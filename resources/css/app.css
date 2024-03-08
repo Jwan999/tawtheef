@@ -1,0 +1,17 @@
+/* resources/css/app.css */
+
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+/* Your custom styles here */
+
+html, body {
+    font-family: 'Montserrat Alternates', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+    position: relative;
+    overflow-x: hidden;
+}
+
