@@ -14,6 +14,7 @@ export default {
         return {
             tableHeaders: ['Company', 'Employment status', 'Phone number', 'Email Address'],
             companies: [{
+                id: 1,
                 company: 'Company name',
                 employmentStatus: 'Employment',
                 phone: 'Phone',

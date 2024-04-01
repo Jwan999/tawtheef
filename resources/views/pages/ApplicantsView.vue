@@ -14,6 +14,7 @@ export default {
         return {
             tableHeaders: ['Full name', 'Job status', 'Field of interest', 'Phone number', 'Email Address'],
             applicants: [{
+                id: 1,
                 fullName: 'name',
                 jobStatus: 'Job statue',
                 field: 'Field',

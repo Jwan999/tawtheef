@@ -10,7 +10,6 @@ import NavigationComponent from './components/NavigationComponent.vue'
 
 export default {
     components: {NavigationComponent},
-
     name: "App.vue"
 }
 </script>

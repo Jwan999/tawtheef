@@ -132,7 +132,10 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr v-for="data in tableData" class="hover:bg-orange-50 cursor-pointer border-b dark:border-gray-700">
+
+                    <tr v-for="data in tableData" :key="data.id"
+                        @click="navigateToLink(`${title.toLowerCase()}/${data.id}`)"
+                        class="hover:bg-orange-50 cursor-pointer border-b dark:border-gray-700">
 
                         <th v-if="data.fullName" scope="row"
                             class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
@@ -178,6 +181,7 @@
                         </td>
 
                     </tr>
+
                     </tbody>
                 </table>
             </div>
@@ -250,6 +254,11 @@ export default {
         tableData: Array,
         // Other props as needed for table details
     },
+    methods: {
+        navigateToLink(route) {
+            this.$router.push(route);
+        },
+    }
 
 
 }
