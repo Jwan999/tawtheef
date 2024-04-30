@@ -1,66 +1,97 @@
+<script setup>
+import RatingComponent from './RatingComponent.vue';
+import {computed, ref, watch} from 'vue';
+import store from "../../store/index.js";
+
+const hoveredElement = ref(null)
+const borderColor = ref('border-slate-100')
+
+const {modelValue} = defineProps(["modelValue"]);
+
+const changeBorderColor = (index, color) => {
+    hoveredElement.value = index
+    borderColor.value = color;
+}
+
+const list = computed({
+    get() {
+        return modelValue?.length ? modelValue : [{item: "", rating: ""}];
+    },
+    set(val) {
+        emit('update:modelValue', val)
+    }
+});
+
+const componentAction = (index) => {
+    if (index === 0) {
+        list.value.push({
+            item: "",
+            rating: "",
+        });
+    } else if (index > 0) {
+        list.value.splice(index, 1)
+
+    }
+}
+
+const emit = defineEmits(["update:modelValue"])
+
+const editMode = computed({
+    get() {
+        return store.getters.editMode;
+    },
+    set() {
+        store.dispatch('setEditMode', true)
+    }
+})
+</script>
+
 <template>
     <div v-if="!editMode" class="rounded-md p-4 bg-white text-sm md:text-xs">
 
         <div class="space-y-1">
-            <h1 class="text-lg font-semibold text-dark pb-4">Tools and Technologies</h1>
-            <div v-for="(tool,index) in tools" :key="index" class="flex items-center justify-between w-full mt-3">
-                <h1 class="font-semibold">{{ tool.tool }}</h1>
+            <h1 class="text-lg font-semibold text-dark pb-4">tools</h1>
+            <div v-for="(tool,index) in list" :key="index" class="flex items-center justify-between">
+                <h1 class="font-semibold">{{ tool.item }}</h1>
+
+
                 <div class="flex items-center space-x-2">
-                    <div :class="1 <= tool.efficiency ? 'bg-orange' : 'bg-light'"
-                         class="rounded-full w-6 h-2"></div>
-                    <div :class="2 <= tool.efficiency ? 'bg-orange' : 'bg-light'"
-                         class="rounded-full w-6 h-2"></div>
-                    <div :class="3 <= tool.efficiency ? 'bg-orange' : 'bg-light'"
-                         class="rounded-full w-6 h-2"></div>
-                    <div :class="4 <= tool.efficiency ? 'bg-orange' : 'bg-light'"
-                         class="rounded-full w-6 h-2"></div>
-                    <div :class="5 <= tool.efficiency ? 'bg-orange' : 'bg-light'"
-                         class="rounded-full w-6 h-2"></div>
+                    <div
+                        v-for="(value,index) in 5"
+                        :key="index"
+                        :class="tool.rating >= value ? 'bg-orange':'bg-zinc-100'"
+                        class="rounded-full w-8 h-3">
+                    </div>
+
                 </div>
-
-
             </div>
-
         </div>
 
     </div>
-    <div v-else class="rounded-md p-4 bg-white text-sm md:text-xs">
 
-        <div class="space-y-1">
-            <h1 class="text-lg font-semibold text-dark pb-4">Tools and Technologies</h1>
+    <div v-else class="rounded-md py-4 bg-white text-sm md:text-xs">
+
+        <div class="space-y-3 px-4 text-sm md:text-xs">
+            <h1 class="text-lg font-semibold text-dark pb-3">Tools</h1>
+
             <div class="relative w-full">
-                <div class="flex">
-                    <input type="text" v-model="tool" name="tool" placeholder="Tools and technologies"
-                           class="focus:border-orange focus:ring-0 bg-slate-50 w-full rounded-bl-md md:text-xs text-sm border-0 border-b-[1px] border-gray-300 hover:border-orange focus:outline-none"/>
-                    <input type="number" v-model="efficiency" name="efficiency" placeholder="Efficiency"
-                           class="focus:border-orange focus:ring-0 bg-slate-50 w-full rounded-br-md md:text-xs text-sm border-0 border-b-[1px] border-gray-300 hover:border-orange focus:outline-none"/>
+                <div class="space-y-3">
+                    <div v-for="(item,index) in list"
+                         :key="index"
+                         class="rounded-bl-md border-0 border-l-[1px] border-b-[1px]"
+                         :class="hoveredElement===index ? borderColor : 'border-slate-100'">
+                        <button @mouseover="changeBorderColor(index,'border-dark')"
+                                @mouseleave="changeBorderColor(index,'border-slate-100')"
+                                @click="componentAction(index)"
+                                class="flex-none w-auto appearance-none px-3 py-1 rounded-br-md font-semibold text-start text-orange bg-slate-100 hover:bg-dark hover:text-white text-sm">
+                            {{ index === 0 ? 'Add component' : 'Remove component' }}
+                        </button>
+
+                        <ratingComponent v-model="list[index]"></ratingComponent>
+                    </div>
                 </div>
-                <button type="submit" @click="addTool" @keyup:enter="addTool"
-                        class="absolute top-0 end-0 p-2.5 h-full text-sm font-medium text-white bg-orange rounded-e-lg  hover:bg-dark focus:outline-none">
-                    +
-                </button>
-            </div>
 
-        </div>
-        <div v-for="(tool,index) in tools" :key="index" class="flex items-center justify-between w-full mt-6">
-            <h1 class="font-semibold">{{ tool.tool }}</h1>
-            <div class="flex items-center space-x-2">
-                <div :class="1 <= tool.efficiency ? 'bg-orange' : 'bg-light'"
-                     class="rounded-full w-6 h-2"></div>
-                <div :class="2 <= tool.efficiency ? 'bg-orange' : 'bg-light'"
-                     class="rounded-full w-6 h-2"></div>
-                <div :class="3 <= tool.efficiency ? 'bg-orange' : 'bg-light'"
-                     class="rounded-full w-6 h-2"></div>
-                <div :class="4 <= tool.efficiency ? 'bg-orange' : 'bg-light'"
-                     class="rounded-full w-6 h-2"></div>
-                <div :class="5 <= tool.efficiency ? 'bg-orange' : 'bg-light'"
-                     class="rounded-full w-6 h-2"></div>
             </div>
-
-            <button @click="deleteTool(index)"
-                    class="bg-white focus:outline-none appearance-none text-sm hover:text-orange">
-                X
-            </button>
 
 
         </div>
@@ -70,46 +101,6 @@
 
 
 </template>
-
-<script>
-export default {
-    name: "ToolsComponent",
-    data() {
-        return {
-            tool: '',
-            efficiency: null,
-            tools: [{
-                tool: 'English',
-                efficiency: 2,
-            }],
-        }
-    },
-    methods: {
-        addTool() {
-            if (this.tool !== '' && this.efficiency && typeof this.efficiency === 'number' && this.efficiency >= 1 && this.efficiency <= 5) {
-                const tool = {
-                    tool: this.tool,
-                    efficiency: this.efficiency
-                }
-                this.tools.push(tool)
-                this.tool = ''
-                this.efficiency = null
-            } else {
-
-            }
-
-        },
-        deleteTool(index) {
-            this.tools.splice(index, 1)
-        }
-    },
-    computed: {
-        editMode() {
-            return this.$store.getters.editMode;
-        }
-    }
-}
-</script>
 
 <style scoped>
 

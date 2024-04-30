@@ -8,12 +8,10 @@
     @vite('resources/css/app.css')
     <title>Tawtheef</title>
 </head>
-<body class="bg-gray-100">
+<body class="bg-light">
 
-<div id="app">
-    <navigation-component></navigation-component>
-    <router-view></router-view>
-</div>
+<div id="app"></div>
+
 
 @vite('resources/js/app.js')
 </body>

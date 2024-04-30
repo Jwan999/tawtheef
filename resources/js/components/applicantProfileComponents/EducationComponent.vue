@@ -16,20 +16,39 @@
     <div v-else class="rounded-md p-4 bg-white text-sm md:text-xs">
         <h1 class="text-lg font-semibold text-dark pb-4">Education</h1>
 
-        <div class="space-y-3 text-sm md:text-xs ">
+        <div class="space-y-5 text-sm md:text-xs ">
+            <div class="relative">
+                <span class="text-orange absolute top-0 right-0 ml-24 -mt-3">*</span>
+                <input @input="emitInputData" v-model="university" name="university" placeholder="University"
+                       class="focus:border-orange focus:ring-0 bg-slate-50 w-full rounded-md md:text-xs text-sm border-0 border-b-[1px] border-gray-300 hover:border-orange focus:outline-none"
+                       type="text">
+<!--                <h1 class="text-red-500 text-xs mt-1 font-semibold">This field is required.</h1>-->
 
-            <input name="email" placeholder="University"
-                   class="focus:border-orange focus:ring-0 bg-slate-50 w-full rounded-md md:text-xs text-sm border-0 border-b-[1px] border-gray-300 hover:border-orange focus:outline-none"
-                   type="text">
-            <input name="phone" placeholder="Degree"
-                   class="focus:border-orange focus:ring-0 bg-slate-50 w-full rounded-md md:text-xs text-sm border-0 border-b-[1px] border-gray-300 hover:border-orange focus:outline-none"
-                   type="text">
-            <input name="links" placeholder="College"
-                   class="focus:border-orange focus:ring-0 bg-slate-50 w-full rounded-md md:text-xs text-sm border-0 border-b-[1px] border-gray-300 hover:border-orange focus:outline-none"
-                   type="text">
-            <input name="links" placeholder="Year"
-                   class="focus:border-orange focus:ring-0 bg-slate-50 w-full rounded-md md:text-xs text-sm border-0 border-b-[1px] border-gray-300 hover:border-orange focus:outline-none"
-                   type="text">
+            </div>
+            <div class="relative">
+                <span class="text-orange absolute top-0 right-0 ml-24 -mt-3">*</span>
+                <input @input="emitInputData" v-model="degree" name="degree" placeholder="Degree"
+                       class="focus:border-orange focus:ring-0 bg-slate-50 w-full rounded-md md:text-xs text-sm border-0 border-b-[1px] border-gray-300 hover:border-orange focus:outline-none"
+                       type="text">
+<!--                <h1 class="text-red-500 text-xs mt-1 font-semibold">This field is required.</h1>-->
+
+            </div>
+            <div class="relative">
+                <span class="text-orange absolute top-0 right-0 ml-24 -mt-3">*</span>
+                <input @input="emitInputData" v-model="college" name="college" placeholder="College"
+                       class="focus:border-orange focus:ring-0 bg-slate-50 w-full rounded-md md:text-xs text-sm border-0 border-b-[1px] border-gray-300 hover:border-orange focus:outline-none"
+                       type="text">
+<!--                <h1 class="text-red-500 text-xs mt-1 font-semibold">This field is required.</h1>-->
+
+            </div>
+            <div class="relative">
+                <span class="text-orange absolute top-0 right-0 ml-24 -mt-3">*</span>
+                <input @input="emitInputData" v-model="year" name="date" placeholder="Year"
+                       class="focus:border-orange focus:ring-0 bg-slate-50 w-full rounded-md md:text-xs text-sm border-0 border-b-[1px] border-gray-300 hover:border-orange focus:outline-none"
+                       type="text">
+<!--                <h1 class="text-red-500 text-xs mt-1 font-semibold">This field is required.</h1>-->
+
+            </div>
         </div>
 
 
@@ -40,9 +59,27 @@
 <script>
 export default {
     name: "EducationComponent",
+    data() {
+        return {
+            university: '',
+            degree: '',
+            college: '',
+            year: '',
+        }
+    },
     computed: {
         editMode() {
             return this.$store.getters.editMode;
+        }
+    },
+    methods: {
+        emitInputData() {
+            this.$emit('educationUpdated', {
+                university: this.university,
+                degree: this.degree,
+                college: this.college,
+                year: this.year
+            })
         }
     }
 }

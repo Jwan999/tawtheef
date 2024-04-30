@@ -51,46 +51,23 @@
         </div>
 
 
-
         <div v-else class="rounded-md bg-white space-y-4 p-4">
-
-
-            <div v-for="index in activityCount" :key="index"
+            <div v-for="(item,index) in list" :key="index"
                  class="rounded-bl-md border-0 border-l-[1px] border-b-[1px]"
-                 :class="hoveredElement==index ? borderColor : 'border-slate-100'">
+                 :class="hoveredElement===index ? borderColor : 'border-slate-100'">
                 <div class="w-full">
+
                     <button @mouseover="changeBorderColor(index,'border-dark')"
                             @mouseleave="changeBorderColor(index,'border-slate-100')"
-                            @click="sectionEdit(index == 1 ? 'add':'remove')"
+                            @click="componentAction(index)"
                             class="flex-none w-auto appearance-none px-3 py-1 rounded-br-md font-semibold text-start text-orange bg-slate-100 hover:bg-dark hover:text-white text-sm">
-                        {{ index === 1 ? 'Add component' : 'Remove component' }}
+                        {{ index === 0 ? 'Add component' : 'Remove component' }}
 
                     </button>
-
-                    <div class="w-full p-6 pr-0">
-                        <label for="message" class="block mb-2 text-xs font-medium text-dark">Lorem ipsum dolor
-                            sit amet,
-                            consectetur adipisicing elit. Blanditiis culpa ea hic illo nihil sed voluptatibus?</label>
-
-                        <div class="flex space-x-3 items-center">
-                            <input name="email" placeholder="Activity or event title"
-                                   class="focus:border-orange focus:ring-0 bg-slate-50 w-6/12 rounded-md md:text-xs text-sm border-0 border-b-[1px] border-gray-300 hover:border-orange focus:outline-none"
-                                   type="text">
-                            <input name="email" placeholder="participated as"
-                                   class="focus:border-orange focus:ring-0 bg-slate-50 w-6/12 rounded-md md:text-xs text-sm border-0 border-b-[1px] border-gray-300 hover:border-orange focus:outline-none"
-                                   type="text">
-                            <input name="email" placeholder="Year"
-                                   class="focus:border-orange focus:ring-0 bg-slate-50 w-6/12 rounded-md md:text-xs text-sm border-0 border-b-[1px] border-gray-300 hover:border-orange focus:outline-none"
-                                   type="text">
-                        </div>
-                    </div>
-
-
-
+                    <ActivityInputs v-model="list[index]">
+                    </ActivityInputs>
                 </div>
             </div>
-
-
         </div>
 
 
@@ -98,38 +75,54 @@
 
 </template>
 
-<script>
-export default {
-    name: "ActivitiesComponent",
-    data() {
-        return {
-            hoveredElement: null,
-            activityCount: 1,
-            borderColor: 'border-slate-100'
-        };
-    },
-    methods: {
-        changeBorderColor(index, color) {
-            this.hoveredElement = index
-            this.borderColor = color;
-        },
-        sectionEdit(action) {
-            this.borderColor = 'border-dark'
+<script setup>
+import ActivityInputs from "../addableComponents/ActivityInputs.vue";
 
-            if (action == 'add') {
-                this.activityCount++
-            } else if (action == 'remove') {
-                this.activityCount--
-            }
+import {computed, ref} from "vue";
+import store from "../../store/index.js";
 
-        }
+const hoveredElement = ref(null)
+const borderColor = ref('border-slate-100')
+
+const {modelValue} = defineProps(["modelValue"]);
+
+const changeBorderColor = (index, color) => {
+    hoveredElement.value = index
+    borderColor.value = color;
+}
+
+const list = computed({
+    get() {
+        return modelValue?.length ? modelValue : [{title: "", participatedAs: "", year: ""}];
     },
-    computed: {
-        editMode() {
-            return this.$store.getters.editMode;
-        }
+    set(val) {
+        emit('update:modelValue', val)
+    }
+});
+
+const componentAction = (index) => {
+    if (index === 0) {
+        list.value.push({
+            title: "",
+            participatedAs: "",
+            year: ""
+        });
+    } else if (index > 0) {
+        list.value.splice(index, 1)
+
     }
 }
+
+const emit = defineEmits(["update:modelValue"])
+
+const editMode = computed({
+    get() {
+        return store.getters.editMode;
+    },
+    set() {
+        store.dispatch('setEditMode', true)
+    }
+})
 </script>
 
 <style scoped>

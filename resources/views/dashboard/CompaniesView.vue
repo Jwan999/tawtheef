@@ -1,5 +1,5 @@
 <template>
-    <div class="p-4 sm:ml-64 mt-16">
+    <div class="">
         <TableComponent title="Companies" :tableHeaders="tableHeaders" :tableData="companies"/>
     </div>
 </template>

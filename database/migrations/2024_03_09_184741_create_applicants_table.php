@@ -13,6 +13,12 @@ return new class extends Migration
     {
         Schema::create('applicants', function (Blueprint $table) {
             $table->id();
+
+            $table->string('profileable_type');
+            $table->unsignedBigInteger('profileable_id');
+            $table->foreign('profileable_id')->references('id')->on('users');
+
+
             $table->string('first_name');
             $table->string('last_name');
             $table->string('image')->nullable();

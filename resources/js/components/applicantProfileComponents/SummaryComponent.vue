@@ -17,9 +17,20 @@
         </div>
         <div v-else class="rounded-md p-4 bg-white">
 
-            <label for="message" class="block mb-2 text-xs font-medium text-dark">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Blanditiis culpa ea hic illo nihil sed voluptatibus?</label>
-            <textarea id="message" rows="4" class="focus:border-orange focus:ring-0 block p-2.5 w-full text-sm bg-slate-50 rounded-md md:text-xs border-0 border-b-[1px] border-gray-300 hover:border-orange focus:outline-none" placeholder="Write your thoughts here..."></textarea>
+            <div class="w-full">
+                <label for="message" class="block mb-2 text-xs font-medium text-dark">Lorem ipsum dolor sit
+                    amet, consectetur adipisicing elit. Blanditiis culpa ea hic illo nihil sed
+                    voluptatibus?</label>
+                <div class="relative w-full mt-3">
+                    <span class="text-orange absolute top-0 right-0 ml-24 -mt-3">*</span>
+                    <textarea @input="emitInputData" v-model="summary" id="message" rows="4"
+                              class="w-full focus:border-orange focus:ring-0 block p-2.5 w-full text-sm bg-slate-50 rounded-md md:text-xs border-0 border-b-[1px] border-gray-300 hover:border-orange focus:outline-none"
+                              placeholder="Write your thoughts here..."></textarea>
+<!--                    <h1 class="text-red-500 text-xs mt-1 font-semibold">This field is required.</h1>-->
 
+                </div>
+
+            </div>
 
         </div>
     </div>
@@ -29,10 +40,20 @@
 <script>
 export default {
     name: "SummaryComponent",
+    data() {
+        return {
+            summary: ''
+        }
+    },
     computed: {
         editMode() {
             return this.$store.getters.editMode;
         }
+    },
+    methods: {
+        emitInputData() {
+            this.$emit('summaryUpdated', {summary: this.summary});
+        },
     }
 }
 </script>

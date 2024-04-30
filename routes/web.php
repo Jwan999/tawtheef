@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,11 +14,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-//Route::get('/', function () {
-//    return view('dashboard/master');
-//});
-
 
 Route::get('/{any}', function () {
-    return view('dashboard.master');
+    return view('master');
 })->where('any', '.*');
+
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/signup', [AuthController::class, 'register']);

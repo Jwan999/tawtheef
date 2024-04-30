@@ -11,7 +11,10 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
-
+//    public function profileType()
+//    {
+//        return $this->profile_type;
+//    }
     /**
      * The attributes that are mass assignable.
      *
@@ -19,6 +22,7 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'profileType',
         'email',
         'password',
     ];

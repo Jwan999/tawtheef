@@ -1,89 +1,120 @@
 <template>
     <!--preview-->
-    <div class="relative col-span-12 grid grid-cols-12 gap-x-6 place-items-center">
-        <div class="col-span-3 w-full">
-            <div class="relative flex items-center">
-                <div class="flex justify-center w-full items-center bg-white h-48 rounded-md dark:bg-gray-600">
-                    <img v-if="image" class="h-48 object-cover w-full rounded-md"
-                         :src="image" alt="">
+    <div class="relative grid grid-cols-12 gap-x-6 place-items-start">
 
+        <div v-if="!editMode" class="col-span-8 w-full">
 
-                    <svg v-else class="h-32 fill-dark" viewBox="-42 0 512 512.002" xmlns="http://www.w3.org/2000/svg">
-                        <path
-                            d="m210.351562 246.632812c33.882813 0 63.222657-12.152343 87.195313-36.128906 23.972656-23.972656 36.125-53.304687 36.125-87.191406 0-33.875-12.152344-63.210938-36.128906-87.191406-23.976563-23.96875-53.3125-36.121094-87.191407-36.121094-33.886718 0-63.21875 12.152344-87.191406 36.125s-36.128906 53.308594-36.128906 87.1875c0 33.886719 12.15625 63.222656 36.132812 87.195312 23.976563 23.96875 53.3125 36.125 87.1875 36.125zm0 0"/>
-                        <path
-                            d="m426.128906 393.703125c-.691406-9.976563-2.089844-20.859375-4.148437-32.351563-2.078125-11.578124-4.753907-22.523437-7.957031-32.527343-3.308594-10.339844-7.808594-20.550781-13.371094-30.335938-5.773438-10.15625-12.554688-19-20.164063-26.277343-7.957031-7.613282-17.699219-13.734376-28.964843-18.199219-11.226563-4.441407-23.667969-6.691407-36.976563-6.691407-5.226563 0-10.28125 2.144532-20.042969 8.5-6.007812 3.917969-13.035156 8.449219-20.878906 13.460938-6.707031 4.273438-15.792969 8.277344-27.015625 11.902344-10.949219 3.542968-22.066406 5.339844-33.039063 5.339844-10.972656 0-22.085937-1.796876-33.046874-5.339844-11.210938-3.621094-20.296876-7.625-26.996094-11.898438-7.769532-4.964844-14.800782-9.496094-20.898438-13.46875-9.75-6.355468-14.808594-8.5-20.035156-8.5-13.3125 0-25.75 2.253906-36.972656 6.699219-11.257813 4.457031-21.003906 10.578125-28.96875 18.199219-7.605469 7.28125-14.390625 16.121094-20.15625 26.273437-5.558594 9.785157-10.058594 19.992188-13.371094 30.339844-3.199219 10.003906-5.875 20.945313-7.953125 32.523437-2.058594 11.476563-3.457031 22.363282-4.148437 32.363282-.679688 9.796875-1.023438 19.964844-1.023438 30.234375 0 26.726562 8.496094 48.363281 25.25 64.320312 16.546875 15.746094 38.441406 23.734375 65.066406 23.734375h246.53125c26.625 0 48.511719-7.984375 65.0625-23.734375 16.757813-15.945312 25.253906-37.585937 25.253906-64.324219-.003906-10.316406-.351562-20.492187-1.035156-30.242187zm0 0"/>
-                    </svg>
+            <span
+                :class="workAvailability ? 'bg-orange text-white':'bg-slate-200 text-slate-400'"
+                class="font-semibold text-sm font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-blue-900 dark:text-blue-300">
+                    {{ workAvailability ? 'Available for Work' : 'Not Available for work' }}
+            </span>
 
-                </div>
+            <h1 class="text-2xl text-orange font-semibold mt-4 tracking-wider">Martin Garrix</h1>
 
-                <div v-if="editMode" class="absolute top-0 right-0 mt-[2.5px]">
-                    <label for="fileInput"
-                           class="appearance-none relative appearance-none text-xs rounded-bl-md rounded-tr-md px-3 py-2 font-semibold text-white bg-orange hover:bg-dark cursor-pointer">
-                        Upload photo
-                    </label>
-                    <input id="fileInput" type="file" v-on:change="previewImage" class="absolute left-0 hidden">
-                </div>
+        </div>
+        <div v-else class="col-span-8 w-full space-y-6">
+            <div class="flex">
+                <span @click="workAvailability = !workAvailability"
+                      :class="workAvailability ? 'bg-orange text-white':'bg-slate-200 text-slate-400'"
+                      class="cursor-pointer font-semibold hover:bg-orange hover:text-white text-sm font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-blue-900 dark:text-blue-300">
+                    Available for Work
+            </span>
+                <span @click="workAvailability = !workAvailability"
+                      :class="!workAvailability ? 'bg-orange text-white':'bg-slate-200 text-slate-400'"
+                      class="cursor-pointer font-semibold hover:bg-orange hover:text-white text-sm font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-blue-900 dark:text-blue-300">
+                    Not Available for Work
+            </span>
             </div>
 
-        </div>
-        <div class="col-span-3 w-full">
-            <span
-                class="bg-orange-50 text-orange text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">
-                Open to Work
-            </span>
-            <h1 class="text-2xl text-orange font-semibold mt-4 tracking-wider">Martin Garrix</h1>
-            <h1 class="mt-2 text-lg text-orange">Graphic Designer</h1>
+            <div class="">
+                <span
+                    class="block mb-2 text-xs font-medium text-gray-600">Please provide your First and Last name.</span>
+
+                <div class="relative">
+                    <input @input="emitDetails" v-model="fullName"
+                           placeholder="Full name"
+                           class="bg-slate-50 w-full rounded-md text-xl text-dark py-1 tracking-wider font-semibold border-0 border-b-[1px] border-gray-300 hover:border-orange focus:outline-none focus:border-orange focus:ring-0"
+                           type="text">
+                    <span class="text-orange absolute top-0 right-0 ml-24 -mt-4">*</span>
+
+                </div>
+
+<!--                <h1 class="text-red-500 text-xs mt-1 font-semibold">This field is required.</h1>-->
+            </div>
+            <ContactComponent v-model="contactUpdated" @contactUpdated="getValues('contactUpdated',$event)"
+                              editMode></ContactComponent>
+
 
         </div>
-        <div class=" col-span-6 w-full flex justify-end items-start">
-            <button @click="toggleEditMode"
-                    class="absolute top-0 right-0 appearance-none text-xs rounded-bl-md px-3 py-2 font-semibold text-white bg-orange hover:bg-dark">
-
-                <svg v-if="!editMode" class="fill-white h-4" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path
-                        d="m21.783 3.766-1.548-1.548c-1.088-1.088-2.858-1.088-3.946 0l-13.939 13.937c-.092.092-.151.211-.169.339l-.774 5.42c-.027.187.036.375.169.509.113.113.266.176.424.176.028 0 .057-.002.085-.006l5.42-.774c.128-.018.248-.078.339-.169l13.938-13.938c1.088-1.088 1.088-2.858 0-3.946zm-14.645 16.894-4.431.633.633-4.431 11.364-11.363 3.797 3.797-11.364 11.364zm13.796-13.796-1.584 1.584-3.797-3.797 1.584-1.584c.62-.62 1.629-.62 2.249 0l1.548 1.548c.62.62.62 1.629 0 2.249z"/>
-                </svg>
-                <span v-else>Save</span>
-            </button>
-        </div>
+<!--        <div class="col-span-6 w-full flex justify-end items-start">-->
+<!--        </div>-->
     </div>
 
 </template>
 
-<script>
 
-export default {
-    name: "ApplicantDetailsComponent",
-    data() {
-        return {
-            image: null
-        }
-    },
-    methods: {
-        toggleEditMode() {
-            this.$store.dispatch('toggleEditMode');
-        },
-        previewImage(event) {
-            const file = event.target.files[0];
+<script setup>
+import ResumeActionButtonsComponent from '../applicantProfileComponents/ResumeActionButtonsComponent.vue'
+import {computed, ref} from "vue";
+import store from "../../store/index.js";
+import ContactComponent from "./ContactComponent.vue";
 
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    this.image = e.target.result;
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-    },
-    computed: {
-        editMode() {
-            return this.$store.getters.editMode;
-        }
+// const image = ref(null)
+const workAvailability = ref(null)
+const fullName = ref(null)
+const email = ref(null)
+const phone = ref(null)
+const birthdate = ref(null)
+const links = ref(null)
+const location = ref(null)
+
+const invalidFields = computed(() => store.state.validationErrors.map(error => error.field));
+const updateFieldValue = (field, value) => {
+    // Update the corresponding state variable (e.g., fullName.value = value)
+
+    // Remove the field from invalidFields if the value is no longer empty or null
+    if (value && value.trim()) {
+        const newInvalidFields = invalidFields.value.filter(f => f !== field);
+        store.commit('setValidationErrors', newInvalidFields.map(f => ({ field: f, message: '' }))); // Clear message for removed field
     }
+};
 
+const editMode = computed({
+    get() {
+        return store.getters.editMode;
+    },
+    set() {
+        store.dispatch('setEditMode', true)
+    }
+})
+
+const emit = defineEmits(["detailsUpdated"])
+
+const getValues = (componentTitle, data) => {
+    email.value = data.email
+    phone.value = data.phone
+    links.value = data.links
+    birthdate.value = data.birthdate
+    location.value = data.location
 }
+const emitDetails = () => {
+
+    const detailsData = {
+        workAvailability: workAvailability.value,
+        fullName: fullName.value,
+
+        email: email.value,
+        phone: phone.value,
+        links: links.value,
+
+        location: location.value,
+        birthdate: birthdate.value,
+    };
+    emit('detailsUpdated', detailsData); // Use emit here
+};
 </script>
+
 
 <style scoped>
 

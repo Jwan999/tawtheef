@@ -34,42 +34,21 @@
 
         <div v-else class="rounded-md bg-white p-4 space-y-4">
 
-            <div v-for="index in courseCount" :key="index"
+            <div v-for="(course,index) in courses" :key="index"
                  class="rounded-bl-md border-0 border-l-[1px] border-b-[1px]"
-                 :class="hoveredElement==index ? borderColor : 'border-slate-100'">
+                 :class="hoveredElement===index ? borderColor : 'border-slate-100'">
                 <div class="w-full">
                     <button @mouseover="changeBorderColor(index,'border-dark')"
                             @mouseleave="changeBorderColor(index,'border-slate-100')"
-                            @click="sectionEdit(index == 1 ? 'add':'remove')"
+                            @click="coursesActions(index === 0 ? 'add':'remove',index)"
                             class="flex-none w-auto appearance-none px-3 py-1 rounded-br-md font-semibold text-start text-orange bg-slate-100 hover:bg-dark hover:text-white text-sm">
-                        {{ index === 1 ? 'Add component' : 'Remove component' }}
+                        {{ index === 0 ? 'Add component' : 'Remove component' }}
 
                     </button>
-
-                    <div class="w-full space-y-4 p-6 pr-0">
-                        <div class="flex space-x-3 items-center ">
-                            <input name="email" placeholder="Course title"
-                                   class="focus:border-orange focus:ring-0 bg-slate-50 w-6/12 rounded-md md:text-xs text-sm border-0 border-b-[1px] border-gray-300 hover:border-orange focus:outline-none"
-                                   type="text">
-                            <input name="email" placeholder="Course duration"
-                                   class="focus:border-orange focus:ring-0 bg-slate-50 w-6/12 rounded-md md:text-xs text-sm border-0 border-b-[1px] border-gray-300 hover:border-orange focus:outline-none"
-                                   type="text">
-                        </div>
-                        <div class="w-full">
-                            <label for="message" class="block mb-2 text-xs font-medium text-dark">Lorem ipsum dolor sit
-                                amet, consectetur adipisicing elit. Blanditiis culpa ea hic illo nihil sed
-                                voluptatibus?</label>
-                            <textarea id="message" rows="4"
-                                      class="focus:border-orange focus:ring-0 block p-2.5 w-full text-sm bg-slate-50 rounded-md md:text-xs border-0 border-b-[1px] border-gray-300 hover:border-orange focus:outline-none"
-                                      placeholder="Write your thoughts here..."></textarea>
-
-                        </div>
-                    </div>
-
+                    <CourseInputs v-model="courses[index]"></CourseInputs>
 
                 </div>
             </div>
-
 
 
         </div>
@@ -77,38 +56,57 @@
 
 </template>
 
-<script>
-export default {
-    name: "CoursesComponent",
-    data() {
-        return {
-            hoveredElement: null,
-            courseCount: 1,
-            borderColor: 'border-slate-100'
-        };
-    },
-    methods: {
-        changeBorderColor(index, color) {
-            this.hoveredElement = index
-            this.borderColor = color;
-        },
-        sectionEdit(action) {
-            this.borderColor = 'border-dark'
 
-            if (action == 'add') {
-                this.courseCount++
-            } else if (action == 'remove') {
-                this.courseCount--
-            }
+<script setup>
+import {computed, ref} from "vue";
+import CourseInputs from "../addableComponents/CourseInputs.vue";
+import store from "../../store/index.js";
 
-        }
-    },
-    computed: {
-        editMode() {
-            return this.$store.getters.editMode;
-        }
-    }
+const hoveredElement = ref(null)
+const borderColor = ref('border-slate-100')
+const courses = ref([{
+    title: '',
+    duration: '',
+    description: '',
+}])
+const {modelValue} = defineProps(["modelValue"]);
+const changeBorderColor = (index, color) => {
+    hoveredElement.value = index
+    borderColor.value = color;
 }
+
+const coursesActions = (action, index) => {
+    borderColor.value = 'border-dark'
+    if (action == 'add') {
+        courses.value.push({
+            title: "",
+            duration: "",
+            description: ""
+        });
+    } else if (action === 'remove') {
+        courses.value.splice(index, 1)
+    }
+
+}
+const emit = defineEmits(["courseUpdated"])
+
+const course = computed({
+    get() {
+        return modelValue;
+    },
+    set(val) {
+        emit('update:modelValue', val)
+    }
+});
+console.log(modelValue)
+
+const editMode = computed({
+    get() {
+        return store.getters.editMode;
+    },
+
+})
+
 </script>
 
 <style scoped>
