@@ -1,8 +1,8 @@
 <template>
     <div class="relative flex flex-col items-center">
         <div class="flex justify-center w-full items-center bg-white h-48 rounded-md dark:bg-gray-600">
-            <img v-if="image" class="h-48 object-cover w-full rounded-md"
-                 :src="image" alt="">
+            <img v-if="previewURL" class="h-48 object-cover w-full rounded-md"
+                 :src="previewURL" alt="">
 
 
             <svg v-else class="h-32 fill-dark" viewBox="-42 0 512 512.002" xmlns="http://www.w3.org/2000/svg">
@@ -32,15 +32,13 @@ import {computed, ref} from "vue";
 import store from "../../store/index.js";
 
 const image = ref(null)
-
+const previewURL = ref(null);
 const previewImage = (event) => {
     const file = event.target.files[0];
+    image.value = file;
     if (file) {
         const reader = new FileReader();
-        reader.onload = (e) => {
-            image.value = e.target.result;
-        };
-        reader.readAsDataURL(file);
+        previewURL.value = URL.createObjectURL(file);
         emitImage()
     }
 }
@@ -56,11 +54,9 @@ const editMode = computed({
 const emit = defineEmits(["imageUpdated"])
 
 const emitImage = () => {
-    const imageUpdated = {
-        image: image.value,
-    };
 
-    emit('imageUpdated', imageUpdated); // Use emit here
+
+    emit('update:modelValue', image.value); // Use emit here
 };
 
 

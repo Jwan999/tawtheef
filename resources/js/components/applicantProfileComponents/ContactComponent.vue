@@ -77,7 +77,8 @@
                     <div class="w-full relative">
                         <span class="text-orange absolute top-0 right-0 ml-24 -mt-3">*</span>
                         <div class="flex">
-                            <select @change="emitInputData" v-model="city" class="focus:border-orange focus:ring-0 bg-slate-50 w-full rounded-l-md md:text-xs text-sm border-0 border-b-[1px] border-gray-300 hover:border-orange focus:outline-none">
+                            <select @change="emitInputData" v-model="city"
+                                    class="focus:border-orange focus:ring-0 bg-slate-50 w-full rounded-l-md md:text-xs text-sm border-0 border-b-[1px] border-gray-300 hover:border-orange focus:outline-none">
                                 <option selected>Choose a city</option>
                                 <option>Baghdad</option>
                                 <option>Najaf</option>
@@ -145,53 +146,50 @@
     </div>
 </template>
 
-<script>
-export default {
-    name: "ContactComponent",
-    data() {
-        return {
-            location: [],
-            city: 'Choose a city',
-            zone: '',
-            email: '',
-            phone: '',
-            birthdate: '',
-            residence: '',
-            link: '',
-            hyperLink: '',
-            links: [],
-            isChecked: false
-        }
-    },
-    methods: {
-        emitInputData() {
-            this.$emit('contactUpdated', {
-                email: this.email,
-                phone: this.phone,
-                links: this.links,
-                location: this.location.push({city: this.city, zone: this.zone}),
-                birthdate: this.birthdate,
-                residence: this.residence
-            });
-        },
-        addLink() {
-            if (this.link !== '') {
-                this.links.push({link: this.link, hyperLink: this.hyperLink})
-                this.link = ''
-                this.hyperLink = ''
-            }
-        },
-        deleteLink(index) {
-            this.links.splice(index, 1)
-        }
-    },
-    computed: {
-        editMode() {
-            return this.$store.getters.editMode;
-        }
+<script setup>
+import {ref, watch} from 'vue'; // Import ref and computed
+import {editMode} from "../../utils/storeHelpers.js";
+
+const city = ref('Choose a city');
+const zone = ref('');
+const email = ref('');
+const phone = ref('');
+const birthdate = ref('');
+const links = ref([]);
+
+const link = ref('');
+const hyperLink = ref('');
+const isChecked = ref(false);
+
+
+const addLink = () => {
+    if (link.value.trim() !== '') { // Check for non-empty link
+        links.value.push({link: link.value, hyperLink: hyperLink.value});
+        link.value = '';
+        hyperLink.value = '';
     }
-}
+};
+const deleteLink = (index) => {
+    links.value.splice(index, 1);
+};
+
+const emit = defineEmits(["update:modelValue"])
+
+watch([phone, email, city, zone, birthdate], () => {
+    emit('update:modelValue',
+        {
+            phone: phone.value,
+            email: email.value,
+            links: links.value,
+            birthdate: birthdate.value,
+            city: city.value,
+            zone: zone.value
+        }
+    )
+}, {deep: true})
+
 </script>
+
 
 <style scoped>
 

@@ -1,7 +1,15 @@
 <script setup>
 import {ref, watchEffect} from 'vue';
 
-const {modelValue} = defineProps(["modelValue"]);
+const {modelValue,placeholderLabel} = defineProps({
+    modelValue: {
+      type: Object,
+    },
+    placeholderLabel: {
+        type:String,
+        default: "Language"
+    }
+});
 const emit = defineEmits(["update:modelValue"]);
 
 const item = ref(modelValue.item);
@@ -27,7 +35,7 @@ const setRatingValue = (value) => {
             <input
                 type="text"
                 v-model="item"
-                placeholder="item"
+                :placeholder="placeholderLabel"
                 class="capitalize font-semibold focus:border-orange focus:ring-0 bg-slate-50 w-full rounded-md md:text-xs text-sm border-0 border-b-[1px] border-gray-300 hover:border-orange focus:outline-none"
             />
             <!--            <h1 class="text-red-500 text-xs mt-1 font-semibold">This field is required.</h1>-->

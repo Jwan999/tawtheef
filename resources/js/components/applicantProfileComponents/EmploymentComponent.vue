@@ -6,7 +6,7 @@
         </div>
 
         <div v-if="!editMode" class="rounded-md p-4 bg-white space-y-8">
-            <div v-for="(job,index) in employment">
+            <div v-for="(job,index) in value">
                 <!--period of employment-->
                 <div class="flex text-dark space-x-1 text-sm font-semibold">
                     <h1 class="text-orange">{{ job.duration[0] }}</h1>
@@ -28,21 +28,27 @@
 
         <div v-else class="rounded-md bg-white p-4 space-y-8">
 
-            <div v-for="(item,index) in employment" :key="index"
+            <div v-for="(item,index) in value" :key="index"
                  class="rounded-bl-md border-0 border-l-[1px] border-b-[1px]"
                  :class="hoveredElement===index ? borderColor : 'border-slate-100'">
                 <div class="w-full">
                     <button @mouseover="changeBorderColor(index,'border-dark')"
                             @mouseleave="changeBorderColor(index,'border-slate-100')"
-                            @click="componentAction(index)"
+                            @click="remove(index)"
                             class="flex-none w-auto appearance-none px-3 py-1 rounded-br-md font-semibold text-start text-orange bg-slate-100 hover:bg-dark hover:text-white text-sm">
-                        {{ index === 0 ? 'Add component' : 'Remove component' }}
+                        Remove component
 
                     </button>
-                    <EmploymentInputs v-model="employment[index]"></EmploymentInputs>
-
+                    <EmploymentInputs v-model="value[index]"></EmploymentInputs>
                 </div>
             </div>
+            <button
+
+                @click="addNew"
+                class="flex-none w-auto appearance-none px-3 py-1 rounded-br-md font-semibold text-start text-orange bg-slate-100 hover:bg-dark hover:text-white text-sm">
+                Add component
+
+            </button>
 
         </div>
 
@@ -53,8 +59,7 @@
 
 <script setup>
 
-import {computed, ref} from "vue";
-import store from "../../store/index.js";
+import {onMounted, ref, watch} from "vue";
 import EmploymentInputs from "../addableComponents/EmploymentInputs.vue";
 
 const hoveredElement = ref(null)
@@ -62,41 +67,36 @@ const borderColor = ref('border-slate-100')
 
 const {modelValue} = defineProps(["modelValue"]);
 
+import {editMode} from "../../utils/storeHelpers.js";
+
+const value = ref([])
 const changeBorderColor = (index, color) => {
     hoveredElement.value = index
     borderColor.value = color;
 }
 
-    const employment = computed({
-        get() {
-            return modelValue?.length ? modelValue : [{title: "", employer: "", duration: [], description: ""}];
-        },
-        set(val) {
-            emit('update:modelValue', val)
-        }
+watch(value, (newValue) => {
+    emit('update:modelValue', newValue);
+}, {deep: true})
+const addNew = () => {
+    value.value.push({
+        title: "", employer: "", duration: [], description: ""
     });
-
-    const componentAction = (index) => {
-        if (index === 0) {
-            employment.value.push({
-                title: "", employer: "", duration: [], description: ""
-            });
-        } else if (index > 0) {
-            employment.value.splice(index, 1)
-
-        }
+}
+onMounted(() => {
+    value.value = modelValue;
+    if (modelValue.length == 0) {
+        addNew();
     }
+})
 
-    const emit = defineEmits(["update:modelValue"])
+const remove = (index) => {
+    value.value.splice(index, 1)
+}
 
-    const editMode = computed({
-        get() {
-            return store.getters.editMode;
-        },
-        set() {
-            store.dispatch('setEditMode', true)
-        }
-    })
+const emit = defineEmits(["update:modelValue"])
+
+
 </script>
 
 

@@ -76,44 +76,36 @@
 
 </template>
 
-<script>
-export default {
-    name: "EducationComponent",
-    data() {
-        return {
-            university: '',
-            degree: 'Choose a degree',
-            college: '',
-            duration: ['Start year', 'End year'],
-            years: [],
+<script setup>
+import {onMounted, ref, watch} from "vue";
+import {editMode} from "../../utils/storeHelpers.js";
 
-        }
-    },
-    created() {
-        // Compute the current year
-        const currentYear = new Date().getFullYear();
+const university = ref('')
+const degree = ref('Choose a degree')
+const college = ref('')
+const duration = ref(['Start year', 'End year'])
 
-        // Populate the years array with the years from 2000 to the current year
-        for (let year = 2000; year <= currentYear; year++) {
-            this.years.push(year);
-        }
-    },
-    computed: {
-        editMode() {
-            return this.$store.getters.editMode;
-        }
-    },
-    methods: {
-        emitInputData() {
-            this.$emit('educationUpdated', {
-                university: this.university,
-                degree: this.degree,
-                college: this.college,
-                duration: this.duration
-            })
-        }
+const currentYear = ref(new Date().getFullYear());
+const years = ref([]);
+
+onMounted(() => {
+    for (let year = 2000; year <= currentYear.value; year++) {
+        years.value.push(year);
     }
-}
+});
+
+const emit = defineEmits(["update:modelValue"])
+
+watch([university,degree,college,duration], () => {
+    emit('update:modelValue',{
+        university: university.value,
+        degree: degree.value,
+        college: college.value,
+        duration: duration.value,
+    })
+},{deep: true})
+
+
 </script>
 
 <style scoped>

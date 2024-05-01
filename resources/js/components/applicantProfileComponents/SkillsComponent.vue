@@ -5,7 +5,7 @@
 
             <div class="flex flex-wrap items-center space-y-2">
                 <div class="flex flex-wrap gap-2">
-                    <span v-for="skill in skills"
+                    <span v-for="skill in value"
                           class="inline-block bg-dark text-white px-3 py-1 rounded-full uppercase font-semibold text-xs">
                         {{ skill }}
                     </span>
@@ -43,7 +43,7 @@
 
 
                 <div class="flex flex-wrap gap-2">
-                    <span v-for="(skill,index) in skills" :key="index"
+                    <span v-for="(skill,index) in value" :key="index"
                           class="inline-block flex items-center bg-dark text-white px-3 py-1 rounded-full uppercase font-semibold text-xs">
                         <button @click="removeSkill(index)" class="appearance-none mr-2">
                              <svg class="fill-white w-4 h-4" viewBox="0 0 1024 1024"
@@ -63,38 +63,39 @@
 
 </template>
 
-<script>
-export default {
-    name: "SkillsComponent",
-    data() {
-        return {
-            skill: '',
-            skills: [],
-        }
-    },
-    methods: {
-        addSkill() {
-            if (this.skill != '') {
-                this.skills.push(this.skill)
-                this.skill = ''
-                this.emitInputData()
+<script setup>
+import {onMounted, ref, watch} from 'vue';
+import {editMode} from "../../utils/storeHelpers.js";
 
-            }
-        },
-        removeSkill(index) {
-            this.skills.splice(index, 1)
-        },
-        emitInputData() {
-            this.$emit('skillsUpdated', {skill: this.skill})
-        }
-    },
-    computed: {
-        editMode() {
-            return this.$store.getters.editMode;
-        }
+const skill = ref('');
+
+const {modelValue} = defineProps(["modelValue"]);
+const value = ref([])
+
+const addSkill = () => {
+    if (skill.value.trim() !== '') {
+        value.value.push(skill.value);
+        skill.value = '';
     }
-}
+};
+
+const removeSkill = (index) => {
+    value.value.splice(index, 1);
+};
+
+onMounted(() => {
+    value.value = modelValue;
+})
+
+watch(value, (newValue) => {
+    emit('update:modelValue', newValue);
+}, {deep: true})
+
+const emit = defineEmits(["update:modelValue"])
+
+
 </script>
+
 
 <style scoped>
 

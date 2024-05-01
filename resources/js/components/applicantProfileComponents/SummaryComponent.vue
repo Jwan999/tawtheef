@@ -17,7 +17,7 @@
                     voluptatibus?</label>
                 <div class="relative w-full mt-3">
                     <span class="text-orange absolute top-0 right-0 ml-24 -mt-3">*</span>
-                    <textarea @input="emitInputData" v-model="summary" id="message" rows="4"
+                    <textarea v-model="summary" id="message" rows="4"
                               class="w-full focus:border-orange focus:ring-0 block p-2.5 w-full text-sm bg-slate-50 rounded-md md:text-xs border-0 border-b-[1px] border-gray-300 hover:border-orange focus:outline-none"
                               placeholder="Write your thoughts here..."></textarea>
 <!--                    <h1 class="text-red-500 text-xs mt-1 font-semibold">This field is required.</h1>-->
@@ -31,25 +31,19 @@
 
 </template>
 
-<script>
-export default {
-    name: "SummaryComponent",
-    data() {
-        return {
-            summary: ''
-        }
-    },
-    computed: {
-        editMode() {
-            return this.$store.getters.editMode;
-        }
-    },
-    methods: {
-        emitInputData() {
-            this.$emit('summaryUpdated', {summary: this.summary});
-        },
-    }
-}
+<script setup>
+import {ref, watch} from 'vue'; // Import ref for reactive variables
+import {editMode} from "../../utils/storeHelpers.js";
+const summary = ref('');
+
+const emit = defineEmits(["update:modelValue"])
+
+watch([summary], () => {
+    emit('update:modelValue',
+        summary.value,
+    )
+},{deep: true})
+
 </script>
 
 <style scoped>

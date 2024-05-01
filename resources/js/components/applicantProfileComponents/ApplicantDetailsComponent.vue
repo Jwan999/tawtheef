@@ -53,43 +53,23 @@
 
 
 <script setup>
-import {computed, ref} from "vue";
-import store from "../../store/index.js";
+import {ref, watch} from "vue";
+import {editMode} from "../../utils/storeHelpers.js";
 
-const workAvailability = ref(null)
+const workAvailability = ref(true)
 const fullName = ref(null)
 
 
-// const invalidFields = computed(() => store.state.validationErrors.map(error => error.field));
-// const updateFieldValue = (field, value) => {
-//     // Update the corresponding state variable (e.g., fullName.value = value)
-//
-//     // Remove the field from invalidFields if the value is no longer empty or null
-//     if (value && value.trim()) {
-//         const newInvalidFields = invalidFields.value.filter(f => f !== field);
-//         store.commit('setValidationErrors', newInvalidFields.map(f => ({ field: f, message: '' }))); // Clear message for removed field
-//     }
-// };
+const emit = defineEmits(["update:modelValue"])
 
-const editMode = computed({
-    get() {
-        return store.getters.editMode;
-    },
-    set() {
-        store.dispatch('setEditMode', true)
-    }
-})
-
-const emit = defineEmits(["detailsUpdated"])
-
-const emitDetails = () => {
-
-    const detailsData = {
-        workAvailability: workAvailability.value,
-        fullName: fullName.value,
-    };
-    emit('detailsUpdated', detailsData); // Use emit here
-};
+watch([workAvailability, fullName], () => {
+    emit('update:modelValue',
+        {
+            workAvailability: workAvailability.value,
+            fullName: fullName.value
+        }
+    )
+}, {deep: true})
 </script>
 
 

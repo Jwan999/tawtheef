@@ -6,7 +6,7 @@
         </div>
 
         <div v-if="!editMode" class="rounded-md p-4 bg-white space-y-8">
-            <div v-for="(course,index) in courses" :key="index">
+            <div v-for="(course,index) in value" :key="index">
                 <h1 class="text-sm font-semibold mb-1">{{ course.duration }}</h1>
                 <h1 class="text-orange text-lg font-semibold mb-4">{{ course.title }}</h1>
                 <p class="text-sm">{{
@@ -18,21 +18,29 @@
 
         <div v-else class="rounded-md bg-white p-4 space-y-4">
 
-            <div v-for="(course,index) in courses" :key="index"
+            <div v-for="(course,index) in value" :key="index"
                  class="rounded-bl-md border-0 border-l-[1px] border-b-[1px]"
                  :class="hoveredElement===index ? borderColor : 'border-slate-100'">
                 <div class="w-full">
                     <button @mouseover="changeBorderColor(index,'border-dark')"
                             @mouseleave="changeBorderColor(index,'border-slate-100')"
-                            @click="coursesActions(index === 0 ? 'add':'remove',index)"
+                            @click="remove"
                             class="flex-none w-auto appearance-none px-3 py-1 rounded-br-md font-semibold text-start text-orange bg-slate-100 hover:bg-dark hover:text-white text-sm">
-                        {{ index === 0 ? 'Add component' : 'Remove component' }}
+                        Remove component
 
                     </button>
-                    <CourseInputs v-model="courses[index]"></CourseInputs>
+                    <CourseInputs v-model="value[index]"></CourseInputs>
 
                 </div>
+
             </div>
+            <button
+
+                @click="addNew"
+                class="flex-none w-auto appearance-none px-3 py-1 rounded-br-md font-semibold text-start text-orange bg-slate-100 hover:bg-dark hover:text-white text-sm">
+                Add component
+
+            </button>
 
 
         </div>
@@ -42,54 +50,42 @@
 
 
 <script setup>
-import {computed, ref} from "vue";
+import {onMounted, ref, watch} from "vue";
 import CourseInputs from "../addableComponents/CourseInputs.vue";
-import store from "../../store/index.js";
+import {editMode} from "../../utils/storeHelpers.js";
 
 const hoveredElement = ref(null)
 const borderColor = ref('border-slate-100')
-const courses = ref([{
-    title: '',
-    duration: '',
-    description: '',
-}])
-const {modelValue} = defineProps(["modelValue"]);
+
 const changeBorderColor = (index, color) => {
     hoveredElement.value = index
     borderColor.value = color;
 }
 
-const coursesActions = (action, index) => {
-    borderColor.value = 'border-dark'
-    if (action == 'add') {
-        courses.value.push({
-            title: "",
-            duration: "",
-            description: ""
-        });
-    } else if (action === 'remove') {
-        courses.value.splice(index, 1)
-    }
+const value = ref([])
+const {modelValue} = defineProps(["modelValue"]);
 
+const addNew = () => {
+    value.value.push({
+        title: "", duration: "", description: ""
+    });
 }
-const emit = defineEmits(["courseUpdated"])
+const remove = (index) => {
+    value.value.splice(index, 1)
+}
+const emit = defineEmits(["update:modelValue"])
 
-const course = computed({
-    get() {
-        return modelValue;
-    },
-    set(val) {
-        emit('update:modelValue', val)
+watch(value, (newValue) => {
+    emit('update:modelValue', newValue);
+}, {deep: true})
+
+onMounted(() => {
+    value.value = modelValue;
+    if (modelValue.length == 0) {
+        addNew();
     }
-});
-console.log(modelValue)
-
-const editMode = computed({
-    get() {
-        return store.getters.editMode;
-    },
-
 })
+
 
 </script>
 
