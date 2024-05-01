@@ -8,7 +8,7 @@
 
         <div class="col-span-3 space-y-6">
             <ApplicantPhotoUpload v-model="imageUpdated"
-                                  @imageUpdated="getValues('imageUpdated',$event)"></ApplicantPhotoUpload>
+                                  @imageUpdated="getImage(imageUpdated,$event)"></ApplicantPhotoUpload>
 
             <FieldOfInterestComponent v-model="specialityUpdated"
                                       @specialityUpdated="getValues('specialityUpdated',$event)"
@@ -28,6 +28,11 @@
         <div class="col-span-9 space-y-8">
             <ApplicantDetailsComponent v-model="detailsUpdated"
                                        @detailsUpdated="getValues('detailsUpdated',$event)"></ApplicantDetailsComponent>
+
+            <div class="w-9/12">
+                <ContactComponent v-model="contactUpdated"
+                                  @detailsUpdated="getValues('contactUpdated',$event)"></ContactComponent>
+            </div>
 
             <!--summary section-->
             <SummaryComponent v-model="summaryUpdated" @summaryUpdated="getValues('summaryUpdated',$event)"
@@ -66,6 +71,7 @@ import ResumeActionButtonsComponent
     from "../../js/components/applicantProfileComponents/ResumeActionButtonsComponent.vue";
 import LanguagesComponent from "../../js/components/applicantProfileComponents/LanguagesComponent.vue";
 import ToolsComponent from "../../js/components/applicantProfileComponents/ToolsComponent.vue";
+import ContactComponent from "../../js/components/applicantProfileComponents/ContactComponent.vue";
 
 const imageUpdated = ref(null);
 const specialityUpdated = ref(null);
@@ -79,6 +85,10 @@ const summaryUpdated = ref(null);
 const employmentUpdated = ref(null);
 const coursesUpdated = ref(null);
 const activitiesUpdated = ref(null);
+
+const getImage = (title,data) => {
+    console.log(data)
+}
 
 // const field = 'fullName'; // Replace with your child component's field name
 const sendData = () => {

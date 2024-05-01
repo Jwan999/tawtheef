@@ -50,7 +50,7 @@ const editMode = computed({
     <div v-if="!editMode" class="rounded-md p-4 bg-white text-sm md:text-xs">
 
         <div class="space-y-1">
-            <h1 class="text-lg font-semibold text-dark pb-4">tools</h1>
+            <h1 class="text-lg font-semibold text-dark pb-4">Tools</h1>
             <div v-for="(tool,index) in list" :key="index" class="flex items-center justify-between">
                 <h1 class="font-semibold">{{ tool.item }}</h1>
 

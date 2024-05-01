@@ -10,7 +10,7 @@
                     {{ workAvailability ? 'Available for Work' : 'Not Available for work' }}
             </span>
 
-            <h1 class="text-2xl text-orange font-semibold mt-4 tracking-wider">Martin Garrix</h1>
+            <h1 class="text-2xl text-orange font-semibold mt-4 tracking-wider">{{ fullName }}</h1>
 
         </div>
         <div v-else class="col-span-8 w-full space-y-6">
@@ -40,45 +40,36 @@
 
                 </div>
 
-<!--                <h1 class="text-red-500 text-xs mt-1 font-semibold">This field is required.</h1>-->
+                <!--                <h1 class="text-red-500 text-xs mt-1 font-semibold">This field is required.</h1>-->
             </div>
-            <ContactComponent v-model="contactUpdated" @contactUpdated="getValues('contactUpdated',$event)"
-                              editMode></ContactComponent>
 
 
         </div>
-<!--        <div class="col-span-6 w-full flex justify-end items-start">-->
-<!--        </div>-->
+        <!--        <div class="col-span-6 w-full flex justify-end items-start">-->
+        <!--        </div>-->
     </div>
 
 </template>
 
 
 <script setup>
-import ResumeActionButtonsComponent from '../applicantProfileComponents/ResumeActionButtonsComponent.vue'
 import {computed, ref} from "vue";
 import store from "../../store/index.js";
-import ContactComponent from "./ContactComponent.vue";
 
-// const image = ref(null)
 const workAvailability = ref(null)
 const fullName = ref(null)
-const email = ref(null)
-const phone = ref(null)
-const birthdate = ref(null)
-const links = ref(null)
-const location = ref(null)
 
-const invalidFields = computed(() => store.state.validationErrors.map(error => error.field));
-const updateFieldValue = (field, value) => {
-    // Update the corresponding state variable (e.g., fullName.value = value)
 
-    // Remove the field from invalidFields if the value is no longer empty or null
-    if (value && value.trim()) {
-        const newInvalidFields = invalidFields.value.filter(f => f !== field);
-        store.commit('setValidationErrors', newInvalidFields.map(f => ({ field: f, message: '' }))); // Clear message for removed field
-    }
-};
+// const invalidFields = computed(() => store.state.validationErrors.map(error => error.field));
+// const updateFieldValue = (field, value) => {
+//     // Update the corresponding state variable (e.g., fullName.value = value)
+//
+//     // Remove the field from invalidFields if the value is no longer empty or null
+//     if (value && value.trim()) {
+//         const newInvalidFields = invalidFields.value.filter(f => f !== field);
+//         store.commit('setValidationErrors', newInvalidFields.map(f => ({ field: f, message: '' }))); // Clear message for removed field
+//     }
+// };
 
 const editMode = computed({
     get() {
@@ -91,25 +82,11 @@ const editMode = computed({
 
 const emit = defineEmits(["detailsUpdated"])
 
-const getValues = (componentTitle, data) => {
-    email.value = data.email
-    phone.value = data.phone
-    links.value = data.links
-    birthdate.value = data.birthdate
-    location.value = data.location
-}
 const emitDetails = () => {
 
     const detailsData = {
         workAvailability: workAvailability.value,
         fullName: fullName.value,
-
-        email: email.value,
-        phone: phone.value,
-        links: links.value,
-
-        location: location.value,
-        birthdate: birthdate.value,
     };
     emit('detailsUpdated', detailsData); // Use emit here
 };

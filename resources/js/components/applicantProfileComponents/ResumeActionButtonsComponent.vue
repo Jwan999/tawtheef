@@ -9,15 +9,24 @@
             </svg>
             <span v-else>Save</span>
         </button>
-        <button v-if="editMode" @click="$emit('publishResume')"
-                class="appearance-none text-xs px-3 py-2 font-semibold text-dark hover:text-white bg-white hover:bg-dark">
-            <span>Publish</span>
-        </button>
+<!--        <button v-if="editMode" @click="$emit('publishResume')"-->
+<!--                class="appearance-none text-xs px-3 py-2 font-semibold text-dark hover:text-white bg-white hover:bg-dark">-->
+<!--            <span>Publish</span>-->
+<!--        </button>-->
+                <button v-if="editMode" @click="$emit('publishResume')"
+                        class="appearance-none text-xs px-3 py-2 font-semibold text-zinc-500 bg-zinc-200">
+                    <span>Publish</span>
+                </button>
         <!--        todo only show when logged in and without the edit more-->
+<!--        <button-->
+<!--            class="appearance-none text-xs rounded-tr-md px-3 py-2 font-semibold text-dark hover:text-white bg-white hover:bg-dark">-->
+<!--            <span>Download PDF</span>-->
+<!--        </button>  -->
         <button
-            class="appearance-none text-xs rounded-tr-md px-3 py-2 font-semibold text-dark hover:text-white bg-white hover:bg-dark">
+            class="appearance-none text-xs px-3 py-2 font-semibold text-zinc-500 bg-zinc-200">
             <span>Download PDF</span>
         </button>
+
     </div>
 
 </template>

@@ -1,7 +1,7 @@
 <template>
     <div class="flex justify-center mt-24">
         <div class="w-4/12  bg-white rounded-md">
-            <h2 class="text-xl text-orange  mt-8 px-6">Start with creating your account</h2>
+            <h2 class="text-lg text-orange font-semibold mt-8 px-6">Start with creating your account</h2>
             <div class="pl-6">
                 <hr class="h-px w-full bg-orange  border-0 mt-1 mb-8">
 
@@ -53,10 +53,13 @@
                  :class="hovered ? 'border-dark' : 'border-orange'">
                 <form @mouseover="hovered = !hovered"
                       @mouseleave="hovered = !hovered"
-                      class="uppercase text-xs cursor-pointer inline-block font-semibold bg-orange text-white hover:bg-dark px-4 py-2 rounded-br-md"
+                      class="uppercase text-xs cursor-pointer inline-block font-semibold bg-orange text-white hover:bg-dark px-4 py-2"
                       @click="handleSignup">
                     signup
                 </form>
+                <router-link to="/login" class="uppercase text-xs cursor-pointer inline-block font-semibold text-zinc-700 hover:text-white 0 hover:bg-dark px-4 py-2 rounded-br-md">
+                    Or Login
+                </router-link>
             </div>
 
 

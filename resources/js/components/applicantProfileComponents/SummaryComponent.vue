@@ -6,13 +6,7 @@
         </div>
 
         <div v-if="!editMode" class="rounded-md p-4 bg-white">
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                Aliquam
-                asperiores dicta dolore fuga harum id
-                incidunt, inventore iusto nemo pariatur provident, tempore temporibus voluptatibus? Excepturi
-                nulla
-                odit
-                repellat? Aspernatur, facere!</p>
+            <p>{{ summary }}</p>
 
         </div>
         <div v-else class="rounded-md p-4 bg-white">

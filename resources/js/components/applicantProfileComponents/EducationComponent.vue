@@ -4,11 +4,11 @@
         <div class="space-y-1">
             <h1 class="text-lg font-semibold text-dark pb-4">Education</h1>
 
-            <h1 class="font-semibold">University of Baghdad</h1>
-            <h1 class="text-dark font-semibold">Bachelor's degree,
-                <span class="">College of Languages</span>
+            <h1 class="font-semibold">{{ university }}</h1>
+            <h1 class="text-dark font-semibold">{{ degree }}
+                <span class="">{{ college }}</span>
             </h1>
-            <h1 class="text-orange font-semibold">2016 - 2020</h1>
+            <h1 class="text-orange font-semibold">{{ duration[0] + '-' + duration[1] }}</h1>
         </div>
 
     </div>
@@ -22,15 +22,19 @@
                 <input @input="emitInputData" v-model="university" name="university" placeholder="University"
                        class="focus:border-orange focus:ring-0 bg-slate-50 w-full rounded-md md:text-xs text-sm border-0 border-b-[1px] border-gray-300 hover:border-orange focus:outline-none"
                        type="text">
-<!--                <h1 class="text-red-500 text-xs mt-1 font-semibold">This field is required.</h1>-->
+                <!--                <h1 class="text-red-500 text-xs mt-1 font-semibold">This field is required.</h1>-->
 
             </div>
             <div class="relative">
                 <span class="text-orange absolute top-0 right-0 ml-24 -mt-3">*</span>
-                <input @input="emitInputData" v-model="degree" name="degree" placeholder="Degree"
-                       class="focus:border-orange focus:ring-0 bg-slate-50 w-full rounded-md md:text-xs text-sm border-0 border-b-[1px] border-gray-300 hover:border-orange focus:outline-none"
-                       type="text">
-<!--                <h1 class="text-red-500 text-xs mt-1 font-semibold">This field is required.</h1>-->
+                <select @change="emitInputData" v-model="degree"
+                        class="focus:border-orange focus:ring-0 bg-slate-50 w-full rounded-l-md md:text-xs text-sm border-0 border-b-[1px] border-gray-300 hover:border-orange focus:outline-none">
+                    <option selected>Choose a degree</option>
+                    <option>Bachelor's Degree</option>
+                    <option>Master's Degree</option>
+                    <option>Doctorate (Ph.D.)</option>
+                </select>
+                <!--                <h1 class="text-red-500 text-xs mt-1 font-semibold">This field is required.</h1>-->
 
             </div>
             <div class="relative">
@@ -38,15 +42,31 @@
                 <input @input="emitInputData" v-model="college" name="college" placeholder="College"
                        class="focus:border-orange focus:ring-0 bg-slate-50 w-full rounded-md md:text-xs text-sm border-0 border-b-[1px] border-gray-300 hover:border-orange focus:outline-none"
                        type="text">
-<!--                <h1 class="text-red-500 text-xs mt-1 font-semibold">This field is required.</h1>-->
+                <!--                <h1 class="text-red-500 text-xs mt-1 font-semibold">This field is required.</h1>-->
 
             </div>
             <div class="relative">
                 <span class="text-orange absolute top-0 right-0 ml-24 -mt-3">*</span>
-                <input @input="emitInputData" v-model="year" name="date" placeholder="Year"
-                       class="focus:border-orange focus:ring-0 bg-slate-50 w-full rounded-md md:text-xs text-sm border-0 border-b-[1px] border-gray-300 hover:border-orange focus:outline-none"
-                       type="text">
-<!--                <h1 class="text-red-500 text-xs mt-1 font-semibold">This field is required.</h1>-->
+                <div class="flex">
+                    <select @change="emitInputData" v-model="duration[0]" name="startYear"
+                            class="focus:border-orange focus:ring-0 bg-slate-50 w-full rounded-l-md md:text-xs text-sm border-0 border-b-[1px] border-gray-300 hover:border-orange focus:outline-none">
+                        <option selected>Start year</option>
+                        <!-- Generate options for years from 2000 to current year -->
+                        <template v-for="year in years">
+                            <option :value="year">{{ year }}</option>
+                        </template>
+                    </select>
+                    <select @change="emitInputData" v-model="duration[1]" name="endYear"
+                            class="focus:border-orange focus:ring-0 bg-slate-50 w-full rounded-r-md md:text-xs text-sm border-0 border-b-[1px] border-gray-300 hover:border-orange focus:outline-none">
+                        <option class="hidden" selected>End year</option>
+                        <!-- Generate options for years from 2000 to current year -->
+                        <template v-for="year in years">
+                            <option :value="year">{{ year }}</option>
+                        </template>
+                    </select>
+                </div>
+
+                <!--                <h1 class="text-red-500 text-xs mt-1 font-semibold">This field is required.</h1>-->
 
             </div>
         </div>
@@ -62,9 +82,20 @@ export default {
     data() {
         return {
             university: '',
-            degree: '',
+            degree: 'Choose a degree',
             college: '',
-            year: '',
+            duration: ['Start year', 'End year'],
+            years: [],
+
+        }
+    },
+    created() {
+        // Compute the current year
+        const currentYear = new Date().getFullYear();
+
+        // Populate the years array with the years from 2000 to the current year
+        for (let year = 2000; year <= currentYear; year++) {
+            this.years.push(year);
         }
     },
     computed: {
@@ -78,7 +109,7 @@ export default {
                 university: this.university,
                 degree: this.degree,
                 college: this.college,
-                year: this.year
+                duration: this.duration
             })
         }
     }

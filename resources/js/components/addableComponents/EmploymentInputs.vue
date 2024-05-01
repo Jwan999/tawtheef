@@ -7,7 +7,7 @@
                 <input v-model="modelValue.title" placeholder="Job title"
                        class="w-full focus:border-orange focus:ring-0 bg-slate-50 w-4/12 rounded-md md:text-xs text-sm border-0 border-b-[1px] border-gray-300 hover:border-orange focus:outline-none"
                        type="text">
-<!--                <h1 class="text-red-500 text-xs mt-1 font-semibold">This field is required.</h1>-->
+                <!--                <h1 class="text-red-500 text-xs mt-1 font-semibold">This field is required.</h1>-->
 
             </div>
 
@@ -16,17 +16,34 @@
                 <input v-model="modelValue.employer" placeholder="Employer"
                        class="w-full focus:border-orange focus:ring-0 bg-slate-50 w-4/12 rounded-md md:text-xs text-sm border-0 border-b-[1px] border-gray-300 hover:border-orange focus:outline-none"
                        type="text">
-<!--                <h1 class="text-red-500 text-xs mt-1 font-semibold">This field is required.</h1>-->
+                <!--                <h1 class="text-red-500 text-xs mt-1 font-semibold">This field is required.</h1>-->
 
             </div>
 
 
             <div class="relative w-full">
                 <span class="text-orange absolute top-0 right-0 ml-24 -mt-3">*</span>
-                <input v-model="modelValue.duration" placeholder="Duration of employment"
-                       class="w-full focus:border-orange focus:ring-0 bg-slate-50 w-4/12 rounded-md md:text-xs text-sm border-0 border-b-[1px] border-gray-300 hover:border-orange focus:outline-none"
-                       type="text">
-<!--                <h1 class="text-red-500 text-xs mt-1 font-semibold">This field is required.</h1>-->
+
+                <div class="flex">
+                    <select v-model="modelValue.duration[0]" name="startYear"
+                            class="focus:border-orange focus:ring-0 bg-slate-50 w-full rounded-l-md md:text-xs text-sm border-0 border-b-[1px] border-gray-300 hover:border-orange focus:outline-none">
+                        <option selected>Start year</option>
+                        <!-- Generate options for years from 2000 to current year -->
+                        <template v-for="year in years">
+                            <option :value="year">{{ year }}</option>
+                        </template>
+                    </select>
+                    <select v-model="modelValue.duration[1]" name="endYear"
+                            class="focus:border-orange focus:ring-0 bg-slate-50 w-full rounded-r-md md:text-xs text-sm border-0 border-b-[1px] border-gray-300 hover:border-orange focus:outline-none">
+                        <option class="hidden" selected>End year</option>
+                        <!-- Generate options for years from 2000 to current year -->
+                        <template v-for="year in years">
+                            <option :value="year">{{ year }}</option>
+                        </template>
+                    </select>
+                </div>
+
+                <!--                <h1 class="text-red-500 text-xs mt-1 font-semibold">This field is required.</h1>-->
 
             </div>
 
@@ -40,7 +57,7 @@
                 <textarea id="message" rows="4" v-model="modelValue.description"
                           class="w-full focus:border-orange focus:ring-0 block p-2.5 w-full text-sm bg-slate-50 rounded-md md:text-xs border-0 border-b-[1px] border-gray-300 hover:border-orange focus:outline-none"
                           placeholder="Write your thoughts here..."></textarea>
-<!--                <h1 class="text-red-500 text-xs mt-1 font-semibold">This field is required.</h1>-->
+                <!--                <h1 class="text-red-500 text-xs mt-1 font-semibold">This field is required.</h1>-->
 
             </div>
 
@@ -59,6 +76,18 @@ const title = ref(modelValue.title)
 const employer = ref(modelValue.employer)
 const duration = ref(modelValue.duration)
 const description = ref(modelValue.description)
+modelValue.duration[0] = 'Start year'
+modelValue.duration[1] = 'End year'
+
+const years = ref([]);
+
+// Compute the current year
+const currentYear = new Date().getFullYear();
+
+// Populate the years array with the years from 2000 to the current year
+for (let year = 2000; year <= currentYear; year++) {
+    years.value.push(year);
+}
 
 const emit = defineEmits(["update:modelValue"]);
 
@@ -70,6 +99,7 @@ watchEffect(() => {
         description: description.value
     });
 });
+
 </script>
 
 <style scoped>

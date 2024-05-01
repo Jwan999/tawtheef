@@ -7,43 +7,14 @@
         </div>
 
         <div v-if="!editMode" class="rounded-md p-4 bg-white space-y-8">
-            <div>
-                <h1 class="text-orange font-semibold text-lg mb-4">2019</h1>
+            <div v-for="(year, index) in uniqueYears" :key="index">
+                <h1 class="text-orange font-semibold text-lg mb-4">{{ year }}</h1>
                 <ul class="text-sm">
-                    <li class="flex space-x-2 items-center ml-5">
-                        <h1 class="font-semibold">Some Event</h1>
+                    <li v-for="event in list.filter(item => item.year === year)"
+                        class="flex space-x-2 items-center ml-5">
+                        <h1 class="font-semibold">{{ event.title }}</h1>
                         <h1>as</h1>
-                        <h1 class="text-orange font-semibold">Speaker</h1>
-                    </li>
-                    <li class="flex space-x-2 items-center ml-5">
-                        <h1 class="font-semibold">Some Event</h1>
-                        <h1>as</h1>
-                        <h1 class="text-orange font-semibold">Attendee</h1>
-                    </li>
-                    <li class="flex space-x-2 items-center ml-5">
-                        <h1 class="font-semibold">Some Event</h1>
-                        <h1>as</h1>
-                        <h1 class="text-orange font-semibold">Volunteer</h1>
-                    </li>
-                </ul>
-            </div>
-            <div>
-                <h1 class="text-orange font-semibold text-lg mb-4">2019</h1>
-                <ul class="text-sm">
-                    <li class="flex space-x-2 items-center ml-5">
-                        <h1 class="font-semibold">Some Event</h1>
-                        <h1>as</h1>
-                        <h1 class="text-orange font-semibold">Speaker</h1>
-                    </li>
-                    <li class="flex space-x-2 items-center ml-5">
-                        <h1 class="font-semibold">Some Event</h1>
-                        <h1>as</h1>
-                        <h1 class="text-orange font-semibold">Attendee</h1>
-                    </li>
-                    <li class="flex space-x-2 items-center ml-5">
-                        <h1 class="font-semibold">Some Event</h1>
-                        <h1>as</h1>
-                        <h1 class="text-orange font-semibold">Volunteer</h1>
+                        <h1 class="text-orange font-semibold">{{ event.participatedAs }}</h1>
                     </li>
                 </ul>
             </div>
@@ -91,6 +62,7 @@ const changeBorderColor = (index, color) => {
     borderColor.value = color;
 }
 
+
 const list = computed({
     get() {
         return modelValue?.length ? modelValue : [{title: "", participatedAs: "", year: ""}];
@@ -99,6 +71,13 @@ const list = computed({
         emit('update:modelValue', val)
     }
 });
+
+const uniqueYears = computed({
+    get() {
+        const yearSet = new Set(list.value.map(item => item.year));
+        return [...yearSet];
+    }
+})
 
 const componentAction = (index) => {
     if (index === 0) {

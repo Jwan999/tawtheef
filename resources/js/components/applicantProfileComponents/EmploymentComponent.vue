@@ -6,50 +6,24 @@
         </div>
 
         <div v-if="!editMode" class="rounded-md p-4 bg-white space-y-8">
-            <div>
+            <div v-for="(job,index) in employment">
                 <!--period of employment-->
                 <div class="flex text-dark space-x-1 text-sm font-semibold">
-                    <h1 class="text-orange">2019</h1>
+                    <h1 class="text-orange">{{ job.duration[0] }}</h1>
                     <h1>-</h1>
-                    <h1 class="text-orange">2022</h1>
+                    <h1 class="text-orange">{{ job.duration[1] }}</h1>
                 </div>
                 <!--position-->
                 <div class="flex items-center space-x-2 mb-3">
-                    <h1 class="font-semibold text-lg">Graphic Designer</h1>
+                    <h1 class="font-semibold text-lg">{{ job.title }}</h1>
                     <h1>at</h1>
-                    <h1 class="font-semibold italic text-orange text-sm">Employer</h1>
+                    <h1 class="font-semibold italic text-orange text-sm">{{ job.employer }}</h1>
                 </div>
-                <p class="text-sm">Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                    Aliquam
-                    asperiores dicta dolore fuga harum id
-                    incidunt, inventore iusto nemo pariatur provident, tempore temporibus voluptatibus?
-                    Excepturi
-                    nulla
-                    odit
-                    repellat? Aspernatur, facere!</p>
+                <p class="text-sm">{{
+                        job.description
+                    }}</p>
             </div>
-            <div>
-                <!--period of employment-->
-                <div class="flex text-dark space-x-1 text-sm font-semibold">
-                    <h1 class="text-orange">2019</h1>
-                    <h1>-</h1>
-                    <h1 class="text-orange">2022</h1>
-                </div>
-                <!--position-->
-                <div class="flex items-center space-x-2 mb-3">
-                    <h1 class="font-semibold text-lg">Graphic Designer</h1>
-                    <h1>at</h1>
-                    <h1 class="font-semibold italic text-orange text-sm">Employer</h1>
-                </div>
-                <p class="text-sm">Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                    Aliquam
-                    asperiores dicta dolore fuga harum id
-                    incidunt, inventore iusto nemo pariatur provident, tempore temporibus voluptatibus?
-                    Excepturi
-                    nulla
-                    odit
-                    repellat? Aspernatur, facere!</p>
-            </div>
+
         </div>
 
         <div v-else class="rounded-md bg-white p-4 space-y-8">
@@ -95,7 +69,7 @@ const changeBorderColor = (index, color) => {
 
     const employment = computed({
         get() {
-            return modelValue?.length ? modelValue : [{title: "", employer: "", duration: "", description: ""}];
+            return modelValue?.length ? modelValue : [{title: "", employer: "", duration: [], description: ""}];
         },
         set(val) {
             emit('update:modelValue', val)
@@ -105,7 +79,7 @@ const changeBorderColor = (index, color) => {
     const componentAction = (index) => {
         if (index === 0) {
             employment.value.push({
-                title: "", employer: "", duration: "", description: ""
+                title: "", employer: "", duration: [], description: ""
             });
         } else if (index > 0) {
             employment.value.splice(index, 1)

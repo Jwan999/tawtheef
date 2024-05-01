@@ -6,30 +6,14 @@
         </div>
 
         <div v-if="!editMode" class="rounded-md p-4 bg-white space-y-8">
-            <div>
-                <h1 class="text-sm font-semibold mb-1">3 months</h1>
-                <h1 class="text-orange text-lg font-semibold mb-4">Graphic design</h1>
-                <p class="text-sm">Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                    Aliquam
-                    asperiores dicta dolore fuga harum id
-                    incidunt, inventore iusto nemo pariatur provident, tempore temporibus voluptatibus?
-                    Excepturi
-                    nulla
-                    odit
-                    repellat? Aspernatur, facere!</p>
+            <div v-for="(course,index) in courses" :key="index">
+                <h1 class="text-sm font-semibold mb-1">{{ course.duration }}</h1>
+                <h1 class="text-orange text-lg font-semibold mb-4">{{ course.title }}</h1>
+                <p class="text-sm">{{
+                        course.description
+                    }}</p>
             </div>
-            <div>
-                <h1 class="text-sm font-semibold mb-1">3 months</h1>
-                <h1 class="text-orange text-lg font-semibold mb-4">Graphic design</h1>
-                <p class="text-sm">Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                    Aliquam
-                    asperiores dicta dolore fuga harum id
-                    incidunt, inventore iusto nemo pariatur provident, tempore temporibus voluptatibus?
-                    Excepturi
-                    nulla
-                    odit
-                    repellat? Aspernatur, facere!</p>
-            </div>
+
         </div>
 
         <div v-else class="rounded-md bg-white p-4 space-y-4">
