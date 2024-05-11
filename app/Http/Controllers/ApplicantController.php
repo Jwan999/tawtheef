@@ -13,7 +13,9 @@ class ApplicantController extends Controller
 
     public function index()
     {
-        //
+        $applicants = Applicant::all();
+        return response()->json($applicants);
+
     }
 
     /**
@@ -29,15 +31,50 @@ class ApplicantController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $applicant = new Applicant;
+
+        if ($request->hasFile('image')) {
+            // Store image
+            $path = $request->file('image')->store('images', 'public');
+            $applicant->image = $path;
+        }
+
+        $applicant->speciality_title = $request->input('speciality.title');
+        $applicant->speciality_children = json_encode($request->input('speciality.children'));
+        $applicant->education = json_encode($request->input('education'));
+        $applicant->languages = json_encode($request->input('languages'));
+        $applicant->skills = json_encode($request->input('skills'));
+        $applicant->tools = json_encode($request->input('tools'));
+        $applicant->work_availability = $request->input('details.workAvailability');
+        $applicant->full_name = $request->input('details.fullName');
+        $applicant->summary = $request->input('summary');
+        $applicant->courses = json_encode($request->input('courses'));
+        $applicant->phone = $request->input('contact.phone');
+        $applicant->gender = $request->input('contact.gender');
+        $applicant->email = $request->input('contact.email');
+        $applicant->links = json_encode($request->input('contact.links'));
+        $applicant->birthdate = $request->input('contact.birthdate');
+        $applicant->city = $request->input('contact.city');
+        $applicant->zone = $request->input('contact.zone');
+        $applicant->employment = json_encode($request->input('employment'));
+        $applicant->activities = json_encode($request->input('activities'));
+        $applicant->profileable_id = $request->input('profileable_id');
+        $applicant->profileable_type = $request->input('profileable_type');
+
+        $applicant->save();
+
+        return response()->json($applicant, 201);
     }
+
 
     /**
      * Display the specified resource.
      */
-    public function show(Applicant $applicant)
+    public function show(Applicant $applicant, $id)
     {
-        //
+        $applicant = Applicant::find($id);
+
+        return response()->json($applicant);
     }
 
     /**

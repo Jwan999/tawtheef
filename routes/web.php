@@ -1,6 +1,9 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ApplicantController;
+use App\Http\Controllers\FormControlController;
+use App\Models\FormControl;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,10 +17,18 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('/api/selectables/{key}',[FormControlController::class, 'getSelectables']);
+
+Route::post('/api/applicant', [ApplicantController::class, 'store']);
+Route::get('/api/applicants', [ApplicantController::class, 'index']);
+Route::get('/api/applicants/{id}', [ApplicantController::class, 'show']);
+//Route::get('/api/filter/{speciality}', [ApplicantController::class, 'filter']);
+
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/signup', [AuthController::class, 'register']);
 
 Route::get('/{any}', function () {
     return view('master');
 })->where('any', '.*');
 
-Route::post('/login', [AuthController::class, 'login']);
-Route::post('/signup', [AuthController::class, 'register']);
+

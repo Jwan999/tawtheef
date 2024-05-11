@@ -25,14 +25,14 @@
         <div v-else class="rounded-md bg-white space-y-4 p-4">
             <div v-for="(item,index) in value" :key="index"
                  class="rounded-bl-md border-0 border-l-[1px] border-b-[1px]"
-                 :class="hoveredElement===index ? borderColor : 'border-slate-100'">
+                 :class="hoveredElement===index ? borderColor : 'border-zinc-100'">
                 <div class="w-full">
 
                     <button @mouseover="changeBorderColor(index,'border-dark')"
-                            @mouseleave="changeBorderColor(index,'border-slate-100')"
-                            @click="remove"
-                            class="flex-none w-auto appearance-none px-3 py-1 rounded-br-md font-semibold text-start text-orange bg-slate-100 hover:bg-dark hover:text-white text-sm">
-                        {{ index === 0 ? 'Add component' : 'Remove component' }}
+                            @mouseleave="changeBorderColor(index,'border-zinc-100')"
+                            @click="remove(index)"
+                            class="flex-none w-auto appearance-none px-3 py-1 rounded-br-md font-semibold text-start text-orange bg-zinc-100 hover:bg-dark hover:text-white text-sm">
+                        Remove component
 
                     </button>
                     <ActivityInputs v-model="value[index]">
@@ -42,7 +42,7 @@
             <button
 
                 @click="addNew"
-                class="flex-none w-auto appearance-none px-3 py-1 rounded-br-md font-semibold text-start text-orange bg-slate-100 hover:bg-dark hover:text-white text-sm">
+                class="flex-none w-auto appearance-none px-3 py-1 rounded-br-md font-semibold text-start text-orange bg-zinc-100 hover:bg-dark hover:text-white text-sm">
                 Add component
 
             </button>
@@ -60,7 +60,7 @@ import {computed, onMounted, ref, watch} from "vue";
 import {editMode} from "../../utils/storeHelpers.js";
 
 const hoveredElement = ref(null)
-const borderColor = ref('border-slate-100')
+const borderColor = ref('border-zinc-100')
 
 const changeBorderColor = (index, color) => {
     hoveredElement.value = index
@@ -79,7 +79,7 @@ const uniqueYears = computed({
 })
 const addNew = () => {
     value.value.push({
-        title: "", participatedAs: "", year: ""
+        title: "", participatedAs: "Participated as", year: ""
     });
 }
 const remove = (index) => {

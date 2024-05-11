@@ -4,27 +4,34 @@
     </div>
 </template>
 
-<script>
+<script setup>
 import TableComponent from "../../js/components/TableComponent.vue";
+import {onMounted, ref} from "vue";
 
-export default {
-    name: "ApplicantsView",
-    components: {TableComponent},
-    data() {
-        return {
-            tableHeaders: ['Full name', 'Job status', 'Field of interest', 'Phone number', 'Email Address'],
-            applicants: [{
-                id: 1,
-                fullName: 'name',
-                jobStatus: 'Job statue',
-                field: 'Field',
-                phone: 'Phone',
-                email: 'Email',
-            }],
-        }
-    },
-}
+const tableHeaders = ref(['Full name', 'Job status', 'Field of interest', 'Phone number', 'Email Address'])
+const applicants = ref([])
+
+const getApplicants = async () => {
+    try {
+        const response = await axios.get('/api/applicants');
+        console.log(response.data)
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching applicants:', error);
+        throw error;
+    }
+};
+
+onMounted(async () => {
+    try {
+        applicants.value = await getApplicants();
+        // Do something with the fetched applicantsData, such as updating a reactive variable
+    } catch (error) {
+        // Handle the error if necessary
+    }
+});
 </script>
+
 
 <style scoped>
 

@@ -11,12 +11,13 @@
         </div>
 
         <div class="bg-lines bg-cover w-6/12 grid grid-flow-row-dense justify-items-end gap-3 grid-cols-2 grid-rows-3">
-            <div
-                :class="((index+1)*2 /2) % 2 == 0 ? 'place-self-start -mt-[52px] rounded-r-lg rounded-bl-lg':'place-self-end rounded-b-lg rounded-tl-lg'"
-                v-for="(field,index) in fields"
-                class="cursor-pointer hover:bg-orange  bg-dark text-white flex-none py-2 px-3 inline-block font-semibold">
-                {{ field }}
-            </div>
+<!--            @click="getApplicantsSpecilities(field.title)"-->
+            <button
+                    :class="((index+1)*2 /2) % 2 == 0 ? 'place-self-start -mt-[52px] rounded-r-lg rounded-bl-lg':'place-self-end rounded-b-lg rounded-tl-lg'"
+                    v-for="(field,index) in specialities"
+                    class="cursor-pointer hover:bg-orange  bg-dark text-white flex-none py-2 px-3 inline-block font-semibold">
+                {{ field.title }}
+            </button>
         </div>
 
 
@@ -25,9 +26,30 @@
 </template>
 
 <script setup>
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
+import {getSelectables} from "../../../js/utils/storeHelpers.js";
 
-const fields = ref(['Graphic Design', 'Web Development', 'Videography', 'Social Media', 'Marketing', 'Marketing'])
+const specialities = ref([])
+// const getApplicantsSpecilities = (speciality) => async () => {
+//     axios.get(`/api/filter/${speciality}`).then(async res => {
+//         specialities.value = await getSelectables('specialities');
+//
+//     }).catch(error => {
+//         console.error('Failed to fetch select options:', error);
+//
+//     });
+//
+// }
+onMounted(async () => {
+    axios.get('').then(async res => {
+        specialities.value = await getSelectables('specialities');
+
+    }).catch(error => {
+        console.error('Failed to fetch select options:', error);
+
+    });
+
+});
 </script>
 
 <style>

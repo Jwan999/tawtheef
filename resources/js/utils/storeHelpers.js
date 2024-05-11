@@ -1,5 +1,8 @@
-import {computed} from "vue";
+import {computed, onMounted} from "vue";
 import store from "../store/index.js";
+import axios from 'axios';
+// import router from "../router/index.js";
+
 
 export const editMode = computed({
     get() {
@@ -9,3 +12,23 @@ export const editMode = computed({
         store.dispatch('setEditMode', true)
     }
 })
+
+export const countWords = (summary) => {
+    return computed(() => {
+        // Remove extra white spaces and split the text into words
+        const words = summary.trim().split(/\s+/);
+        // Filter out empty strings
+        const filteredWords = words.filter(word => word !== '');
+        // Update the word count
+        return filteredWords.length;
+    });
+};
+
+export const getSelectables = async (key) => {
+    const response = await axios.get(`/api/selectables/${key}`)
+    const {data} = response;
+    return data;
+
+};
+
+

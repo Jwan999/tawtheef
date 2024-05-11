@@ -1,6 +1,6 @@
 <template>
     <div class="relative flex flex-col items-center">
-        <div class="flex justify-center w-full items-center bg-white h-48 rounded-md dark:bg-gray-600">
+        <div class="flex justify-center w-full items-center bg-white h-48 rounded-md dark:bg-zinc-600">
             <img v-if="previewURL" class="h-48 object-cover w-full rounded-md"
                  :src="previewURL" alt="">
 

@@ -1,22 +1,22 @@
 <template>
-    <!--    <div v-if="!editMode && chosenMainSpeciality !== 'Undecided Yet'" class="">-->
-    <!--        <div class="flex items-center space-x-3 mb-4">-->
-    <!--            <h1 class="flex-none text-lg font-semibold text-dark">Field of interest:-->
-    <!--            </h1>-->
-    <!--            <hr class="h-px w-full bg-orange border-0 mt-1">-->
-    <!--        </div>-->
-    <!--        <div :class="chosenSubSpeciality.length && chosenMainSpeciality !== 'Other' ? '' : 'rounded-b-md'"-->
-    <!--             class="bg-orange text-start px-2 text-white py-3 rounded-t-md font-semibold">-->
-    <!--            {{ chosenMainSpeciality === 'Other' ? chosenSubSpeciality.toString() : chosenMainSpeciality }}-->
-    <!--        </div>-->
-    <!--        <div v-if="chosenMainSpeciality !== 'Other'">-->
-    <!--            <div v-if="chosenSubSpeciality.length" class="bg-white rounded-b-md px-4 py-2 space-y-1">-->
-    <!--                <h1 class="text-orange text-xs font-semibold mb-2">Experienced with the following:</h1>-->
-    <!--                <h1 class="font-semibold text-sm" v-for="subSpeciality in chosenSubSpeciality">{{ subSpeciality }}.</h1>-->
-    <!--            </div>-->
-    <!--        </div>-->
+    <div v-if="!editMode && mainSpeciality !== 'Undecided Yet'" class="">
+        <div class="flex items-center space-x-3 mb-4">
+            <h1 class="flex-none text-lg font-semibold text-dark">Field of interest:
+            </h1>
+            <hr class="h-px w-full bg-orange border-0 mt-1">
+        </div>
+        <div :class="subSpecialities.length && mainSpeciality !== 'Other' ? '' : 'rounded-b-md'"
+             class="bg-orange text-start px-2 text-white py-3 rounded-t-md font-semibold">
+            {{ mainSpeciality?.title === 'Other' ? subSpecialities.toString() : mainSpeciality?.title }}
+        </div>
+        <div v-if="mainSpeciality !== 'Other'">
+            <div v-if="subSpecialities.length" class="bg-white rounded-b-md px-4 py-2 space-y-1">
+                <h1 class="text-orange text-xs font-semibold mb-2">Experienced with the following:</h1>
+                <h1 class="font-semibold text-sm" v-for="subSpeciality in subSpecialities">{{ subSpeciality }}.</h1>
+            </div>
+        </div>
 
-    <!--    </div>-->
+    </div>
 
     <div :class="!editMode ? 'hidden':'flex'"
          class="flex">
@@ -36,7 +36,7 @@
                     </div>
 
                     <div class="w-full bg-white py-4 px-2" v-if="mainSpeciality == speciality">
-                        <div class="flex items-start space-y-2  me-4 "
+                        <div class="flex items-start space-y-2 me-4"
                              v-for="(subSpeciality, index) in speciality.children"
 
                              :key="index">
@@ -67,47 +67,34 @@
 
 <script setup>
 import {computed, onMounted, ref, watch, watchEffect} from "vue";
-import store from "../../store/index.js";
-import {editMode} from "../../utils/storeHelpers.js";
+
+import {editMode, getSelectables} from "../../utils/storeHelpers.js";
 
 const mainSpeciality = ref();
 const subSpecialities = ref([]);
-const specialities = ref([
-    {
-        title: 'Creative & Design',
-        children: ['Graphic Design', 'User Experience (UX) Design', 'User Interface (UI) Design', 'Visual Design', 'Motion Graphics', 'Interaction Design', 'Product Design', 'Content Design', 'Fashion Design', 'Interior Design', 'Architecture']
-    },
-    {
-        title: 'Development',
-        children: ['Front-End Development', 'Back-End Development', 'Full-Stack Development', 'Web Development', 'Mobile Development', 'Software Development', 'Data Science', 'Machine Learning', 'Artificial Intelligence', 'DevOps', 'Cloud Computing']
-    },
-    {
-        title: 'Business & Management', children: ['Marketing', 'Sales', 'Project Management', 'Operations Management']
-    },
-    {
-        title: 'Writing & Editing',
-        children: ['Copywriting', 'Content Writing', 'Technical Writing', 'Editing', 'Proofreading']
-    },
-    {
-        title: 'Science & Engineering',
-        children: ['Biology', 'Chemistry', 'Engineering (various specializations)', 'Mathematics', 'Statistics', 'Physics']
-    },
-    {
-        title: 'Other',
-        children: ['Education & Training', 'Healthcare', 'Law', 'Social Work', 'Communications', 'Public Relations', 'Customer Service', 'Translation & Interpretation']
-    },
 
-])
+const specialities = ref([])
+
+onMounted(async () => {
+    axios.get('').then(async res => {
+        specialities.value = await getSelectables('specialities');
+
+    }).catch(error => {
+        console.error('Failed to fetch select options:', error);
+
+    });
+
+});
 
 
 const emit = defineEmits(["update:modelValue"])
 
-watch([mainSpeciality,subSpecialities], () => {
-    emit('update:modelValue',{
+watch([mainSpeciality, subSpecialities], () => {
+    emit('update:modelValue', {
         title: mainSpeciality.value.title,
         children: subSpecialities.value
     })
-},{deep: true})
+}, {deep: true})
 
 onMounted(() => {
 });

@@ -1,10 +1,10 @@
 <template>
     <div class="mt-32">
-        <div v-for="smth in 6" class="my-16">
+        <div v-for="speci in specialities" class="my-16">
             <div class="bg-dark px-3">
                 <div class="flex items-center justify-between">
-                    <h1 class="inline-block px-20 py-2 my-2 text-white font-semibold text-2xl uppercase w-4/12">
-                        Graphic Design
+                    <h1 class="inline-block px-20 py-1 my-2 text-white font-semibold text-2xl uppercase w-4/12">
+                        {{ speci.title }}
                     </h1>
                     <div class="w-9/12">
                         <hr class="h-px bg-orange border-0 mt-1 w-full">
@@ -33,7 +33,8 @@
                             <span class="bg-dark text-xs text-white font-semibold py-1 px-2 rounded-full">Sketch</span>
                         </div>
 
-                        <p class="text-xs mt-4">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aspernatur at ducimus,
+                        <p class="text-xs mt-4">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aspernatur at
+                            ducimus,
                             fugiat harum in
                             ...</p>
                     </div>
@@ -57,10 +58,22 @@
 
 </template>
 
-<script>
-export default {
-    name: "SlidersComponent"
-}
+<script setup>
+import {onMounted, ref} from "vue";
+import {getSelectables} from "../../../js/utils/storeHelpers.js";
+
+const specialities = ref([])
+
+onMounted(async () => {
+    axios.get('').then(async res => {
+        specialities.value = await getSelectables('specialities');
+
+    }).catch(error => {
+        console.error('Failed to fetch select options:', error);
+
+    });
+
+});
 </script>
 
 <style scoped>

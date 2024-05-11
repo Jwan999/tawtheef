@@ -11,10 +11,11 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
-//    public function profileType()
-//    {
-//        return $this->profile_type;
-//    }
+
+    public function profileable()
+    {
+        return $this->morphTo();
+    }
     /**
      * The attributes that are mass assignable.
      *

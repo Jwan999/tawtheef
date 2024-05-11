@@ -24,8 +24,16 @@
 
                     <div class="relative w-full">
                         <span class="text-orange absolute top-0 right-0 ml-24 -mt-3">*</span>
-                        <input type="text" v-model="skill" name="skill" placeholder="Skills"
-                               class="focus:border-orange focus:ring-0 bg-slate-50 w-full rounded-md md:text-xs text-sm border-0 border-b-[1px] border-gray-300 hover:border-orange focus:outline-none"/>
+<!--                        <input type="text" v-model="skill" name="skill" placeholder="Skills"-->
+<!--                               class="focus:border-orange focus:ring-0 bg-zinc-50 w-full rounded-md md:text-xs text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none"/>-->
+
+                        <select v-model="skill"
+                                class="rounded text-xs focus:border-orange focus:ring-0 bg-zinc-50 w-full border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none">
+
+                            <option :value="skill" class="hidden" selected>Skills</option>
+                            <option v-for="item in skills">{{ item }}</option>
+
+                        </select>
 
                     </div>
 
@@ -65,7 +73,19 @@
 
 <script setup>
 import {onMounted, ref, watch} from 'vue';
-import {editMode} from "../../utils/storeHelpers.js";
+import {editMode, getSelectables} from "../../utils/storeHelpers.js";
+const skills = ref([])
+
+onMounted(async () => {
+    axios.get('').then(async res => {
+        skills.value = await getSelectables('skills');
+
+    }).catch(error => {
+        console.error('Failed to fetch select options:', error);
+
+    });
+
+});
 
 const skill = ref('');
 

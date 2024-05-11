@@ -128,17 +128,19 @@
                         @click="navigateToLink(`${title.toLowerCase()}/${data.id}`)"
                         class="hover:bg-orange-50 cursor-pointer border-b dark:border-gray-700">
 
-                        <th v-if="data.fullName" scope="row"
+                        <th v-if="data.full_name" scope="row"
                             class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            {{ data.fullName }}
+                            {{ data.full_name }}
                         </th>
                         <th v-if="data.company" scope="row"
                             class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                             {{ data.company }}
                         </th>
-                        <td v-if="data.jobStatus" class="px-4 py-3">{{ data.jobStatus }}</td>
-                        <td v-if="data.employmentStatus" class="px-4 py-3">{{ data.employmentStatus }}</td>
-                        <td v-if="data.field" class="px-4 py-3">{{ data.field }}</td>
+                        <td v-if="data.workAvailability" class="px-4 py-3">{{ data.workAvailability }}</td>
+                        <td v-if="data.employment" class="px-4 py-3">
+                            {{ data.employment.length > 0 ? 'Employed' : 'Unemployed' }}
+                        </td>
+                        <td v-if="data.speciality_title" class="px-4 py-3">{{ data.speciality_title }}</td>
                         <td v-if="data.phone" class="px-4 py-3">{{ data.phone }}</td>
                         <td v-if="data.email" class="px-4 py-3">{{ data.email }}</td>
                         <td class="px-4 py-3 flex items-center justify-end">
@@ -236,23 +238,20 @@
     </div>
 </template>
 
-<script>
-export default {
-    name: "TableComponent",
-    props: {
-        title: String,
-        tableHeaders: Array,
-        tableData: Array,
-        // Other props as needed for table details
-    },
-    methods: {
-        navigateToLink(route) {
-            this.$router.push(route);
-        },
-    }
+<script setup>
 
+import router from "../router/index.js";
 
+const {title, tableHeaders, tableData} = defineProps({
+    title: String,
+    tableHeaders: Array,
+    tableData: Array,
+});
+
+const navigateToLink = (route) => {
+    router.push(route);
 }
+
 </script>
 
 <style scoped>

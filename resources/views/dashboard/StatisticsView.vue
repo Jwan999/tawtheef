@@ -3,148 +3,42 @@
     <div>
         <div class="">
             <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
-                <div class="grid grid-cols-3 gap-4 mb-4">
-                    <div class="flex items-center justify-center h-24 rounded bg-gray-50 dark:bg-gray-800">
-                        <p class="text-2xl text-gray-400 dark:text-gray-500">
-                            <svg class="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                 viewBox="0 0 18 18">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                      stroke-width="2"
-                                      d="M9 1v16M1 9h16"/>
-                            </svg>
-                        </p>
+                <div class="grid grid-cols-3 gap-4 mb-4 h-[300px]">
+                    <div class="flex items-center p-4 rounded bg-gray-50 dark:bg-gray-800 h-[300px]">
+                        <BarChart></BarChart>
                     </div>
-                    <div class="flex items-center justify-center h-24 rounded bg-gray-50 dark:bg-gray-800">
-                        <p class="text-2xl text-gray-400 dark:text-gray-500">
-                            <svg class="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                 viewBox="0 0 18 18">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                      stroke-width="2"
-                                      d="M9 1v16M1 9h16"/>
-                            </svg>
-                        </p>
+                    <div class="flex items-center p-4 rounded bg-gray-50 dark:bg-gray-800 h-[300px]">
+                       <DoughnutChart></DoughnutChart>
                     </div>
-                    <div class="flex items-center justify-center h-24 rounded bg-gray-50 dark:bg-gray-800">
-                        <p class="text-2xl text-gray-400 dark:text-gray-500">
-                            <svg class="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                 viewBox="0 0 18 18">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                      stroke-width="2"
-                                      d="M9 1v16M1 9h16"/>
-                            </svg>
-                        </p>
+                    <div class="flex items-center p-4 rounded bg-gray-50 dark:bg-gray-800 h-[300px]">
+                        <PieChart></PieChart>
                     </div>
                 </div>
-                <div class="flex items-center justify-center h-48 mb-4 rounded bg-gray-50 dark:bg-gray-800">
-                    <p class="text-2xl text-gray-400 dark:text-gray-500">
-                        <svg class="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                             viewBox="0 0 18 18">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M9 1v16M1 9h16"/>
-                        </svg>
-                    </p>
+                <div class="grid grid-cols-3 gap-4 h-[450px]">
+                    <div class="col-span-2 flex justify-center items-center p-4 mb-4 rounded bg-gray-50 dark:bg-gray-800 h-[450px] w-[900px]">
+                        <LineChart></LineChart>
+
+                    </div>
+                    <div class="col-span-1 p-4 mb-4 rounded bg-gray-50 dark:bg-gray-800 h-[450px] w-auto">
+                        <PolarChart></PolarChart>
+
+                    </div>
+
                 </div>
-                <div class="grid grid-cols-2 gap-4 mb-4">
-                    <div class="flex items-center justify-center rounded bg-gray-50 h-28 dark:bg-gray-800">
-                        <p class="text-2xl text-gray-400 dark:text-gray-500">
-                            <svg class="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                 viewBox="0 0 18 18">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                      stroke-width="2"
-                                      d="M9 1v16M1 9h16"/>
-                            </svg>
-                        </p>
-                    </div>
-                    <div class="flex items-center justify-center rounded bg-gray-50 h-28 dark:bg-gray-800">
-                        <p class="text-2xl text-gray-400 dark:text-gray-500">
-                            <svg class="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                 viewBox="0 0 18 18">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                      stroke-width="2"
-                                      d="M9 1v16M1 9h16"/>
-                            </svg>
-                        </p>
-                    </div>
-                    <div class="flex items-center justify-center rounded bg-gray-50 h-28 dark:bg-gray-800">
-                        <p class="text-2xl text-gray-400 dark:text-gray-500">
-                            <svg class="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                 viewBox="0 0 18 18">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                      stroke-width="2"
-                                      d="M9 1v16M1 9h16"/>
-                            </svg>
-                        </p>
-                    </div>
-                    <div class="flex items-center justify-center rounded bg-gray-50 h-28 dark:bg-gray-800">
-                        <p class="text-2xl text-gray-400 dark:text-gray-500">
-                            <svg class="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                 viewBox="0 0 18 18">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                      stroke-width="2"
-                                      d="M9 1v16M1 9h16"/>
-                            </svg>
-                        </p>
-                    </div>
-                </div>
-                <div class="flex items-center justify-center h-48 mb-4 rounded bg-gray-50 dark:bg-gray-800">
-                    <p class="text-2xl text-gray-400 dark:text-gray-500">
-                        <svg class="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                             viewBox="0 0 18 18">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M9 1v16M1 9h16"/>
-                        </svg>
-                    </p>
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="flex items-center justify-center rounded bg-gray-50 h-28 dark:bg-gray-800">
-                        <p class="text-2xl text-gray-400 dark:text-gray-500">
-                            <svg class="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                 viewBox="0 0 18 18">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                      stroke-width="2"
-                                      d="M9 1v16M1 9h16"/>
-                            </svg>
-                        </p>
-                    </div>
-                    <div class="flex items-center justify-center rounded bg-gray-50 h-28 dark:bg-gray-800">
-                        <p class="text-2xl text-gray-400 dark:text-gray-500">
-                            <svg class="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                 viewBox="0 0 18 18">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                      stroke-width="2"
-                                      d="M9 1v16M1 9h16"/>
-                            </svg>
-                        </p>
-                    </div>
-                    <div class="flex items-center justify-center rounded bg-gray-50 h-28 dark:bg-gray-800">
-                        <p class="text-2xl text-gray-400 dark:text-gray-500">
-                            <svg class="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                 viewBox="0 0 18 18">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                      stroke-width="2"
-                                      d="M9 1v16M1 9h16"/>
-                            </svg>
-                        </p>
-                    </div>
-                    <div class="flex items-center justify-center rounded bg-gray-50 h-28 dark:bg-gray-800">
-                        <p class="text-2xl text-gray-400 dark:text-gray-500">
-                            <svg class="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                 viewBox="0 0 18 18">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                      stroke-width="2"
-                                      d="M9 1v16M1 9h16"/>
-                            </svg>
-                        </p>
-                    </div>
-                </div>
+
+
             </div>
         </div>
     </div>
 </template>
-<script>
-export default {
-    name: "MainView"
-}
+<script setup>
+
+
+import BarChart from "../../js/components/charts/BarChart.vue";
+import LineChart from "../../js/components/charts/LineChart.vue";
+import PieChart from "../../js/components/charts/PieChart.vue";
+import PolarChart from "../../js/components/charts/PolarChart.vue";
+import DoughnutChart from "../../js/components/charts/DoughnutChart.vue";
 </script>
 
 <style scoped>
