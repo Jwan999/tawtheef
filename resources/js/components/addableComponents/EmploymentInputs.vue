@@ -1,6 +1,6 @@
 <template>
 
-    <div class="space-y-4 w-full p-6 pr-0">
+    <div class="space-y-4 w-full pr-0">
         <div class="flex space-x-3 items-center">
             <div class="relative w-full">
                 <span class="text-orange absolute top-0 right-0 ml-24 -mt-3">*</span>
@@ -56,7 +56,7 @@
 
                 <div class="relative w-full">
                     <span class="text-orange absolute top-0 right-0 ml-24 -mt-4">*</span>
-                    <input type="text" v-model="task" name="Task" placeholder="Tasks"
+                    <input type="text" v-model="task" name="Task" placeholder="Responsibilities"
                            class="focus:border-orange focus:ring-0 bg-zinc-50 w-full rounded-md md:text-xs text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none"/>
 
                 </div>
@@ -74,8 +74,8 @@
 
             <div class="mt-3 space-y-2">
                 <div v-for="(task,index) in allTasks" class="flex items-center justify-between">
-                    <div class="flex w-full items-center space-x-3 ">
-                        <span class="w-2 h-2 bg-dark rounded-full"></span>
+                    <div class="flex items-start w-full space-x-3">
+                        <span class="flex-none mt-2 w-2 h-2 bg-dark rounded-full"></span>
                         <p class="text-sm font-semibold">{{ task }}</p>
                     </div>
 

@@ -29,6 +29,7 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
+
         // Validate signup data
         $this->validate($request, [
             'email' => 'required|email|unique:users',
@@ -42,8 +43,10 @@ class AuthController extends Controller
         $user->name = $request->name;
         $user->profile_type = $request->profileType;
         $user->password = bcrypt($request->password);
+//        dd($user);
 
         $user->save();
+        Auth::login($user);
 
 
         return response()->json(['message' => 'Signup successful'], 201);

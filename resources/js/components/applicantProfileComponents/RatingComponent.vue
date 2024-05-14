@@ -26,7 +26,7 @@ watchEffect(() => {
 
 const languages = ref([])
 onMounted(async () => {
-    axios.get('').then(async res => {
+    axios.get('/api/selectables/languages').then(async res => {
         languages.value = await getSelectables('languages');
 
     }).catch(error => {
@@ -48,7 +48,7 @@ const setRatingValue = (value) => {
         <select v-if="placeholderLabel == 'Language'" v-model="item" :value="item"
                 class="text-xs focus:border-orange rounded focus:ring-0 bg-zinc-50 w-full border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none">
 
-            <option value="Languages" class="hidden" selected>Languages</option>
+            <option value="" class="hidden" selected>Languages</option>
             <option v-for="language in languages">{{ language }}</option>
 
         </select>
@@ -59,7 +59,7 @@ const setRatingValue = (value) => {
                 type="text"
                 v-model="item"
                 :placeholder="placeholderLabel"
-                class="capitalize focus:border-orange focus:ring-0 bg-zinc-50 w-full rounded-md  text-xs border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none"
+                class="capitalize focus:border-orange focus:ring-0 bg-zinc-50 w-full rounded-md text-xs border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none"
             />
             <!--            <h1 class="text-red-500 text-xs mt-1 font-semibold">This field is required.</h1>-->
 

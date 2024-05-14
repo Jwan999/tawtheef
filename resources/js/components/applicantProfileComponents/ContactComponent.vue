@@ -74,15 +74,15 @@
                             <select @change="emitInputData" v-model="city" :value="city"
                                     :class="city == 'Baghdad' ?'rounded-l-md' :'rounded'"
                                     class="h-[37.1px] text-xs focus:border-orange focus:ring-0 bg-zinc-50 w-full border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none">
-
-                                <option value="Choose your city..." class="hidden" selected>Choose your city...</option>
+                                <option value="" class="hidden" selected>Choose your city...</option>
                                 <option v-for="city in cities">{{ city }}</option>
 
                             </select>
 
                             <select v-if="city == 'Baghdad'" v-model="zone" :value="zone" @change="emitInputData"
                                     class="h-[37.1px] text-xs focus:border-orange focus:ring-0 bg-zinc-50 w-full rounded-r-md border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none">
-                                <option selected>Karkh</option>
+                                <option value="none" selected>Choose your zone...</option>
+                                <option>Karkh</option>
                                 <option>Risafa</option>
                             </select>
 
@@ -174,7 +174,7 @@ const cities = ref([])
 
 const city = ref('');
 const gender = ref('Female');
-const zone = ref('Karkh');
+const zone = ref('');
 const email = ref('');
 const phone = ref('');
 const birthdate = ref('');

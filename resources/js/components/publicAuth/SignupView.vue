@@ -104,11 +104,6 @@ const handleSignup = async () => {
         }
     } catch (error) {
         console.error('Signup error:', error.response.data);
-        // Handle API errors
-    } finally {
-        // Clear form after submission (optional)
-        email.value = '';
-        password.value = '';
     }
 };
 </script>

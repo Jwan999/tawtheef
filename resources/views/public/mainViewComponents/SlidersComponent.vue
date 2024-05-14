@@ -13,7 +13,7 @@
                 </div>
 
             </div>
-            <div class="flex flex-shrink-0 overflow-y space-x-4 px-0 mx-0 py-6">
+            <div class="flex flex-shrink-0 overflow-y space-x-4 px-0 mx-0 pt-6 pb-4">
                 <div v-for="item in 6" :class="item === 1 ? 'rounded-r-lg' : 'rounded-lg'"
                      class="relative bg-white h-80 rounded-r-lg w-72x p-4">
                     <div :class="1 == 1? 'bg-orange text-white':'bg-gray-400 text-gray-600'"
@@ -38,17 +38,7 @@
                             fugiat harum in
                             ...</p>
                     </div>
-                    <div class="flex items-center space-x-3 text-sm my-4 text-orange font-semibold">
-                        <div>
-                            ic
-                        </div>
-                        <div>
-                            ic
-                        </div>
-                        <div>
-                            ic
-                        </div>
-                    </div>
+
 
                 </div>
             </div>

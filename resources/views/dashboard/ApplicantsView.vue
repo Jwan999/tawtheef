@@ -14,7 +14,7 @@ const applicants = ref([])
 const getApplicants = async () => {
     try {
         const response = await axios.get('/api/applicants');
-        console.log(response.data)
+        console.log('this is the applicants'+response.data)
         return response.data;
     } catch (error) {
         console.error('Error fetching applicants:', error);

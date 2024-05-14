@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Applicant;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ApplicantController extends Controller
 {
@@ -32,19 +33,19 @@ class ApplicantController extends Controller
     public function store(Request $request)
     {
         $applicant = new Applicant;
-
+        dd($request);
         if ($request->hasFile('image')) {
             // Store image
             $path = $request->file('image')->store('images', 'public');
             $applicant->image = $path;
         }
 
-        $applicant->speciality_title = $request->input('speciality.title');
-        $applicant->speciality_children = json_encode($request->input('speciality.children'));
-        $applicant->education = json_encode($request->input('education'));
-        $applicant->languages = json_encode($request->input('languages'));
-        $applicant->skills = json_encode($request->input('skills'));
-        $applicant->tools = json_encode($request->input('tools'));
+        $applicant->speciality_title = json_decode($request->speciality, true)['specializations'];
+        $applicant->speciality_children = json_decode($request->speciality, true)['children'];
+        $applicant->education = json_decode($request->education, true);
+        $applicant->languages = json_decode($request->languages, true);
+        $applicant->skills = explode(',', $request->skills);
+        $applicant->tools = json_decode($request->tools, true);
         $applicant->work_availability = $request->input('details.workAvailability');
         $applicant->full_name = $request->input('details.fullName');
         $applicant->summary = $request->input('summary');
@@ -72,10 +73,20 @@ class ApplicantController extends Controller
      */
     public function show(Applicant $applicant, $id)
     {
+        $userId = Auth::id();
+
         $applicant = Applicant::find($id);
+        $applicant->user_id = $userId;
 
         return response()->json($applicant);
     }
+
+    public function getAuthUserId()
+    {
+        $user = Auth::user();
+        return response()->json($user);
+    }
+
 
     /**
      * Show the form for editing the specified resource.

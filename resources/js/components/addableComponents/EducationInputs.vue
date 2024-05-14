@@ -4,7 +4,7 @@
             <span class="text-orange absolute top-0 right-0 ml-24 -mt-3">*</span>
             <select v-model="modelValue.degree"
                     class="focus:border-orange focus:ring-0 bg-zinc-50 w-full rounded-md md:text-xs text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none">
-                <option :value="degree" class="hidden" selected>Choose your degree...</option>
+                <option value="" class="hidden" selected>Choose your degree...</option>
                 <option v-for="option in degrees">{{ option }}</option>
             </select>
             <!--<h1 class="text-red-500 text-xs mt-1 font-semibold">This field is required.</h1>-->
@@ -72,7 +72,7 @@ watchEffect(() => {
 });
 
 onMounted(async () => {
-    axios.get('').then(async res => {
+    axios.get('/api/selectables/degrees').then(async res => {
         degrees.value = await getSelectables('degrees');
 
     }).catch(error => {

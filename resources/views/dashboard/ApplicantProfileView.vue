@@ -1,12 +1,9 @@
 <template>
-    <div class="flex justify-end">
-        <button @click="saveResume" class="bg-dark text-white px-6 py-2 mx-10 rounded-md">Save Resume</button>
 
-    </div>
 
     <div :class="!isDashboard ? 'px-10 mt-6 mb-10' : ''" class="grid grid-cols-12 gap-6 relative">
         <!--first row-->
-        <ResumeActionButtonsComponent class="z-40 absolute top-0 right-0 mr-10"></ResumeActionButtonsComponent>
+        <ResumeActionButtonsComponent @saveResume="mainSaveResume" class="z-40 absolute top-0 right-0 mr-10"></ResumeActionButtonsComponent>
 
         <div class="col-span-3 space-y-6">
             <ApplicantPhotoUpload v-model="image"></ApplicantPhotoUpload>
@@ -61,31 +58,37 @@ const languages = ref([]);
 const tools = ref([]);
 const skills = ref([]);
 const summary = ref(null);
-const details = ref(null);
+const details = ref('');
 const courses = ref([]);
 const contact = ref(null);
 const employment = ref([]);
 const activities = ref([]);
 
-const saveResume = () => {
-    const formData = new FormData();
+const mainSaveResume = () => {
+    const requestData = {
+        image: image.value,
+        speciality: speciality.value,
+        education: education.value,
+        languages: languages.value,
+        skills: skills.value,
+        tools: tools.value,
+        details: details.value,
+        summary: summary.value,
+        courses: courses.value,
+        contact: contact.value,
+        employment: employment.value,
+        activities: activities.value
+    };
 
+    const formData = new FormData();
+    formData.append('data', JSON.stringify(requestData));
     formData.append('image', image.value);
 
-    formData.append('speciality', JSON.stringify(speciality.value));
-    formData.append('education', JSON.stringify(education.value));
-    formData.append('languages', JSON.stringify(languages.value));
-    formData.append('skills', skills.value); // No need to stringify
-    formData.append('tools', JSON.stringify(tools.value));
-    formData.append('details', JSON.stringify(details.value));
-    formData.append('summary', summary.value);
-    formData.append('courses', JSON.stringify(courses.value));
-    formData.append('contact', JSON.stringify(contact.value));
-    formData.append('employment', JSON.stringify(employment.value));
-    formData.append('activities', JSON.stringify(activities.value));
-
-    // Send the form data using Axios
-    axios.post('/api/applicant', formData)
+    axios.post('/api/applicant', formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    })
         .then(response => {
             console.log('Data sent successfully:', response.data);
         })
@@ -93,44 +96,54 @@ const saveResume = () => {
             console.error('Error sending data:', error);
         });
 };
+const getAuthUserId = async () => {
+        try {
+            const response = await axios.get('/api/auth');
 
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
 
-const fetchData = async () => {
-    try {
-        const response = await axios.get('/api/applicants/1');
-        const data = response.data;
-        console.log(data)
-        // Update the values of ref variables with the fetched data
-        image.value = data.image;
-        speciality.value = data.speciality;
-        education.value = data.education;
-        languages.value = data.languages;
-        tools.value = data.tools;
-        skills.value = data.skills;
-        summary.value = data.summary;
-        details.value = data.details;
-        courses.value = data.courses;
-        contact.value = data.contact;
-        employment.value = data.employment;
-        activities.value = JSON.parse(data.activities);
-    } catch (error) {
-        console.error('Error fetching data:', error);
-    }
-};
-
-onMounted(() => {
-    checkEditMode();
-    fetchData();
-});
-
-const checkEditMode = () => {
-    return store.dispatch('checkEditMode', window.location.href);
 }
 
+    const fetchData = async () => {
+        try {
+            const response = await axios.get(`/api/applicants/${getAuthUserId}`);
+            const data = response.data;
 
-const route = useRoute();
+            image.value = data.image;
+            speciality.value = data.speciality;
+            education.value = data.education;
+            languages.value = data.languages;
+            tools.value = data.tools;
+            skills.value = data.skills;
+            summary.value = data.summary;
+            details.value = data.details;
+            courses.value = data.courses;
+            contact.value = data.contact;
+            employment.value = data.employment;
+            activities.value = data.activities;
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
 
-const isDashboard = computed(() => {
-    return route.path.includes('/dashboard');
-});
+    onMounted(() => {
+        checkEditMode();
+        getAuthUserId()
+        // fetchData();
+    });
+
+
+    const checkEditMode = () => {
+        return store.dispatch('checkEditMode', window.location.href);
+    }
+
+
+    const route = useRoute();
+
+    const isDashboard = computed(() => {
+        return route.path.includes('/dashboard');
+    });
 </script>
