@@ -1,9 +1,22 @@
-import {computed, onMounted} from "vue";
+import {computed} from "vue";
 import store from "../store/index.js";
 import axios from 'axios';
 // import router from "../router/index.js";
 
+export const getAuthUser = async () => {
+    try {
+        const response = await axios.get('/api/auth');
+        return {
+            id: response.data.id,
+            name: response.data.name,
+            email: response.data.email,
+            profileType: response.data.profile_type,
+        }
 
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+}
 export const editMode = computed({
     get() {
         return store.getters.editMode;

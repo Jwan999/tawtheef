@@ -3,11 +3,19 @@
 
         <div class="space-y-1">
             <h1 class="text-lg font-semibold text-dark pb-4">Educational Background</h1>
+            <div v-if="modelValue[0]?.degree"
+                 v-for="item in modelValue">
+                <h1 class="text-dark font-semibold">{{ item.degree }}</h1>
+                <h1 class="font-semibold">{{ item.institute }}</h1>
+                <h1 class="font-semibold text-orange">{{ item.duration[0] + ' - ' + item.duration[1] }}</h1>
+            </div>
 
-            <h1 class="font-semibold">{{ modelValue.institute }}</h1>
-            <h1 class="text-dark font-semibold">{{ modelValue.degree }}
-            </h1>
-            <!--            <h1 class="text-orange font-semibold">{{ modelValue.duration[0] + '-' + modelValue.duration[1] }}</h1>-->
+            <div v-if="!modelValue[0]?.degree">
+                <p class="text-sm text-zinc-700">
+                    Not all data filled yet.
+                </p>
+            </div>
+
         </div>
 
     </div>
@@ -69,8 +77,9 @@ const {modelValue} = defineProps(["modelValue"]);
 const value = ref([])
 
 const addNew = () => {
+    // duration: ['Start year', 'End year']
     value.value.push({
-        degree: "", institute: "", duration: ['Start year', 'End year']
+        degree: "Bachelor's Degree", institute: "Test", duration: ['2020', '2024']
     });
 }
 const remove = (index) => {

@@ -2,6 +2,11 @@
     <div v-if="!editMode" class="rounded-md p-4 bg-white text-sm md:text-xs">
         <div class="space-y-1">
             <h1 class="text-lg font-semibold text-dark pb-4">Skills</h1>
+            <div v-if="!editMode && selectedSkills.length == 0">
+                <p class="text-sm text-zinc-700">
+                    Not all data filled yet.
+                </p>
+            </div>
 
             <div class="flex flex-wrap items-center space-y-2">
                 <div class="flex flex-wrap gap-2">
@@ -14,7 +19,7 @@
 
         </div>
     </div>
-    <div v-else >
+    <div v-else>
         <div class="rounded-md p-4 bg-white text-sm md:text-xs">
             <div class="space-y-1">
                 <h1 class="text-lg font-semibold text-dark pb-4">Skills</h1>
@@ -54,7 +59,7 @@
 import {onMounted, ref, watch} from 'vue';
 import {editMode, getSelectables} from "../../utils/storeHelpers.js";
 
-const skills = ref([])
+const skills = ref([''])
 
 
 onMounted(async () => {
@@ -65,23 +70,14 @@ onMounted(async () => {
         console.error('Failed to fetch select options:', error);
 
     });
+    selectedSkills.value = ['Teamwork']
+//     selectedSkills.value = modelValue;
 
 });
 
 const {modelValue} = defineProps(["modelValue"]);
 const selectedSkills = ref([])
 
-// const addSkill = (item) => {
-//     if (selectedSkills.value.length < 5) {
-//         console.log(selectedSkills.value.length)
-//         selectedSkills.value.push(item);
-//     }
-// };
-
-
-onMounted(() => {
-    selectedSkills.value = modelValue;
-})
 
 watch(selectedSkills, (newValue) => {
     emit('update:modelValue', newValue);

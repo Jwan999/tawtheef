@@ -6,14 +6,20 @@
         </div>
 
         <div v-if="!editMode" class="rounded-md p-4 bg-white space-y-8">
-            <div v-for="(course,index) in value" :key="index">
-                <h1 class="text-sm font-semibold mb-1">{{ course.duration }}</h1>
-                <h1 class="text-orange text-lg font-semibold mb-4">{{ course.title }}</h1>
-                <p class="text-sm">{{
-                        course.description
-                    }}</p>
-            </div>
+            <!--            !value[0].title-->
 
+            <div v-if="!showInputs" v-for="(course,index) in value" :key="index">
+                <h1 class="text-sm font-semibold mb-1">{{ course.duration }}</h1>
+                <h1 class="text-orange text-xl font-semibold">{{ course.title }}</h1>
+                <h1 v-if="course.entity" class="text-zinc-600 text-sm font-semibold mb-4">Provided by: {{
+                        course.entity
+                    }}</h1>
+            </div>
+            <div v-else>
+                <p class="text-sm text-zinc-700">
+                    Not all data filled yet.
+                </p>
+            </div>
         </div>
 
         <div v-else class="rounded-md bg-white p-4">
@@ -52,7 +58,6 @@
             </div>
 
 
-
         </div>
     </div>
 
@@ -77,7 +82,7 @@ const {modelValue} = defineProps(["modelValue"]);
 
 const addNew = () => {
     value.value.push({
-        title: "", duration: "", description: ""
+        title: "Test", duration: "2 Weeks", entity: "Test"
     });
 }
 const remove = (index) => {
@@ -85,8 +90,17 @@ const remove = (index) => {
 }
 const emit = defineEmits(["update:modelValue"])
 
+const showInputs = ref(false)
+const changeShowInputs = () => {
+    if (editMode && value?.value[0]?.title === "") {
+        showInputs.value = true;
+    } else {
+        showInputs.value = false;
+    }
+}
 watch(value, (newValue) => {
     emit('update:modelValue', newValue);
+    changeShowInputs()
 }, {deep: true})
 
 onMounted(() => {
@@ -94,6 +108,7 @@ onMounted(() => {
     if (modelValue.length == 0) {
         addNew();
     }
+    changeShowInputs()
 })
 
 

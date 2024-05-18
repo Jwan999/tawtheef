@@ -1,8 +1,11 @@
 <template>
     <div class="w-full space-y-4 pr-0">
-        <div class="flex space-x-3 items-center ">
+        <label for="message" class="block mb-2 text-xs font-medium text-zinc-700">List the courses you've completed, that can show the skills you have.</label>
+
+        <div class="flex space-x-3 items-center">
 
             <div class="relative w-full">
+
                 <span class="text-orange absolute top-0 right-0 ml-24 -mt-3">*</span>
                 <input v-model="modelValue.title" placeholder="Course title"
                        class="w-full focus:border-orange focus:ring-0 bg-slate-50 w-6/12 rounded-md md:text-xs text-sm border-0 border-b-[1px] border-gray-300 hover:border-orange focus:outline-none"

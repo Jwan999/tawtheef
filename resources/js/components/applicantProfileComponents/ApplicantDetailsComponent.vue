@@ -44,7 +44,8 @@
 
 <script setup>
 import {onMounted, ref, watch} from "vue";
-import {editMode} from "../../utils/storeHelpers.js";
+import {editMode, getAuthUser} from "../../utils/storeHelpers.js";
+
 
 const workAvailability = ref(false)
 const fullName = ref('')
@@ -62,6 +63,11 @@ watch([workAvailability, fullName], updateModelValue, {deep: true});
 
 onMounted(() => {
     updateModelValue();
+    getAuthUser().then(response => {
+        fullName.value = response.name;
+    }).catch(error => {
+        console.error('Error fetching user data:', error);
+    })
 });
 
 </script>

@@ -1,9 +1,7 @@
 <template>
 
     <div class="w-full pr-0">
-        <label for="message" class="block mb-2 text-xs font-medium text-dark">Lorem ipsum dolor
-            sit amet,
-            consectetur adipisicing elit. Blanditiis culpa ea hic illo nihil sed voluptatibus?</label>
+        <label for="message" class="block mb-2 text-xs font-medium text-zinc-700">These fields are optional, and their purpose is to show if the individual has other related activities.</label>
 
         <div class="flex space-x-3 items-center w-full mt-4">
 

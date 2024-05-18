@@ -7,18 +7,26 @@
         </div>
 
         <div v-if="!editMode" class="rounded-md p-4 bg-white space-y-8">
-            <div v-for="(year, index) in uniqueYears" :key="index">
+
+            <div v-if="!showInputs" v-for="(year, index) in uniqueYears" :key="index">
+
                 <h1 class="text-orange font-semibold text-lg mb-4">{{ year }}</h1>
                 <ul class="text-sm">
                     <li v-for="event in value.filter(item => item.year === year)"
                         class="flex space-x-2 items-center ml-5">
+
                         <h1 class="font-semibold">{{ event.title }}</h1>
-                        <h1>as</h1>
-                        <h1 class="text-orange font-semibold">{{ event.participatedAs }}</h1>
+                        <h1 v-if="event.participatedAs !== 'Participated as'">as</h1>
+                        <h1 v-if="event.participatedAs !== 'Participated as'" class="text-orange font-semibold">{{ event.participatedAs }}</h1>
                     </li>
+
                 </ul>
             </div>
-
+            <div v-else>
+                <p class="text-sm text-zinc-700">
+                    Not all data filled yet.
+                </p>
+            </div>
         </div>
 
 
@@ -78,6 +86,16 @@ const changeBorderColor = (index, color) => {
     borderColor.value = color;
 }
 
+const showInputs = ref(false)
+const changeShowInputs = () => {
+    if (editMode && value?.value[0]?.title === "") {
+        showInputs.value = true
+    } else {
+        showInputs.value = false;
+    }
+}
+
+
 const {modelValue} = defineProps(["modelValue"]);
 const value = ref([])
 
@@ -90,7 +108,7 @@ const uniqueYears = computed({
 })
 const addNew = () => {
     value.value.push({
-        title: "", participatedAs: "Participated as", year: ""
+        title: "test", participatedAs: "Participated as", year: "test"
     });
 }
 const remove = (index) => {
@@ -101,6 +119,8 @@ const emit = defineEmits(["update:modelValue"])
 
 watch(value, (newValue) => {
     emit('update:modelValue', newValue);
+    showInputs.value = false;
+    changeShowInputs();
 }, {deep: true})
 
 onMounted(() => {
@@ -108,8 +128,9 @@ onMounted(() => {
     if (modelValue.length == 0) {
         addNew();
     }
-})
+    changeShowInputs()
 
+})
 
 </script>
 

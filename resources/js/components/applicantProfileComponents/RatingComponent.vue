@@ -1,6 +1,7 @@
 <script setup>
 import {onMounted, ref, watchEffect} from 'vue';
 import {getSelectables} from "../../utils/storeHelpers.js";
+import {editMode} from "../../utils/storeHelpers.js";
 
 const {modelValue, placeholderLabel} = defineProps({
     modelValue: {
@@ -44,6 +45,7 @@ const setRatingValue = (value) => {
 <template>
 
     <div class="p-2 my-2">
+
 
         <select v-if="placeholderLabel == 'Language'" v-model="item" :value="item"
                 class="text-xs focus:border-orange rounded focus:ring-0 bg-zinc-50 w-full border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none">

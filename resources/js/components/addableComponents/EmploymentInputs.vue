@@ -2,6 +2,7 @@
 
     <div class="space-y-4 w-full pr-0">
         <div class="flex space-x-3 items-center">
+
             <div class="relative w-full">
                 <span class="text-orange absolute top-0 right-0 ml-24 -mt-3">*</span>
                 <input v-model="modelValue.title" placeholder="Job title"
@@ -47,21 +48,19 @@
 
         </div>
         <div class="w-full">
-            <label for="message" class="block mb-2 text-xs font-medium text-dark mt-2">Lorem ipsum dolor sit
-                amet, consectetur adipisicing elit. Blanditiis culpa ea hic illo nihil sed
-                voluptatibus?</label>
+            <label for="message" class="block mb-2 text-xs font-medium text-zinc-700 mt-2">List your responsibilities within this period of employment.</label>
 
 
             <div class="relative w-full mt-3">
 
                 <div class="relative w-full">
                     <span class="text-orange absolute top-0 right-0 ml-24 -mt-4">*</span>
-                    <input type="text" v-model="task" name="Task" placeholder="Responsibilities"
+                    <input type="text" v-model="responsibility" name="Responsibility" placeholder="Responsibilities"
                            class="focus:border-orange focus:ring-0 bg-zinc-50 w-full rounded-md md:text-xs text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none"/>
 
                 </div>
 
-                <button type="submit" @click="addTask"
+                <button type="submit" @click="addResponsibility"
                         class="absolute top-0 end-0 p-2.5 h-full text-sm font-medium text-white bg-orange rounded-e-md  hover:bg-dark focus:outline-none">
                     <svg class="w-2 h-2 fill-white" viewBox="0 0 512 512">
                         <g>
@@ -73,13 +72,13 @@
             </div>
 
             <div class="mt-3 space-y-2">
-                <div v-for="(task,index) in allTasks" class="flex items-center justify-between">
+                <div v-for="(responsibility,index) in responsibilities" class="flex items-center justify-between">
                     <div class="flex items-start w-full space-x-3">
                         <span class="flex-none mt-2 w-2 h-2 bg-dark rounded-full"></span>
-                        <p class="text-sm font-semibold">{{ task }}</p>
+                        <p class="text-sm font-semibold">{{ responsibility }}</p>
                     </div>
 
-                    <button @click="removeTask(index)" class="appearance-none cursor-pointer">
+                    <button @click="removeResponsibility(index)" class="appearance-none cursor-pointer">
                         <svg class="fill-dark w-4 h-4" viewBox="0 0 1024 1024"
                              xmlns="http://www.w3.org/2000/svg">
                             <path
@@ -99,17 +98,16 @@
 <script setup>
 import {ref, watchEffect} from 'vue';
 
-const task = ref('')
-const allTasks = ref([])
-const addTask = () => {
-    if (task.value.trim() !== '') {
-        allTasks.value.push(task.value);
-        task.value = '';
+const responsibility = ref('')
+const addResponsibility = () => {
+    if (responsibility.value.trim() !== '') {
+        responsibilities.value.push(responsibility.value);
+        responsibility.value = '';
     }
 }
 
-const removeTask = (index) => {
-    allTasks.value.splice(index,1)
+const removeResponsibility = (index) => {
+    responsibilities.value.splice(index,1)
 }
 
 const {modelValue} = defineProps(["modelValue"]);
@@ -117,7 +115,7 @@ const {modelValue} = defineProps(["modelValue"]);
 const title = ref(modelValue.title)
 const employer = ref(modelValue.employer)
 const duration = ref(modelValue.duration)
-// const tasks = ref(modelValue.tasks)
+const responsibilities = ref(modelValue.responsibilities)
 
 modelValue.duration[0] = 'Start year'
 modelValue.duration[1] = 'End year'
@@ -139,9 +137,10 @@ watchEffect(() => {
         title: title.value,
         employer: employer.value,
         duration: duration.value,
-        tasks: allTasks.value
+        responsibilities: responsibilities.value
     });
 });
+
 
 </script>
 

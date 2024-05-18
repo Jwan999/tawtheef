@@ -9,6 +9,12 @@
             <h1 v-for="(speciality,index) in specializations">
                 {{ specializations.includes('Other') ? subSpecialities.toString() : speciality }}.
             </h1>
+            <div v-if="!editMode && specializations.length === 0">
+                <p class="text-sm">
+                    Not all data filled yet.
+
+                </p>
+            </div>
         </div>
         <div>
             <div v-if="subSpecialities.length" class="bg-white rounded-b-md px-4 py-2 space-y-1">
@@ -18,7 +24,7 @@
         </div>
 
     </div>
-    <div :class="!editMode ? 'hidden':''">
+    <div v-else :class="!editMode ? 'hidden':''">
         <div class="flex items-center space-x-3 mb-5">
             <h1 class="flex-none text-lg font-semibold text-dark">Specializations</h1>
             <hr class="h-px w-full bg-orange border-0 mt-1">
@@ -75,8 +81,8 @@ import {computed, onMounted, ref, watch, watchEffect} from "vue";
 
 import {editMode, getSelectables} from "../../utils/storeHelpers.js";
 
-const specializations = ref([]);
-const subSpecialities = ref([]);
+const specializations = ref(['Creative & Design', 'Development']);
+const subSpecialities = ref(['Graphic Design', 'Front-End Development']);
 
 const specialities = ref([])
 
@@ -116,6 +122,8 @@ watch([specializations, subSpecialities], () => {
 }, {deep: true})
 
 onMounted(() => {
+    specializations.value = ['Creative & Design', 'Development']
+    subSpecialities.value = ['Graphic Design', 'Front-End Development']
 });
 
 // const roundness

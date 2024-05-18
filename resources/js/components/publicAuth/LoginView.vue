@@ -34,10 +34,13 @@
                  :class="hovered ? 'border-dark' : 'border-orange'">
                 <form @mouseover="hovered = !hovered"
                       @mouseleave="hovered = !hovered"
-                      class="uppercase text-xs cursor-pointer inline-block font-semibold bg-orange text-white hover:bg-dark px-4 py-2 rounded-br-md"
+                      class="uppercase text-xs cursor-pointer inline-block font-semibold bg-orange text-white hover:bg-dark px-4 py-2"
                       @click="handleLogin">
                     login
                 </form>
+                <router-link to="/signup" class="uppercase text-xs cursor-pointer inline-block font-semibold text-zinc-700 hover:text-white 0 hover:bg-dark px-4 py-2 rounded-br-md">
+                    Or Signup
+                </router-link>
             </div>
 
 

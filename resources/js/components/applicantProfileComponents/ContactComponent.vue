@@ -2,7 +2,7 @@
     <!--preview-->
     <div v-if="!editMode" class="">
 
-        <div class="bg-white p-4 text-sm rounded-md">
+        <div v-if="!showInputs" class="bg-white p-4 text-sm rounded-md">
 
             <div class="flex justify-between items-center">
                 <div class="w-3/12 flex justify-start space-x-4">
@@ -40,7 +40,12 @@
                    class="text-orange font-semibold underline">{{ link.label }}</a>
             </div>
         </div>
-
+        <div v-else class="bg-white p-4 rounded-md">
+            <h1 class="flex-none font-semibold mb-3 text-zinc-500">Contacts & other info</h1>
+            <p class="text-sm text-zinc-700">
+                Not all data filled yet.
+            </p>
+        </div>
     </div>
     <!--form-->
     <div v-else>
@@ -52,7 +57,7 @@
                     <div class="w-full relative">
                         <input @input="emitInputData" type="text" v-model="phone"
                                class="text-xs block w-full p-2.5 focus:border-orange focus:ring-0 bg-zinc-50 w-full rounded-md border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none"
-                               pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" placeholder="0964-000-0000-000" required/>
+                               placeholder="0964-000-0000-000" required/>
                         <div class="me-4 mt-2 absolute mt-[40px] top-0 left-0">
                             <input @input="emitInputData" checked id="orange-checkbox" type="checkbox" value=""
                                    v-model="isChecked"
@@ -113,6 +118,10 @@
                 </div>
 
                 <div>
+                    <label for="message" class="block mb-2 text-xs font-medium text-zinc-700 mt-2">You can add links to
+                        websites you want hiring managers to see! Perhaps It will be a link to your portfolio, Linkedin
+                        profile, or personal website.</label>
+
                     <div class="relative">
                         <div class="flex">
                             <input @input="emitInputData" type="text" v-model="link" placeholder="Link"
@@ -157,28 +166,43 @@
 
 <script setup>
 import {onMounted, ref, watch} from 'vue'; // Import ref and computed
-import {editMode, getSelectables} from "../../utils/storeHelpers.js";
+import {editMode, getSelectables, getAuthUser} from "../../utils/storeHelpers.js";
 
+const showInputs = ref(false)
+const changeShowInputs = () => {
+    if (editMode && birthdate.value === "") {
+        showInputs.value = true
+    } else {
+        showInputs.value = false;
+    }
+}
 onMounted(async () => {
-    axios.get('').then(async res => {
+    axios.get('/api/selectables/cities').then(async res => {
         cities.value = await getSelectables('cities');
 
     }).catch(error => {
         console.error('Failed to fetch select options:', error);
-
     });
-
+    changeShowInputs()
+    getAuthUser().then(response => {
+        email.value = response.email;
+    }).catch(error => {
+        console.error('Error fetching user data:', error);
+    })
 });
 
 const cities = ref([])
 
-const city = ref('');
+const city = ref('Baghdad');
 const gender = ref('Female');
-const zone = ref('');
+const zone = ref('Karkh');
 const email = ref('');
-const phone = ref('');
-const birthdate = ref('');
-const links = ref([]);
+const phone = ref('07816151297');
+const birthdate = ref('10-10-2020');
+const links = ref([{
+    link: "youtube",
+    label: "youtube"
+}]);
 
 const link = ref('');
 const label = ref('');
@@ -210,6 +234,7 @@ watch([phone, email, city, zone, gender, birthdate], () => {
             zone: zone.value
         }
     )
+    changeShowInputs()
 }, {deep: true})
 
 </script>

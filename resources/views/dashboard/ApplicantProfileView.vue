@@ -3,7 +3,8 @@
 
     <div :class="!isDashboard ? 'px-10 mt-6 mb-10' : ''" class="grid grid-cols-12 gap-6 relative">
         <!--first row-->
-        <ResumeActionButtonsComponent @saveResume="mainSaveResume" class="z-40 absolute top-0 right-0 mr-10"></ResumeActionButtonsComponent>
+        <ResumeActionButtonsComponent @saveResume="saveResume" @publishResume="publishResume"
+                                      class="z-40 absolute top-0 right-0 mr-10"></ResumeActionButtonsComponent>
 
         <div class="col-span-3 space-y-6">
             <ApplicantPhotoUpload v-model="image"></ApplicantPhotoUpload>
@@ -49,7 +50,7 @@ import ResumeActionButtonsComponent
 import LanguagesComponent from "../../js/components/applicantProfileComponents/LanguagesComponent.vue";
 import ToolsComponent from "../../js/components/applicantProfileComponents/ToolsComponent.vue";
 import ContactComponent from "../../js/components/applicantProfileComponents/ContactComponent.vue";
-import {editMode} from "../../js/utils/storeHelpers.js";
+import {editMode, getAuthUser} from "../../js/utils/storeHelpers.js";
 
 const image = ref(null);
 const speciality = ref(null);
@@ -63,8 +64,12 @@ const courses = ref([]);
 const contact = ref(null);
 const employment = ref([]);
 const activities = ref([]);
-
-const mainSaveResume = () => {
+const published = ref(false);
+const user = ref(null)
+const publishResume = (event) => {
+    published.value = event.value
+}
+const saveResume = () => {
     const requestData = {
         image: image.value,
         speciality: speciality.value,
@@ -77,7 +82,8 @@ const mainSaveResume = () => {
         courses: courses.value,
         contact: contact.value,
         employment: employment.value,
-        activities: activities.value
+        activities: activities.value,
+        published: published.value
     };
 
     const formData = new FormData();
@@ -95,55 +101,55 @@ const mainSaveResume = () => {
         .catch(error => {
             console.error('Error sending data:', error);
         });
+
+    // toggleEditMode()
 };
-const getAuthUserId = async () => {
-        try {
-            const response = await axios.get('/api/auth');
+const toggleEditMode = () => {
+    store.dispatch('setEditMode', !editMode.value);
+};
 
-            return response.data;
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
 
+const fetchData = async () => {
+    try {
+        const response = await axios.get(`/api/applicants/${user.id}`);
+        const data = response.data;
+
+        image.value = data.image;
+        speciality.value = data.speciality;
+        education.value = data.education;
+        languages.value = data.languages;
+        tools.value = data.tools;
+        skills.value = data.skills;
+        summary.value = data.summary;
+        details.value = data.details;
+        courses.value = data.courses;
+        contact.value = data.contact;
+        employment.value = data.employment;
+        activities.value = data.activities;
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+};
+
+onMounted(() => {
+    checkEditMode();
+
+    getAuthUser().then(response => {
+        user.value = response;
+    }).catch(error => {
+        console.error('Error fetching user data:', error);
+    })
+});
+
+
+const checkEditMode = () => {
+    return store.dispatch('checkEditMode', window.location.href);
 }
 
-    const fetchData = async () => {
-        try {
-            const response = await axios.get(`/api/applicants/${getAuthUserId}`);
-            const data = response.data;
 
-            image.value = data.image;
-            speciality.value = data.speciality;
-            education.value = data.education;
-            languages.value = data.languages;
-            tools.value = data.tools;
-            skills.value = data.skills;
-            summary.value = data.summary;
-            details.value = data.details;
-            courses.value = data.courses;
-            contact.value = data.contact;
-            employment.value = data.employment;
-            activities.value = data.activities;
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
-    };
+const route = useRoute();
 
-    onMounted(() => {
-        checkEditMode();
-        getAuthUserId()
-        // fetchData();
-    });
-
-
-    const checkEditMode = () => {
-        return store.dispatch('checkEditMode', window.location.href);
-    }
-
-
-    const route = useRoute();
-
-    const isDashboard = computed(() => {
-        return route.path.includes('/dashboard');
-    });
+const isDashboard = computed(() => {
+    return route.path.includes('/dashboard');
+});
 </script>

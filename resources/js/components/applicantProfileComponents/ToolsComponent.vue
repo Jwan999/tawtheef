@@ -3,16 +3,21 @@
 
         <div class="space-y-1">
             <h1 class="text-lg font-semibold text-dark pb-4">Tools & Technologies</h1>
+            <div v-if="!value[0]?.item">
+                <p class="text-sm text-zinc-700">
+                    Not all data filled yet.
+                </p>
+            </div>
             <div v-for="(tool,index) in value" :key="index" class="flex items-center justify-between">
                 <h1 class="font-semibold">{{ tool.item }}</h1>
 
 
                 <div class="flex items-center space-x-2">
-                    <div
-                        v-for="(value,index) in 5"
-                        :key="index"
-                        :class="tool.rating >= value ? 'bg-orange':'bg-zinc-100'"
-                        class="rounded-full w-8 h-3">
+                    <div v-if="tool.rating"
+                         v-for="(value,index) in 5"
+                         :key="index"
+                         :class="tool.rating >= value ? 'bg-orange':'bg-zinc-100'"
+                         class="rounded-full w-8 h-3">
                     </div>
 
                 </div>
@@ -83,7 +88,7 @@ const value = ref([])
 
 const addNew = () => {
     value.value.push({
-        item: "", rating: ""
+        item: "test", rating: 4
     });
 }
 const remove = (index) => {

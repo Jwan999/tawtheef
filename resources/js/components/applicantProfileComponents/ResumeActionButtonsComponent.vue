@@ -1,6 +1,6 @@
 <template>
     <div class="flex">
-        <button @click="saveResume"
+        <button @click="editMode ? emit('saveResume') : toggleEditMode()"
                 class=" appearance-none text-xs rounded-bl-md px-3 py-2 font-semibold text-white bg-orange hover:bg-dark">
 
             <svg v-if="!editMode" class="fill-white h-4" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -10,9 +10,10 @@
             <span v-else>Save</span>
         </button>
 
-        <button v-if="editMode" @click="$emit('publishResume')"
-                class="appearance-none text-xs px-3 py-2 font-semibold text-zinc-500 bg-zinc-200">
-            <span>Publish</span>
+        <button v-if="editMode" @click="publishResume"
+                class="appearance-none text-xs px-3 py-2 font-semibold text-zinc-500 bg-zinc-200 hover:bg-dark hover:text-white">
+            <span v-if="!published">Publish</span>
+            <span v-else>Un publish</span>
         </button>
 
         <button
@@ -26,20 +27,22 @@
 
 <script setup>
 
-import {computed} from "vue";
+import {computed, ref} from "vue";
 import store from '../../store/index.js';
 
 const editMode = computed(() => store.getters.editMode)
 
-const emit = defineEmits(["publishResume","saveResume"])
+const emit = defineEmits(["publishResume", "saveResume"])
+// const props = defineProps(["publishResume", "saveResume"])
 
-
+const published = ref(false)
 const saveResume = () => {
     toggleEditMode()
-    if(editMode){
-        emit("saveResume");
-    }
 };
+const publishResume = () => {
+    published.value = !published.value
+    emit('publishResume', published)
+}
 const toggleEditMode = () => {
     store.dispatch('setEditMode', !editMode.value);
 };
