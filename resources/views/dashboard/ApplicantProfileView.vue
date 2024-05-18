@@ -102,7 +102,7 @@ const saveResume = () => {
             console.error('Error sending data:', error);
         });
 
-    // toggleEditMode()
+    toggleEditMode()
 };
 const toggleEditMode = () => {
     store.dispatch('setEditMode', !editMode.value);
