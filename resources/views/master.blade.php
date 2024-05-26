@@ -9,10 +9,13 @@
     <title>Tawtheef</title>
 </head>
 <body class="bg-light">
+{{--<div v-if="{{auth()->user()}}">--}}
+{{--    {{ auth()->user() }}!--}}
+{{--</div>--}}
 
 <div id="app"></div>
 
-
 @vite('resources/js/app.js')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
 </body>
 </html>

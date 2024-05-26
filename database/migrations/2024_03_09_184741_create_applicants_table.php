@@ -13,32 +13,22 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('applicants', function (Blueprint $table) {
-            $table->increments('id');
+            $table->id();
             $table->string('image')->nullable();
-            $table->string('speciality_title')->nullable();
-            $table->json('speciality_children')->nullable();
-            $table->json('education')->nullable();
-            $table->json('languages')->nullable();
-            $table->json('skills')->nullable();
-            $table->json('tools')->nullable();
-            $table->boolean('work_availability')->nullable();
-            $table->string('full_name')->nullable();
-            $table->text('summary')->nullable();
-            $table->json('courses')->nullable();
-            $table->string('phone')->nullable();
-            $table->string('gender')->nullable();
-            $table->string('email')->nullable();
-            $table->json('links')->nullable();
-            $table->string('birthdate')->nullable();
-            $table->string('city')->nullable();
-            $table->string('zone')->nullable();
-            $table->json('employment')->nullable();
-            $table->json('activities')->nullable();
-            $table->integer('profileable_id')->unsigned()->nullable();
-            $table->string('profileable_type')->nullable();
+            $table->json('speciality'); // Make sure this column exists
+            $table->json('education');
+            $table->json('languages');
+            $table->json('skills');
+            $table->json('tools');
+            $table->json('details');
+            $table->text('summary');
+            $table->json('courses');
+            $table->json('contact');
+            $table->json('employment');
+            $table->json('activities');
+            $table->boolean('published');
             $table->timestamps();
         });
-
     }
 
     /**

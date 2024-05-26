@@ -30,21 +30,14 @@
 
     <div v-else class="rounded-md py-4 bg-white text-sm md:text-xs">
 
-        <div class=" px-4 text-sm md:text-xs">
+        <div class="px-4 text-sm md:text-xs">
             <h1 class="text-lg font-semibold text-dark pb-3">Languages</h1>
 
-            <button
-
-                @click="addNew"
-                class="mt-4 flex-none w-auto appearance-none px-3 py-1 rounded-br-md font-semibold text-start text-orange bg-zinc-100 hover:bg-dark hover:text-white text-sm">
-                Add component
-
-            </button>
             <div class="relative w-full">
                 <div class="">
                     <div v-for="(item,index) in value"
                          :key="index"
-                         class="rounded-bl-md border-0 border-r-[1px] border-b-[1px]"
+                         class="border-0 border-r-[1px] border-b-[1px]"
                          :class="hoveredElement===index ? borderColor : 'border-zinc-100'">
                         <div class="flex justify-end">
                             <button @mouseover="changeBorderColor(index,'border-dark')"
@@ -65,6 +58,13 @@
                 </div>
 
             </div>
+            <button
+
+                @click="addNew"
+                class="flex-none w-auto appearance-none px-3 py-1 rounded-bl-md font-semibold text-start text-orange bg-zinc-100 hover:bg-dark hover:text-white text-sm">
+                Add component
+
+            </button>
 
         </div>
     </div>
@@ -87,7 +87,7 @@ const value = ref([])
 
 const addNew = () => {
     value.value.push({
-        item: "test", rating: 4
+        item: "", rating: ""
     });
 }
 const remove = (index) => {

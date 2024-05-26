@@ -25,8 +25,9 @@ Route::get('/api/applicants/{id}', [ApplicantController::class, 'show']);
 Route::get('/api/auth', [ApplicantController::class, 'getAuthUserId']);
 //Route::get('/api/filter/{speciality}', [ApplicantController::class, 'filter']);
 
-Route::post('/login', [AuthController::class, 'login']);
+Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/signup', [AuthController::class, 'register']);
+Route::post('/logout', [AuthController::class, 'logout']);
 
 Route::get('/{any}', function () {
     return view('master');

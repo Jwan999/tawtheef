@@ -22,7 +22,10 @@
     <div v-else>
         <div class="rounded-md p-4 bg-white text-sm md:text-xs">
             <div class="space-y-1">
-                <h1 class="text-lg font-semibold text-dark pb-4">Skills</h1>
+                <h1 class="text-lg font-semibold text-dark pb-4">Personal Skills</h1>
+                <div class="py-2">
+                    <h1 class="text-xs font-semibold text-zinc-600">* You can pick five personal-skills only.</h1>
+                </div>
                 <div class="space-y-3">
 
                     <div class="">
@@ -47,9 +50,7 @@
 
         </div>
 
-        <div class="mt-2">
-            <h1 class="text-xs font-semibold text-zinc-600">* You can pick five soft-skills only.</h1>
-        </div>
+
     </div>
 
 
@@ -70,8 +71,6 @@ onMounted(async () => {
         console.error('Failed to fetch select options:', error);
 
     });
-    selectedSkills.value = ['Teamwork']
-//     selectedSkills.value = modelValue;
 
 });
 

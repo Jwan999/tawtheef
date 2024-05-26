@@ -8,7 +8,7 @@
 
                 <span class="text-orange absolute top-0 right-0 ml-24 -mt-3">*</span>
                 <input v-model="modelValue.title" placeholder="Course title"
-                       class="w-full focus:border-orange focus:ring-0 bg-slate-50 w-6/12 rounded-md md:text-xs text-sm border-0 border-b-[1px] border-gray-300 hover:border-orange focus:outline-none"
+                       class="w-full focus:border-orange focus:ring-0 bg-zinc-50 w-6/12 rounded-md md:text-xs text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none"
                        type="text">
 <!--                <h1 class="text-red-500 text-xs mt-1 font-semibold">This field is required.</h1>-->
 
@@ -16,14 +16,14 @@
             <div class="relative w-full">
                 <span class="text-orange absolute top-0 right-0 ml-24 -mt-3">*</span>
                 <input v-model="modelValue.entity" placeholder="Offering Entity"
-                       class="w-full focus:border-orange focus:ring-0 bg-slate-50 w-6/12 rounded-md md:text-xs text-sm border-0 border-b-[1px] border-gray-300 hover:border-orange focus:outline-none"
+                       class="w-full focus:border-orange focus:ring-0 bg-zinc-50 w-6/12 rounded-md md:text-xs text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none"
                        type="text">
                 <!--                <h1 class="text-red-500 text-xs mt-1 font-semibold">This field is required.</h1>-->
 
             </div>
             <div class="relative w-full">
                 <span class="text-orange absolute top-0 right-0 ml-24 -mt-3">*</span>
-                <select v-model="modelValue.duration" class="w-full focus:border-orange focus:ring-0 bg-slate-50 w-6/12 rounded-md md:text-xs text-sm border-0 border-b-[1px] border-gray-300 hover:border-orange focus:outline-none">
+                <select v-model="modelValue.duration" class="w-full focus:border-orange focus:ring-0 bg-zinc-50 w-6/12 rounded-md md:text-xs text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none">
                     <option value="" selected disabled>Course duration</option>
                     <option value="1 week">1 week</option>
                     <option value="2 weeks">2 weeks</option>

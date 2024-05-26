@@ -14,12 +14,15 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('profile_type');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
+
+            // Polymorphic relationship columns
+            $table->unsignedBigInteger('profileable_id')->nullable();
+            $table->string('profileable_type')->nullable();
         });
     }
 

@@ -32,12 +32,6 @@
             <h1 class="text-lg font-semibold text-dark pb-3">Tools & Technologies</h1>
 
             <div class="relative w-full">
-                <button
-                    @click="addNew"
-                    class="mt-4 flex-none w-auto appearance-none px-3 py-1 rounded-br-md font-semibold text-start text-orange bg-zinc-100 hover:bg-dark hover:text-white text-sm">
-                    Add component
-
-                </button>
                 <div class="">
                     <div v-for="(item,index) in value"
                          :key="index"
@@ -56,10 +50,16 @@
                             </button>
                         </div>
 
-                        <ratingComponent placeholder-label="Tool" v-model="value[index]"></ratingComponent>
+                        <ratingComponent placeholder-label="Tool or technology title" v-model="value[index]"></ratingComponent>
                     </div>
 
                 </div>
+                <button
+                    @click="addNew"
+                    class="flex-none w-auto appearance-none px-3 py-1 rounded-bl-md font-semibold text-start text-orange bg-zinc-100 hover:bg-dark hover:text-white text-sm">
+                    Add component
+
+                </button>
 
             </div>
 
@@ -88,7 +88,7 @@ const value = ref([])
 
 const addNew = () => {
     value.value.push({
-        item: "test", rating: 4
+        item: "", rating: ""
     });
 }
 const remove = (index) => {

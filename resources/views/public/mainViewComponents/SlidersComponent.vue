@@ -1,19 +1,23 @@
 <template>
     <div class="mt-32">
-        <div v-for="speci in specialities" class="my-16">
-            <div class="bg-dark px-3">
-                <div class="flex items-center justify-between">
-                    <h1 class="inline-block px-20 py-1 my-2 text-white font-semibold text-2xl uppercase w-4/12">
-                        {{ speci.title }}
-                    </h1>
-                    <div class="w-9/12">
-                        <hr class="h-px bg-orange border-0 mt-1 w-full">
-                    </div>
+        <div class="mx-32">
+            <h1 class="text-end text-3xl font-bold">All applicants based</h1>
+            <h1 class="text-end text-3xl font-bold">on their specializations</h1>
+        </div>
+        <div v-for="speci in specialities" class="mb-24">
 
+            <div class="mb-10">
+                <h1 class="px-32 py-1 my-2 font-bold tracking-wider text-2xl uppercase">
+                    {{ speci.title }}
+                </h1>
+                <div class="mt-6">
+                    <div class="-mt-4 h-5 w-2/12 rounded-tr-2xl bg-orange"></div>
+                    <div class="-mt-3 ml-8 h-3 w-3/12 rounded-t-2xl bg-dark"></div>
                 </div>
-
             </div>
-            <div class="flex flex-shrink-0 overflow-y space-x-4 px-0 mx-0 pt-6 pb-4">
+
+
+            <div class="flex flex-shrink-0 overflow-y space-x-6 px-0 mx-0 pt-6 pb-4">
                 <div v-for="item in 6" :class="item === 1 ? 'rounded-r-lg' : 'rounded-lg'"
                      class="relative bg-white h-80 rounded-r-lg w-72x p-4">
                     <div :class="1 == 1? 'bg-orange text-white':'bg-gray-400 text-gray-600'"

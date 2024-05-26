@@ -80,7 +80,7 @@ onMounted(async () => {
 
     });
 
-    for (let year = 2000; year <= currentYear.value; year++) {
+    for (let year = 1950; year <= currentYear.value; year++) {
         years.value.push(year);
     }
 });

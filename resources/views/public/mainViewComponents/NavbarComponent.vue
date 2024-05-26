@@ -7,20 +7,21 @@
             </router-link>
         </div>
         <div class="flex items-center justify-between space-x-3">
-            <!--            <router-link-->
-            <!--                class="cursor-pointer text-dark text-sm border border-transparent transition-colors ease-in delay-100 hover:text-orange hover:border-orange rounded-full lg:px-5 px-4 py-2"-->
-            <!--                to="/login">Login-->
-            <!--            </router-link>-->
-            <router-link
-                class="cursor-pointer text-dark text-sm border border-transparent transition-colors ease-in delay-100 hover:text-orange hover:border-orange rounded-full lg:px-5 px-4 py-2"
-                to="/login">Login
+
+            <router-link v-if="!userId"
+                         class="font-semibold cursor-pointer text-dark text-sm border border-transparent transition-colors ease-in delay-100 hover:text-orange hover:border-orange rounded-full lg:px-5 px-4 py-2"
+                         to="/login">Login
             </router-link>
-            <!--todo add user id-->
+
             <router-link
-                class="cursor-pointer text-dark text-sm border border-transparent transition-colors ease-in delay-100 hover:text-orange hover:border-orange rounded-full lg:px-5 px-4 py-2"
-                :to="`/profile/${userId}/edit`">
-                Profile
+                class="font-semibold cursor-pointer text-dark text-sm border border-transparent transition-colors ease-in delay-100 hover:text-orange hover:border-orange rounded-full lg:px-5 px-4 py-2"
+                :to="userId ? `/profile/${userId}/edit` : '/login'">
+                Resume
             </router-link>
+            <button v-if="userId" @click="logout"
+                    class="font-semibold cursor-pointer text-dark text-sm border border-transparent transition-colors ease-in delay-100 hover:text-orange hover:border-orange rounded-full lg:px-5 px-4 py-2">
+                Logout
+            </button>
 
         </div>
 
@@ -32,15 +33,21 @@ import {getAuthUser} from "../../../js/utils/storeHelpers";
 import {onMounted, ref} from "vue";
 
 const userId = ref(null)
+const logout = () => {
+    axios.post('/logout').then(res => {
+        window.location.href = '/';
+    })
+}
 onMounted(() => {
-
-
     getAuthUser().then(response => {
         userId.value = response.id;
     }).catch(error => {
         console.error('Error fetching user data:', error);
     })
 });
+
+
+
 </script>
 
 <style scoped>

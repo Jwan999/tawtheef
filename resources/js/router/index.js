@@ -9,8 +9,9 @@ import CompaniesView from '../../views/dashboard/CompaniesView.vue';
 import CompanyProfile from '../../views/dashboard/CompanyProfileView.vue';
 import Home from '../../views/public/MainView.vue';
 import LoginAndSignupView from "../../views/public/LoginAndSignupView.vue";
-import LoginView from "../../views/dashboard/LoginView.vue";
 import ApplicantProfileView from "../../views/dashboard/ApplicantProfileView.vue";
+import {getAuthUser} from "../utils/storeHelpers.js";
+import {logoutUser} from "../utils/auth.js";
 // import ComingSoonComponent from "../components/publicMainComponents /ComingSoonComponent.vue";
 
 const routes = [
@@ -22,13 +23,14 @@ const routes = [
     {path: '/dashboard/companies', component: CompaniesView},
     // todo add :id
     {path: '/dashboard/companies/:id', component: CompanyProfile},
-    {path: '/dashboard/login', component: LoginView},
+    {path: '/dashboard/login', component: LoginAndSignupView},
 
     // public routes
     // {path: '/', component: ComingSoonComponent},
     {path: '/', component: Home},
-    {path: '/profile/:id', component: ApplicantProfileView},
-    {path: '/profile/:id/edit', component: ApplicantProfileView},
+
+    {path: '/profile/:id', component: ApplicantProfileView, meta: {requiresAuth: true}},
+    {path: '/profile/:id/edit', component: ApplicantProfileView, meta: {requiresAuth: true}},
 
     {path: '/login', component: LoginAndSignupView},
     {path: '/signup', component: LoginAndSignupView},
@@ -41,6 +43,24 @@ const routes = [
 const router = createRouter({
     history: createWebHistory(),
     routes,
+});
+
+router.beforeEach(async (to, from, next) => {
+    if (to.matched.some(record => record.meta.requiresAuth)) {
+        try {
+            const user = await getAuthUser();
+            if (user && user.id) {
+                next();
+            } else {
+                next({path: '/login', query: {redirect: to.fullPath}});
+            }
+        } catch (error) {
+            console.error('Error during authentication check:', error);
+            next('/login');
+        }
+    } else {
+        next();
+    }
 });
 
 export default router;

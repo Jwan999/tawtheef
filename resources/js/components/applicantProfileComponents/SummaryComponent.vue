@@ -52,9 +52,6 @@ watch([summary], () => {
     )
 }, {deep: true})
 
-onMounted(() => {
-    summary.value = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab accusantium aliquid animi at eaque facere harum, nesciunt placeat vero voluptatibus. Amet error est pariatur vel vitae. Aperiam eaque eos sunt.'
-})
 </script>
 
 <style scoped>

@@ -1,13 +1,14 @@
 <template>
-    <div class="flex justify-center mt-24">
+    <div class="flex justify-center mt-14">
         <div class="w-4/12  bg-white rounded-md">
-            <h2 class="text-lg text-orange font-semibold mt-8 px-6">Start with creating your account</h2>
+            <h2 class="text-lg text-zinc-600 font-semibold mt-8 px-6">Start with creating your account</h2>
+            <router-link to="/login" class="text-orange text-sm font-semibold px-6">or login</router-link>
             <div class="pl-6">
                 <hr class="h-px w-full bg-orange  border-0 mt-1 mb-8">
 
             </div>
 
-            <div class="px-6 space-y-4 my-10">
+            <div class="px-6 space-y-6 my-10">
                 <div class="form-group flex flex-col space-y-3">
                     <h1 class="text-xs text-zinc-500 font-semibold tracking-wider">Full Name</h1>
                     <input type="text" v-model="name"
@@ -53,13 +54,11 @@
                  :class="hovered ? 'border-dark' : 'border-orange'">
                 <form @mouseover="hovered = !hovered"
                       @mouseleave="hovered = !hovered"
-                      class="uppercase text-xs cursor-pointer inline-block font-semibold bg-orange text-white hover:bg-dark px-4 py-2"
+                      class="uppercase text-xs cursor-pointer inline-block font-semibold bg-orange text-white hover:bg-dark px-4 py-2 rounded-br-md"
                       @click="handleSignup">
                     signup
                 </form>
-                <router-link to="/login" class="uppercase text-xs cursor-pointer inline-block font-semibold text-zinc-700 hover:text-white 0 hover:bg-dark px-4 py-2 rounded-br-md">
-                    Or Login
-                </router-link>
+
             </div>
 
 
@@ -70,7 +69,7 @@
 
 <script setup>
 import {ref, defineEmits} from 'vue';
-import axios from 'axios'; // Assuming Axios is installed
+import axios from 'axios';
 
 const email = ref('');
 const profileType = ref('Applicant');
@@ -94,16 +93,13 @@ const handleSignup = async () => {
             password: password.value,
         });
 
-        if (response.status === 200) {
-            // Signup successful!
-            console.log('Signup successful:', response.data);
-            // Handle successful Signup (e.g., redirect, store user data)
+        if (response.status === 201) {
+            window.location.href = '/';
         } else {
-            console.error('Signup failed:', response.data);
-            // Handle Signup errors (e.g., display error messages)
+            // console.error('Signup failed:', response.data);
         }
     } catch (error) {
-        console.error('Signup error:', error.response.data);
+        // console.error('Signup error:', error.response.data);
     }
 };
 </script>

@@ -4,11 +4,10 @@
 
 
         <div v-if="!editMode" class="col-span-8 w-full space-y-6">
-
             <span
                 :class="workAvailability ? 'bg-orange text-white':'bg-zinc-200 text-zinc-400'"
                 class="font-semibold text-sm font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-orange-900 dark:text-orange-300">
-                                {{ workAvailability ? 'Available for Work' : 'Not Available for work' }}
+                {{ workAvailability ? 'Available for Work' : 'Not Available for work' }}
             </span>
             <h1 class="text-2xl text-orange font-semibold mt-4 tracking-wider">{{ fullName }}</h1>
 

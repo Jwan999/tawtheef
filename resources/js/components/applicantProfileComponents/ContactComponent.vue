@@ -55,11 +55,11 @@
 
                 <div class="flex items-start space-x-3 mt-3">
                     <div class="w-full relative">
-                        <input @input="emitInputData" type="text" v-model="phone"
+                        <input type="text" v-model="phone"
                                class="text-xs block w-full p-2.5 focus:border-orange focus:ring-0 bg-zinc-50 w-full rounded-md border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none"
                                placeholder="0964-000-0000-000" required/>
                         <div class="me-4 mt-2 absolute mt-[40px] top-0 left-0">
-                            <input @input="emitInputData" checked id="orange-checkbox" type="checkbox" value=""
+                            <input checked id="orange-checkbox" type="checkbox" value=""
                                    v-model="isChecked"
                                    class="text-xs w-4 h-4 mr-2 mb-1 text-orange bg-zinc-100 border-zinc-300 rounded focus:ring-orange dark:focus:ring-orange dark:ring-offset-zinc-800 focus:ring-1 dark:bg-zinc-700 dark:border-zinc-600">
                             <span class="mb-2 text-xs font-medium text-zinc-500">Make phone number public.</span>
@@ -67,7 +67,7 @@
                     </div>
                     <div class="relative w-full">
                         <span class="text-orange absolute top-0 right-0 ml-24 -mt-3">*</span>
-                        <input @input="emitInputData" type="text" v-model="email"
+                        <input type="text" v-model="email"
                                class="text-xs block w-full p-2.5 bg-zinc-50 w-full rounded-md border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none focus:border-orange focus:ring-0"
                                placeholder="name@flowbite.com">
                         <!--                        <h1 class="text-red-500 text-xs font-semibold">This field is required.</h1>-->
@@ -76,7 +76,7 @@
                     <div class="relative w-full">
                         <span class="text-orange absolute top-0 right-0 ml-24 -mt-3">*</span>
                         <div class="flex">
-                            <select @change="emitInputData" v-model="city" :value="city"
+                            <select v-model="city" :value="city"
                                     :class="city == 'Baghdad' ?'rounded-l-md' :'rounded'"
                                     class="h-[37.1px] text-xs focus:border-orange focus:ring-0 bg-zinc-50 w-full border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none">
                                 <option value="" class="hidden" selected>Choose your city...</option>
@@ -97,17 +97,22 @@
                 </div>
 
                 <div class="flex space-x-3 items-center mt-3">
+
                     <div class="relative w-full">
-                        <span class="text-orange absolute top-0 right-0 ml-24 -mt-3">*</span>
-                        <input @input="emitInputData" type="text" v-model="birthdate"
-                               class=" block w-full p-2.5 bg-zinc-50 w-full rounded-md md:text-xs text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none focus:border-orange focus:ring-0"
-                               placeholder="Date of birth">
-                        <!--                        <h1 class="text-red-500 text-xs font-semibold">This field is required.</h1>-->
+                        <div class="relative w-full">
+
+                            <input v-model="birthdate" type="date"
+                                   class="date-picker z-40 block w-full p-2.5 bg-zinc-50 rounded-md md:text-xs text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none focus:border-orange focus:ring-0"
+                                   placeholder="Birthdate">
+
+                        </div>
+
                     </div>
+
 
                     <div class="relative w-full">
                         <span class="text-orange absolute top-0 right-0 ml-24 -mt-3">*</span>
-                        <select @change="emitInputData" v-model="gender"
+                        <select v-model="gender"
                                 class="h-[37.1px] focus:border-orange focus:ring-0 bg-zinc-50 w-full rounded-md md:text-xs text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none">
                             <option selected>Female</option>
                             <option>Male</option>
@@ -124,9 +129,9 @@
 
                     <div class="relative">
                         <div class="flex">
-                            <input @input="emitInputData" type="text" v-model="link" placeholder="Link"
+                            <input type="text" v-model="link" placeholder="Link"
                                    class="focus:border-orange focus:ring-0 bg-zinc-50 w-full rounded-l-md md:text-xs text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none"/>
-                            <input @input="emitInputData" type="text" v-model="label" placeholder="Link Label"
+                            <input type="text" v-model="label" placeholder="Link Label"
                                    class="focus:border-orange focus:ring-0 bg-zinc-50 w-full rounded-r-md md:text-xs text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none"/>
 
                         </div>
@@ -165,7 +170,7 @@
 </template>
 
 <script setup>
-import {onMounted, ref, watch} from 'vue'; // Import ref and computed
+import {onMounted, ref, watch, watchEffect} from 'vue'; // Import ref and computed
 import {editMode, getSelectables, getAuthUser} from "../../utils/storeHelpers.js";
 
 const showInputs = ref(false)
@@ -193,17 +198,14 @@ onMounted(async () => {
 
 const cities = ref([])
 
-const city = ref('Baghdad');
+const city = ref('');
 const gender = ref('Female');
-const zone = ref('Karkh');
+const zone = ref('');
 const email = ref('');
-const phone = ref('07816151297');
-const birthdate = ref('10-10-2020');
-const links = ref([{
-    link: "youtube",
-    label: "youtube"
-}]);
+const phone = ref('');
+const birthdate = ref('');
 
+const links = ref([]);
 const link = ref('');
 const label = ref('');
 const isChecked = ref(false);
@@ -223,6 +225,7 @@ const deleteLink = (index) => {
 const emit = defineEmits(["update:modelValue"])
 
 watch([phone, email, city, zone, gender, birthdate], () => {
+
     emit('update:modelValue',
         {
             phone: phone.value,

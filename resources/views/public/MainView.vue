@@ -1,5 +1,6 @@
 <template>
     <div>
+        <HeroComponent></HeroComponent>
         <SearchComponent></SearchComponent>
         <SlidersComponent></SlidersComponent>
         <PreviewAllComponent></PreviewAllComponent>
@@ -13,9 +14,10 @@ import NavbarComponent from "./mainViewComponents/NavbarComponent.vue";
 import SlidersComponent from "./mainViewComponents/SlidersComponent.vue";
 import PreviewAllComponent from "./mainViewComponents/PreviewAllComponent.vue";
 import FooterComponent from "./mainViewComponents/FooterComponent.vue";
+import HeroComponent from "./mainViewComponents/HeroComponent.vue";
 
 export default {
     name: "MainView",
-    components: {FooterComponent, PreviewAllComponent, SlidersComponent, NavbarComponent, SearchComponent}
+    components: {HeroComponent, FooterComponent, PreviewAllComponent, SlidersComponent, NavbarComponent, SearchComponent}
 }
 </script>

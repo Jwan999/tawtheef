@@ -8,6 +8,12 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
+    public function logout(Request $request): \Illuminate\Http\JsonResponse
+    {
+        Auth::logout();
+        return response()->json(['message' => 'Logout successful'], 200);
+    }
+
 
     public function login(Request $request)
     {
@@ -29,7 +35,7 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
-
+//dd($request);
         // Validate signup data
         $this->validate($request, [
             'email' => 'required|email|unique:users',
@@ -41,7 +47,7 @@ class AuthController extends Controller
         $user = new User();
         $user->email = $request->email;
         $user->name = $request->name;
-        $user->profile_type = $request->profileType;
+        $user->profileable_type = $request->profileType;
         $user->password = bcrypt($request->password);
 //        dd($user);
 

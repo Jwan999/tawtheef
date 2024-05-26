@@ -5,7 +5,8 @@
 
     <div class="flex justify-center mt-24">
         <div class="w-4/12  bg-white rounded-md">
-            <h2 class="text-lg text-orange font-semibold mt-8 px-6">Go in to your account</h2>
+            <h2 class="text-lg text-zinc-600 font-semibold mt-8 px-6">Login to your account</h2>
+            <router-link to="/signup" class="text-orange text-sm font-semibold px-6">or sign up</router-link>
             <div class="pl-6">
                 <hr class="h-px w-full bg-orange  border-0 mt-1 mb-8">
 
@@ -34,13 +35,11 @@
                  :class="hovered ? 'border-dark' : 'border-orange'">
                 <form @mouseover="hovered = !hovered"
                       @mouseleave="hovered = !hovered"
-                      class="uppercase text-xs cursor-pointer inline-block font-semibold bg-orange text-white hover:bg-dark px-4 py-2"
+                      class="uppercase text-xs cursor-pointer inline-block font-semibold bg-orange text-white hover:bg-dark px-4 py-2 rounded-br-md"
                       @click="handleLogin">
                     login
                 </form>
-                <router-link to="/signup" class="uppercase text-xs cursor-pointer inline-block font-semibold text-zinc-700 hover:text-white 0 hover:bg-dark px-4 py-2 rounded-br-md">
-                    Or Signup
-                </router-link>
+
             </div>
 
 
@@ -50,8 +49,8 @@
 </template>
 
 <script setup>
-import {ref, defineEmits} from 'vue';
-import axios from 'axios'; // Assuming Axios is installed
+import {ref} from 'vue';
+import axios from 'axios';
 
 const email = ref('');
 const password = ref('');
@@ -59,12 +58,10 @@ const hovered = ref(false);
 
 
 const handleLogin = async () => {
-    // Validate email and password
     if (!email.value || !password.value) {
         console.error('Email or password is empty!');
         return;
     }
-
     try {
         const response = await axios.post('/login', {
             email: email.value,
@@ -72,18 +69,15 @@ const handleLogin = async () => {
         });
 
         if (response.status === 200) {
-            // Login successful!
-            console.log('Login successful:', response.data);
-            // Handle successful login (e.g., redirect, store user data)
+
+            window.location.href = '/';
+
         } else {
             console.error('Login failed:', response.data);
-            // Handle login errors (e.g., display error messages)
         }
     } catch (error) {
         console.error('Login error:', error.response.data);
-        // Handle API errors
     } finally {
-        // Clear form after submission (optional)
         email.value = '';
         password.value = '';
     }

@@ -109,11 +109,12 @@ const toggleEditMode = () => {
 };
 
 
-const fetchData = async () => {
+const fetchApplicantData = async () => {
     try {
-        const response = await axios.get(`/api/applicants/${user.id}`);
+        const response = await axios.get(`/api/applicants/${user.value.id}`);
         const data = response.data;
-
+console.log(data)
+        // Assigning the values to the reactive variables
         image.value = data.image;
         speciality.value = data.speciality;
         education.value = data.education;
@@ -126,8 +127,11 @@ const fetchData = async () => {
         contact.value = data.contact;
         employment.value = data.employment;
         activities.value = data.activities;
-    } catch (error) {
-        console.error('Error fetching data:', error);
+        published.value = data.published;
+        user.value = data.user; // Assuming 'user' is part of the response
+
+    } catch (err) {
+        error.value = err.response ? err.response.data.message : err.message;
     }
 };
 
@@ -136,9 +140,13 @@ onMounted(() => {
 
     getAuthUser().then(response => {
         user.value = response;
+        // console.log(user.value.id)
     }).catch(error => {
         console.error('Error fetching user data:', error);
     })
+
+    fetchApplicantData();
+
 });
 
 

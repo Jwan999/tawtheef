@@ -29,13 +29,16 @@
             <h1 class="flex-none text-lg font-semibold text-dark">Specializations</h1>
             <hr class="h-px w-full bg-orange border-0 mt-1">
         </div>
+        <div class="mt-2 mb-1">
+            <h1 class="text-xs font-semibold text-zinc-600">* You can pick two main specializations only.</h1>
+        </div>
         <div class="flex">
 
             <div class="flex justify-between space-x-6 w-full">
                 <div class="w-full">
                     <div v-for="(speciality,index) in specialities" :key="index"
                          class="">
-                        <div @click="addSpecializations(speciality.title,index)"
+                        <div @click="toggleSpecialization(speciality.title)"
                              :class="{'rounded-t-md': index === 0,
                  'rounded-b-md': index === specialities.length - 1,
                  'bg-orange text-white': specializations.includes(speciality.title),
@@ -68,9 +71,7 @@
             </div>
 
         </div>
-        <div class="mt-2">
-            <h1 class="text-xs font-semibold text-zinc-600">* You can pick two main specializations only.</h1>
-        </div>
+
     </div>
 
 
@@ -81,8 +82,8 @@ import {computed, onMounted, ref, watch, watchEffect} from "vue";
 
 import {editMode, getSelectables} from "../../utils/storeHelpers.js";
 
-const specializations = ref(['Creative & Design', 'Development']);
-const subSpecialities = ref(['Graphic Design', 'Front-End Development']);
+const specializations = ref([]);
+const subSpecialities = ref([]);
 
 const specialities = ref([])
 
@@ -96,20 +97,15 @@ onMounted(async () => {
     });
 
 });
-const addSpecializations = (speciality, index) => {
 
-    if (!specializations.value.includes(speciality)) {
-        specializations.value.push(speciality)
-    } else {
-        specializations.value.splice(index, 1)
+const toggleSpecialization = (speciality) => {
+    if (specializations.value.includes(speciality)) {
+        specializations.value = specializations.value.filter(item => item !== speciality);
+    } else if (specializations.value.length < 2) {
+        specializations.value = [...specializations.value, speciality];
     }
-    if (specializations.value.length > 2) {
-        specializations.value.splice(0, 1)
+};
 
-    }
-
-
-}
 const {modelValue} = defineProps(["modelValue"]);
 
 const emit = defineEmits(["update:modelValue"])
@@ -121,16 +117,6 @@ watch([specializations, subSpecialities], () => {
     })
 }, {deep: true})
 
-onMounted(() => {
-    specializations.value = ['Creative & Design', 'Development']
-    subSpecialities.value = ['Graphic Design', 'Front-End Development']
-});
 
-// const roundness
 </script>
 
-<style scoped>
-.hidden {
-    display: none;
-}
-</style>

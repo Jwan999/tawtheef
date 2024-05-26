@@ -30,18 +30,10 @@
         </div>
 
 
-        <div v-else class="rounded-md bg-white p-4">
-            <button
-
-                @click="addNew"
-                class="flex-none w-auto appearance-none px-3 py-1 rounded-br-md font-semibold text-start text-orange bg-zinc-100 hover:bg-dark hover:text-white text-sm">
-                Add component
-
-            </button>
-
+        <div v-else class="rounded-md bg-white p-4 pb-6">
             <div class="space-y-6">
                 <div v-for="(item,index) in value" :key="index"
-                     class="rounded-bl-md border-0 border-r-[1px] pb-4 border-b-[1px]"
+                     class="border-0 border-r-[1px] pb-4 border-b-[1px]"
                      :class="hoveredElement===index ? borderColor : 'border-zinc-100'">
                     <div class="w-full">
                         <div class="flex justify-end">
@@ -56,13 +48,20 @@
                                 </svg>
                             </button>
                         </div>
-                        <div class="pr-8 pt-6 ml-0">
+                        <div class="pr-8 pt-3 ml-0">
                             <ActivityInputs v-model="value[index]">
                             </ActivityInputs>
                         </div>
                     </div>
                 </div>
             </div>
+            <button
+
+                @click="addNew"
+                class="flex-none w-auto appearance-none px-3 py-1 rounded-bl-md font-semibold text-start text-orange bg-zinc-100 hover:bg-dark hover:text-white text-sm">
+                Add component
+
+            </button>
 
 
         </div>
@@ -108,7 +107,7 @@ const uniqueYears = computed({
 })
 const addNew = () => {
     value.value.push({
-        title: "test", participatedAs: "Participated as", year: "test"
+        title: "", participatedAs: "Participated as", year: ""
     });
 }
 const remove = (index) => {
