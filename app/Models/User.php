@@ -12,10 +12,12 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    public function profileable()
+    public function applicant()
     {
-        return $this->morphTo();
+        return $this->hasOne(Applicant::class);
     }
+
+
     /**
      * The attributes that are mass assignable.
      *

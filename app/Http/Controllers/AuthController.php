@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Applicant;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -41,17 +42,19 @@ class AuthController extends Controller
             'email' => 'required|email|unique:users',
             'password' => 'required',
             'name' => 'required',
-            'profileType' => 'required',
         ]);
 
         $user = new User();
         $user->email = $request->email;
         $user->name = $request->name;
-        $user->profileable_type = $request->profileType;
         $user->password = bcrypt($request->password);
-//        dd($user);
-
         $user->save();
+//
+//        $applicant = new Applicant();
+//        $applicant->user_id = $user->id;
+//        $applicant->save();
+
+
         Auth::login($user);
 
 

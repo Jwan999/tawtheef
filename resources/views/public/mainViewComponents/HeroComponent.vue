@@ -1,25 +1,28 @@
 <template>
+    <div class="w-10/12 flex justify-start">
+        <div class="border-[1px] border-orange pt-24 pb-40 mt-6 w-full rounded-r-full">
+            <div class="flex justify-center items-center">
+                <div class="w-10/12">
+                    <div class="w-full">
+                        <h1 class="text-5xl font-bold">Build Your <span class="text-orange">Job-Ready</span> Resume,</h1>
+                        <h1 class="text-5xl font-bold">In Minutes.</h1>
+                    </div>
+                    <div class="flex justify-end -mt-2">
+                        <div class="w-4/12">
+                            <button
+                                class="w-full bg-orange hover:bg-dark py-3 text-center font-semibold tracking-wider text-white text-2xl rounded-full outline-none focus:outline-none">
+                                VISIT YOUR RESUME
+                            </button>
+                        </div>
 
-    <div class="flex flex-col tracking-wider space-y-10 my-32 mb-44">
-        <div class="w-full px-32 flex">
-            <div class="w-8/12">
-                <h1 class="text-5xl font-bold">Build your <span class="text-orange">Job-Ready</span> resume,</h1>
-                <h1 class="text-5xl font-bold">in minutes.</h1>
+                    </div>
+                </div>
+
             </div>
-            <div class="w-6/12 -ml-32 mt-32">
-                <p class="text-xl mb-8">Join thousands of professionals who have landed their dream jobs with our
-                    easy-to-use resume builder.</p>
-            </div>
+
         </div>
 
-        <div class="flex justify-end w-full">
-            <button
-                class="bg-orange hover:bg-dark py-3 px-16 text-start w-8/12 font-semibold tracking-wider text-white text-2xl rounded-l-full outline-none focus:outline-none">
-                Go to your resume now
-            </button>
-        </div>
     </div>
-
 
 </template>
 

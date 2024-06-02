@@ -1,7 +1,7 @@
 <template>
     <div class="w-full space-y-4">
         <div class="flex items-center space-x-3">
-            <h1 class="flex-none text-lg font-semibold text-dark">Employment</h1>
+            <h1 class="flex-none text-xl font-semibold text-dark">Employment</h1>
             <hr class="h-px w-full bg-orange border-0 mt-1">
         </div>
 
@@ -10,22 +10,27 @@
             <div v-if="!showInputs"
                  v-for="(job,index) in value">
                 <!--period of employment-->
-                <div class="flex text-dark space-x-1 text-sm font-semibold">
-                    <h1 v-if="job.duration[0] !== 'Start year'" class="text-orange">{{ job.duration[0] }}</h1>
-                    <h1 v-if="job.duration[1] !== 'End year'">-</h1>
-                    <h1 v-if="job.duration[1] !== 'End year'" class="text-orange">{{ job.duration[1] }}</h1>
+                <div v-if="job.duration[0] !== 'Start Year' && job.duration[1] !== 'End Year'"
+                     class="flex text-dark space-x-1 text-sm font-semibold">
+                    <h1 class="text-orange">{{ job.duration[0] }}</h1>
+                    <h1>-</h1>
+                    <h1 class="text-orange">{{ job.duration[1] }}</h1>
                 </div>
                 <!--position-->
                 <div class="flex items-center space-x-2 mb-3">
-                    <h1 class="font-semibold text-lg">{{ job.title }}</h1>
+                    <h1 class="font-semibold text-xl">{{ job.title }}</h1>
                     <h1 v-if="job.employer">at</h1>
-                    <h1 class="font-semibold italic text-orange text-sm">{{ job.employer }}</h1>
+                    <h1 class="font-semibold italic text-sm">{{ job.employer }}</h1>
                 </div>
                 <div class="space-y-2">
+                    <h1 class="font-semibold text-zinc-500">Responsibilities:</h1>
                     <div v-for="responsibility in job.responsibilities" class="flex items-center space-x-3">
-                        <span class="w-2 h-2 bg-dark rounded-full"></span>
-                        <p class="text-sm font-semibold">{{ responsibility }}</p>
+                        <div class="flex items-start w-full space-x-3">
+                            <span class="flex-none mt-2 w-2 h-2 bg-dark rounded-full"></span>
+                            <p class="text-base">{{ responsibility }}</p>
+                        </div>
                     </div>
+
                 </div>
 
             </div>
@@ -116,7 +121,7 @@ const addNew = () => {
 onMounted(() => {
     value.value = modelValue;
     if (modelValue.length == 0) {
-        nextTick(()=>{
+        nextTick(() => {
             addNew();
         })
     }

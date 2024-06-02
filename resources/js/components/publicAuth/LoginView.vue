@@ -15,14 +15,14 @@
             <div class="px-6 space-y-4 my-10">
 
                 <div class="form-group flex flex-col space-y-3">
-                    <h1 class="text-xs text-zinc-500 font-semibold tracking-wider">Email Address</h1>
+                    <h1 class="text-sm text-zinc-500 font-semibold tracking-wider">Email Address</h1>
 
                     <input type="text" v-model="email"
                            class=" block w-full p-2.5 bg-zinc-50 w-full rounded-md text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none focus:border-orange focus:ring-0"
                            placeholder="name@flowbite.com">
                 </div>
                 <div class="form-group flex flex-col space-y-3">
-                    <h1 class="text-xs text-zinc-500 font-semibold tracking-wider">Password</h1>
+                    <h1 class="text-sm text-zinc-500 font-semibold tracking-wider">Password</h1>
 
                     <input type="password" v-model="password"
                            class=" block w-full p-2.5 bg-zinc-50 w-full rounded-md text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none focus:border-orange focus:ring-0"
@@ -35,7 +35,7 @@
                  :class="hovered ? 'border-dark' : 'border-orange'">
                 <form @mouseover="hovered = !hovered"
                       @mouseleave="hovered = !hovered"
-                      class="uppercase text-xs cursor-pointer inline-block font-semibold bg-orange text-white hover:bg-dark px-4 py-2 rounded-br-md"
+                      class="uppercase text-sm cursor-pointer inline-block font-semibold bg-orange text-white hover:bg-dark px-4 py-2 rounded-br-md"
                       @click="handleLogin">
                     login
                 </form>

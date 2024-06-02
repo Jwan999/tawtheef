@@ -2,7 +2,7 @@
     <div class="w-full space-y-4">
 
         <div class="flex items-center space-x-3">
-            <h1 class="flex-none text-lg font-semibold text-dark">Events and Activities</h1>
+            <h1 class="flex-none text-xl font-semibold text-dark">Events and Activities</h1>
             <hr class="h-px w-full bg-orange border-0 mt-1">
         </div>
 
@@ -10,8 +10,8 @@
 
             <div v-if="!showInputs" v-for="(year, index) in uniqueYears" :key="index">
 
-                <h1 class="text-orange font-semibold text-lg mb-4">{{ year }}</h1>
-                <ul class="text-sm">
+                <h1 v-if="year !== 'Year'" class="text-orange font-semibold text-base mb-2">{{ year }}</h1>
+                <ul class="text-lg">
                     <li v-for="event in value.filter(item => item.year === year)"
                         class="flex space-x-2 items-center ml-5">
 
@@ -107,7 +107,7 @@ const uniqueYears = computed({
 })
 const addNew = () => {
     value.value.push({
-        title: "", participatedAs: "Participated as", year: ""
+        title: "", participatedAs: "Participated as", year: "Year"
     });
 }
 const remove = (index) => {

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Applicant;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -70,64 +71,68 @@ class ApplicantController extends Controller
 
     public function store(Request $request)
     {
-        // Validate the incoming request data
-        $validator = Validator::make($request->all(), [
-            'data' => 'required|json',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
-        ]);
 
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
+//        $validator = Validator::make($request->all(), [
+//            'data' => 'required|json',
+//            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+//        ]);
 
-        // Parse the JSON data
+//        if ($validator->fails()) {
+//            return response()->json(['errors' => $validator->errors()], 422);
+//        }
+
         $requestData = json_decode($request->input('data'), true);
 
-        // Additional validation for parsed JSON data
-        $validator = Validator::make($requestData, [
-            'speciality' => 'required|array',
-            'education' => 'required|array',
-            'languages' => 'required|array',
-            'skills' => 'required|array',
-            'tools' => 'required|array',
-            'details' => 'required|array',
-            'summary' => 'required|string',
-            'courses' => 'required|array',
-            'contact' => 'required|array',
-            'employment' => 'required|array',
-            'activities' => 'required|array',
-            'published' => 'required|boolean'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-
-        // Handle the image file if it's present
         $imagePath = null;
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('applicant_images', 'public');
         }
 
-        // Create a new applicant instance and save the data
-        $applicant = new Applicant();
-        $applicant->image = $imagePath;
-        $applicant->speciality = json_encode($requestData['speciality']);
-        $applicant->education = json_encode($requestData['education']);
-        $applicant->languages = json_encode($requestData['languages']);
-        $applicant->skills = json_encode($requestData['skills']);
-        $applicant->tools = json_encode($requestData['tools']);
-        $applicant->details = json_encode($requestData['details']);
-        $applicant->summary = $requestData['summary'];
-        $applicant->courses = json_encode($requestData['courses']);
-        $applicant->contact = json_encode($requestData['contact']);
-        $applicant->employment = json_encode($requestData['employment']);
-        $applicant->activities = json_encode($requestData['activities']);
-        $applicant->published = $requestData['published'];
 
-        $applicant->save();
+        $user = Auth::user();
+        $applicant = Applicant::where('user_id', $user->id)->first();
 
-        return response()->json(['message' => 'Applicant data saved successfully', 'data' => $applicant], 201);
+        if ($applicant) {
+            // Update existing applicant
+//            dd($imagePath);
+            $applicant->image = $imagePath ?: $applicant->image;
+            $applicant->speciality = json_encode($requestData['speciality']);
+            $applicant->education = json_encode($requestData['education']);
+            $applicant->languages = json_encode($requestData['languages']);
+            $applicant->skills = json_encode($requestData['skills']);
+            $applicant->tools = json_encode($requestData['tools']);
+            $applicant->details = json_encode($requestData['details']);
+            $applicant->summary = $requestData['summary'];
+            $applicant->courses = json_encode($requestData['courses']);
+            $applicant->contact = json_encode($requestData['contact']);
+            $applicant->employment = json_encode($requestData['employment']);
+            $applicant->activities = json_encode($requestData['activities']);
+            $applicant->published = $requestData['published'];
+
+            $applicant->save();
+
+            return response()->json(['message' => 'Applicant data updated successfully', 'data' => $applicant], 200);
+        } else {
+            $applicant = new Applicant();
+            $applicant->image = $imagePath;
+            $applicant->speciality = json_encode($requestData['speciality']);
+            $applicant->education = json_encode($requestData['education']);
+            $applicant->languages = json_encode($requestData['languages']);
+            $applicant->skills = json_encode($requestData['skills']);
+            $applicant->tools = json_encode($requestData['tools']);
+            $applicant->details = json_encode($requestData['details']);
+            $applicant->summary = $requestData['summary'];
+            $applicant->courses = json_encode($requestData['courses']);
+            $applicant->contact = json_encode($requestData['contact']);
+            $applicant->employment = json_encode($requestData['employment']);
+            $applicant->activities = json_encode($requestData['activities']);
+            $applicant->published = $requestData['published'];
+            $applicant->user_id = $user->id;
+
+            $applicant->save();
+
+            return response()->json(['message' => 'Applicant data saved successfully', 'data' => $applicant], 201);
+        }
     }
 
 
@@ -136,16 +141,13 @@ class ApplicantController extends Controller
      */
     public function show($id)
     {
-        // Retrieve the applicant data by ID
-        $applicant = Applicant::with('user')->find($id);
-
-        // Check if the applicant exists
+        $applicant = Applicant::find($id);
+//        dd(Auth::id());
         if (!$applicant) {
             return response()->json(['message' => 'Applicant not found'], 404);
         }
 
-        // Ensure the authenticated user can only access their own data
-        if (Auth::id() !== $applicant->id) { // Assuming you have a user_id column in applicants table
+        if (Auth::id() !== $applicant->user_id) { // Assuming you have a user_id column in applicants table
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 //        dd($applicant);

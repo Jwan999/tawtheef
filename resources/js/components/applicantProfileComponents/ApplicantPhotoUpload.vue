@@ -16,12 +16,12 @@
 
         <div v-if="editMode" class="absolute top-0 right-0 mt-[2.5px]">
             <label for="fileInput"
-                   class="appearance-none relative appearance-none text-xs rounded-bl-md rounded-tr-md px-3 py-2 font-semibold text-white bg-orange hover:bg-dark cursor-pointer">
+                   class="appearance-none relative appearance-none text-sm rounded-bl-md rounded-tr-md px-3 py-2 font-semibold text-white bg-orange hover:bg-dark cursor-pointer">
                 Upload photo
             </label>
             <input id="fileInput" type="file" v-on:change="previewImage" class="absolute left-0 hidden">
         </div>
-<!--        <h1 v-if="editMode" class="w-full text-red-500 text-xs mt-1 font-semibold">This field is required.</h1>-->
+<!--        <h1 v-if="editMode" class="w-full text-red-500 text-sm mt-1 font-semibold">This field is required.</h1>-->
 
     </div>
 

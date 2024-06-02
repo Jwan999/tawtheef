@@ -1,22 +1,23 @@
 <template>
 
     <div class="w-full pr-0">
-        <label for="message" class="block mb-2 text-xs font-medium text-zinc-700">These fields are optional, and their purpose is to show if the individual has other related activities.</label>
+        <label for="message" class="block mb-2 text-sm font-medium text-zinc-700">These fields are optional, and their
+            purpose is to show if the individual has other related activities.</label>
 
         <div class="flex space-x-3 items-center w-full mt-4">
 
             <div class="relative w-full">
                 <input v-model="modelValue.title"
                        placeholder="Activity or event title"
-                       class="w-full focus:border-orange focus:ring-0 bg-zinc-50 w-6/12 rounded-md md:text-xs text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none"
+                       class="w-full capitalize focus:border-orange focus:ring-0 bg-zinc-50 w-6/12 rounded-md text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none"
                        type="text">
-                <!--                <h1 class="text-red-500 text-xs mt-1 font-semibold">This field is required.</h1>-->
+                <!--                <h1 class="text-red-500 text-sm mt-1 font-semibold">This field is required.</h1>-->
 
             </div>
             <div class="relative w-full">
 
                 <select v-model="modelValue.participatedAs"
-                        class="rounded text-xs focus:border-orange focus:ring-0 bg-zinc-50 w-full border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none">
+                        class="rounded text-sm focus:border-orange focus:ring-0 bg-zinc-50 w-full border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none">
 
                     <option value="Participated as" class="hidden" selected>Participated as</option>
                     <option v-for="item in participation">{{ item }}</option>
@@ -27,13 +28,14 @@
 
             <div class="relative w-full">
                 <select v-model="modelValue.year"
-                        class="w-full focus:border-orange focus:ring-0 bg-zinc-50 w-6/12 rounded-md md:text-xs text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none">
-                    <option value="" selected disabled>Year</option>
+                        class="w-full focus:border-orange focus:ring-0 bg-zinc-50 w-6/12 rounded-md text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none">
+                    <option selected>{{ modelValue.year }}
+                    </option>
                     <template v-for="year in years">
                         <option :value="year">{{ year }}</option>
                     </template>
                 </select>
-                <!--                <h1 class="text-red-500 text-xs mt-1 font-semibold">This field is required.</h1>-->
+                <!--                <h1 class="text-red-500 text-sm mt-1 font-semibold">This field is required.</h1>-->
 
             </div>
 

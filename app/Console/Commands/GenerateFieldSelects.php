@@ -47,7 +47,7 @@ class GenerateFieldSelects extends Command
                     ],
                     [
                         'title' => 'Science & Engineering',
-                        'children' => ['Biology', 'Chemistry', 'Engineering (various specializations)', 'Mathematics', 'Statistics', 'Physics']
+                        'children' => ['Biology', 'Chemistry', 'Engineering', 'Mathematics', 'Statistics', 'Physics']
                     ],
                     [
                         'title' => 'Other',

@@ -1,6 +1,6 @@
 <template>
 
-
+    <button class="px-3 py-1 bg-dark text-white uppercase" @click="fetchApplicantData()">get data</button>
     <div :class="!isDashboard ? 'px-10 mt-6 mb-10' : ''" class="grid grid-cols-12 gap-6 relative">
         <!--first row-->
         <ResumeActionButtonsComponent @saveResume="saveResume" @publishResume="publishResume"
@@ -19,10 +19,13 @@
             <ApplicantDetailsComponent class="w-9/12" v-model="details"></ApplicantDetailsComponent>
 
             <div class="w-full">
-                <ContactComponent v-model="contact"></ContactComponent>
+                <ContactComponent :modelValue="contact" @update:modelValue="contact = $event"
+                    v-model="contact"></ContactComponent>
             </div>
 
-            <SummaryComponent v-model="summary"></SummaryComponent>
+            <SummaryComponent :modelValue="summary" @update:modelValue="summary = $event"
+                              v-model="summary"></SummaryComponent>
+
             <EmploymentComponent v-model="employment"></EmploymentComponent>
             <CoursesComponent v-model="courses"></CoursesComponent>
             <ActivitiesComponent v-model="activities"></ActivitiesComponent>
@@ -58,14 +61,14 @@ const education = ref([]);
 const languages = ref([]);
 const tools = ref([]);
 const skills = ref([]);
-const summary = ref(null);
+const summary = ref('');
 const details = ref('');
 const courses = ref([]);
 const contact = ref(null);
 const employment = ref([]);
 const activities = ref([]);
 const published = ref(false);
-const user = ref(null)
+const user = ref({})
 const publishResume = (event) => {
     published.value = event.value
 }
@@ -83,7 +86,7 @@ const saveResume = () => {
         contact: contact.value,
         employment: employment.value,
         activities: activities.value,
-        published: published.value
+        published: published.value,
     };
 
     const formData = new FormData();
@@ -113,25 +116,30 @@ const fetchApplicantData = async () => {
     try {
         const response = await axios.get(`/api/applicants/${user.value.id}`);
         const data = response.data;
-console.log(data)
+
+        // console.log(user.value.id)
         // Assigning the values to the reactive variables
         image.value = data.image;
-        speciality.value = data.speciality;
-        education.value = data.education;
-        languages.value = data.languages;
-        tools.value = data.tools;
-        skills.value = data.skills;
+
+        // speciality.value = data.speciality;
+        // education.value = data.education;
+        // languages.value = data.languages;
+        // tools.value = data.tools;
+        // skills.value = data.skills;
         summary.value = data.summary;
-        details.value = data.details;
-        courses.value = data.courses;
+
+        // details.value = data.details;
+        // courses.value = data.courses;
         contact.value = data.contact;
-        employment.value = data.employment;
-        activities.value = data.activities;
-        published.value = data.published;
-        user.value = data.user; // Assuming 'user' is part of the response
+        console.log(contact.value)
+
+        // employment.value = data.employment;
+        // activities.value = data.activities;
+        // published.value = data.published;
+        // user.value = data.user; // Assuming 'user' is part of the response
 
     } catch (err) {
-        error.value = err.response ? err.response.data.message : err.message;
+        alert(err.response ? err.response.data.message : err.message);
     }
 };
 
@@ -140,12 +148,13 @@ onMounted(() => {
 
     getAuthUser().then(response => {
         user.value = response;
-        // console.log(user.value.id)
+        fetchApplicantData();
+
+        // console.log
     }).catch(error => {
         console.error('Error fetching user data:', error);
     })
 
-    fetchApplicantData();
 
 });
 

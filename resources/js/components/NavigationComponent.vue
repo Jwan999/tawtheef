@@ -15,7 +15,7 @@
                     </button>
                     <a href="/" class="flex ms-2 md:me-24">
                         <img src="https://makersiq.org/images/makerss.svg" class="h-10 me-3" alt="FlowBite Logo"/>
-                        <span class="self-center text-md font-semibold sm:text-2xl whitespace-nowrap dark:text-white">TAWTHEEF</span>
+                        <span class="self-center text-base font-semibold sm:text-2xl whitespace-nowrap dark:text-white">TAWTHEEF</span>
                     </a>
                 </div>
                 <div class="flex items-center">

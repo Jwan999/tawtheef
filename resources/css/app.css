@@ -7,9 +7,14 @@
 /* Your custom styles here */
 
 html, body {
-    font-family: 'Montserrat Alternates', sans-serif;
+    /*font-family: 'Montserrat Alternates', sans-serif;*/
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+
+    font-family: "Dosis", sans-serif;
+    font-optical-sizing: auto;
+    /*font-weight: <weight>;*/
+    font-style: normal;
 
     position: relative;
     overflow-x: hidden;

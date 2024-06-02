@@ -2,7 +2,7 @@
     <div v-if="!editMode" class="rounded-md p-4 bg-white text-sm md:text-xs">
 
         <div class="space-y-1">
-            <h1 class="text-lg font-semibold text-dark pb-4">Languages</h1>
+            <h1 class="text-xl font-semibold text-dark pb-4">Languages</h1>
             <div v-if="!value[0]?.item">
                 <p class="text-sm text-zinc-700">
                     Not all data filled yet.
@@ -12,7 +12,7 @@
             <div v-for="(language,index) in value" :key="index" class="flex items-center justify-between">
 
 
-                <h1 class="font-semibold">{{ language.item }}</h1>
+                <h1 class="font-semibold text-base">{{ language.item }}</h1>
 
                 <div class="flex items-center space-x-2">
                     <div v-if="language.rating"
@@ -28,13 +28,13 @@
 
     </div>
 
-    <div v-else class="rounded-md py-4 bg-white text-sm md:text-xs">
+    <div v-else class="rounded-md py-4 bg-white text-sm md:text-sm">
 
-        <div class="px-4 text-sm md:text-xs">
-            <h1 class="text-lg font-semibold text-dark pb-3">Languages</h1>
+        <div class="px-4 text-sm md:text-sm">
+            <h1 class="text-xl font-semibold text-dark pb-3">Languages</h1>
 
             <div class="relative w-full">
-                <div class="">
+                <div class="space-y-4">
                     <div v-for="(item,index) in value"
                          :key="index"
                          class="border-0 border-r-[1px] border-b-[1px]"

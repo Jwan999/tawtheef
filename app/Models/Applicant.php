@@ -10,7 +10,7 @@ class Applicant extends Model
 {
     public function user()
     {
-        return $this->morphOne(User::class, 'profileable'); // Reverse of the relationship
+        return $this->belongsTo(User::class);
     }
 
     use HasFactory;

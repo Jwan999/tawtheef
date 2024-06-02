@@ -6,18 +6,18 @@
             <div class="relative w-full">
                 <span class="text-orange absolute top-0 right-0 ml-24 -mt-3">*</span>
                 <input v-model="modelValue.title" placeholder="Job title"
-                       class="w-full focus:border-orange focus:ring-0 bg-zinc-50 w-4/12 rounded-md md:text-xs text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none"
+                       class="w-full capitalize focus:border-orange focus:ring-0 bg-zinc-50 w-4/12 rounded-md md:text-sm text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none"
                        type="text">
-                <!--                <h1 class="text-red-500 text-xs mt-1 font-semibold">This field is required.</h1>-->
+                <!--                <h1 class="text-red-500 text-sm mt-1 font-semibold">This field is required.</h1>-->
 
             </div>
 
             <div class="relative w-full">
                 <span class="text-orange absolute top-0 right-0 ml-24 -mt-3">*</span>
                 <input v-model="modelValue.employer" placeholder="Employer"
-                       class="w-full focus:border-orange focus:ring-0 bg-zinc-50 w-4/12 rounded-md md:text-xs text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none"
+                       class="w-full capitalize focus:border-orange focus:ring-0 bg-zinc-50 w-4/12 rounded-md md:text-sm text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none"
                        type="text">
-                <!--                <h1 class="text-red-500 text-xs mt-1 font-semibold">This field is required.</h1>-->
+                <!--                <h1 class="text-red-500 text-sm mt-1 font-semibold">This field is required.</h1>-->
 
             </div>
 
@@ -26,29 +26,36 @@
                 <span class="text-orange absolute top-0 right-0 ml-24 -mt-3">*</span>
 
                 <div class="flex">
-                    <select v-model="modelValue.duration[0]" name="startYear"
-                            class="focus:border-orange focus:ring-0 bg-zinc-50 w-full rounded-l-md md:text-xs text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none">
-                        <option selected>Start year</option>
+                    <select :value="modelValue.duration[0]" v-model="modelValue.duration[0]" name="startYear"
+                            class="focus:border-orange focus:ring-0 bg-zinc-50 w-full rounded-l-md md:text-sm text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none">
+
+                        <option selected>{{ modelValue.duration[0] }}
+                        </option>
                         <template v-for="year in years">
                             <option :value="year">{{ year }}</option>
                         </template>
                     </select>
-                    <select v-model="modelValue.duration[1]" name="endYear"
-                            class="focus:border-orange focus:ring-0 bg-zinc-50 w-full rounded-r-md md:text-xs text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none">
-                        <option class="hidden" selected>End year</option>
+                    <select :value="modelValue.duration[1]" v-model="modelValue.duration[1]" name="endYear"
+                            class="focus:border-orange focus:ring-0 bg-zinc-50 w-full rounded-r-md md:text-sm text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none">
+
+                        <option selected>{{ modelValue.duration[1] }}
+                        </option>
                         <template v-for="year in years">
                             <option :value="year">{{ year }}</option>
                         </template>
+                        <option>To the present</option>
+
                     </select>
                 </div>
 
-                <!--                <h1 class="text-red-500 text-xs mt-1 font-semibold">This field is required.</h1>-->
+                <!--                <h1 class="text-red-500 text-sm mt-1 font-semibold">This field is required.</h1>-->
 
             </div>
 
         </div>
         <div class="w-full">
-            <label for="message" class="block mb-2 text-xs font-medium text-zinc-700 mt-2">List your responsibilities within this period of employment.</label>
+            <label for="message" class="block mb-2 text-sm font-medium text-zinc-700 mt-2">List your responsibilities
+                within this period of employment.</label>
 
 
             <div class="relative w-full mt-3">
@@ -56,18 +63,13 @@
                 <div class="relative w-full">
                     <span class="text-orange absolute top-0 right-0 ml-24 -mt-4">*</span>
                     <input type="text" v-model="responsibility" name="Responsibility" placeholder="Responsibilities"
-                           class="focus:border-orange focus:ring-0 bg-zinc-50 w-full rounded-md md:text-xs text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none"/>
+                           class="focus:border-orange capitalize focus:ring-0 bg-zinc-50 w-full rounded-md md:text-sm text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none"/>
 
                 </div>
 
                 <button type="submit" @click="addResponsibility"
-                        class="absolute top-0 end-0 p-2.5 h-full text-sm font-medium text-white bg-orange rounded-e-md  hover:bg-dark focus:outline-none">
-                    <svg class="w-2 h-2 fill-white" viewBox="0 0 512 512">
-                        <g>
-                            <path
-                                d="m467 211h-166v-166c0-24.853-20.147-45-45-45s-45 20.147-45 45v166h-166c-24.853 0-45 20.147-45 45s20.147 45 45 45h166v166c0 24.853 20.147 45 45 45s45-20.147 45-45v-166h166c24.853 0 45-20.147 45-45s-20.147-45-45-45z"/>
-                        </g>
-                    </svg>
+                        class="absolute top-0 end-0 px-3 text-sm h-full font-semibold text-white bg-orange rounded-e-md hover:bg-dark focus:outline-none">
+                    ADD
                 </button>
             </div>
 
@@ -75,7 +77,7 @@
                 <div v-for="(responsibility,index) in responsibilities" class="flex items-center justify-between">
                     <div class="flex items-start w-full space-x-3">
                         <span class="flex-none mt-2 w-2 h-2 bg-dark rounded-full"></span>
-                        <p class="text-sm font-semibold">{{ responsibility }}</p>
+                        <p class="text-base">{{ responsibility }}</p>
                     </div>
 
                     <button @click="removeResponsibility(index)" class="appearance-none cursor-pointer">
@@ -107,14 +109,14 @@ const addResponsibility = () => {
 }
 
 const removeResponsibility = (index) => {
-    responsibilities.value.splice(index,1)
+    responsibilities.value.splice(index, 1)
 }
 
 const {modelValue} = defineProps(["modelValue"]);
 
 const title = ref(modelValue.title)
 const employer = ref(modelValue.employer)
-const duration = ref(modelValue.duration)
+const duration = ref([modelValue.duration[0], modelValue.duration[1]])
 const responsibilities = ref(modelValue.responsibilities)
 
 modelValue.duration[0] = 'Start year'
@@ -133,6 +135,7 @@ for (let year = 2000; year <= currentYear; year++) {
 const emit = defineEmits(["update:modelValue"]);
 
 watchEffect(() => {
+
     emit("update:modelValue", {
         title: title.value,
         employer: employer.value,

@@ -29,7 +29,8 @@ const routes = [
     // {path: '/', component: ComingSoonComponent},
     {path: '/', component: Home},
 
-    {path: '/profile/:id', component: ApplicantProfileView, meta: {requiresAuth: true}},
+    {path: '/profile/:id', component: ApplicantProfileView},
+    {path: '/resume/:id', component: ApplicantProfileView},
     {path: '/profile/:id/edit', component: ApplicantProfileView, meta: {requiresAuth: true}},
 
     {path: '/login', component: LoginAndSignupView},

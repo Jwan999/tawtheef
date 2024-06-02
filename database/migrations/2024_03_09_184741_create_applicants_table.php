@@ -21,12 +21,16 @@ return new class extends Migration
             $table->json('skills');
             $table->json('tools');
             $table->json('details');
-            $table->text('summary');
+            $table->text('summary')->nullable();
             $table->json('courses');
             $table->json('contact');
             $table->json('employment');
             $table->json('activities');
             $table->boolean('published');
+            // Polymorphic relationship columns
+            $table->unsignedBigInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+
             $table->timestamps();
         });
     }

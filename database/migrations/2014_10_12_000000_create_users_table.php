@@ -20,9 +20,6 @@ return new class extends Migration
             $table->rememberToken();
             $table->timestamps();
 
-            // Polymorphic relationship columns
-            $table->unsignedBigInteger('profileable_id')->nullable();
-            $table->string('profileable_type')->nullable();
         });
     }
 

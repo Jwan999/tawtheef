@@ -1,13 +1,13 @@
 <template>
-    <div v-if="!editMode" class="rounded-md p-4 bg-white text-sm md:text-xs">
+    <div v-if="!editMode" class="rounded-md p-4 bg-white text-sm md:text-sm">
 
-        <div class="space-y-1">
-            <h1 class="text-lg font-semibold text-dark pb-4">Educational Background</h1>
+        <div class="space-y-4">
+            <h1 class="text-xl font-semibold text-dark pb-4">Educational Background</h1>
             <div v-if="modelValue[0]?.degree"
                  v-for="item in modelValue">
-                <h1 class="text-dark font-semibold">{{ item.degree }}</h1>
-                <h1 class="font-semibold">{{ item.institute }}</h1>
-                <h1 class="font-semibold text-orange">{{ item.duration[0] + ' - ' + item.duration[1] }}</h1>
+                <h1 v-if="item.duration[0] !== 'Start Year' && item.duration[1] !== 'End Year'" class="font-semibold text-orange">{{ item.duration[0] + ' - ' + item.duration[1] }}</h1>
+                <h1 class="text-dark font-semibold italic">{{ item.degree }}</h1>
+                <h1 class="font-semibold text-lg">{{ item.institute }}</h1>
             </div>
 
             <div v-if="!modelValue[0]?.degree">
@@ -20,8 +20,8 @@
 
     </div>
 
-    <div v-else class="rounded-md p-4 pb-6 bg-white text-sm md:text-xs">
-        <h1 class="text-lg font-semibold text-dark pb-4">Educational Background</h1>
+    <div v-else class="rounded-md p-4 pb-6 bg-white text-sm md:text-sm">
+        <h1 class="text-xl font-semibold text-dark pb-4">Educational Background</h1>
         <div class="relative w-full space-y-3">
 
             <div v-for="(item,index) in value"
@@ -77,7 +77,7 @@ const value = ref([])
 
 const addNew = () => {
     value.value.push({
-        degree: "", institute: "", duration: ['Start year', 'End year']
+        degree: "", institute: "", duration: ['Start Year', 'End Year']
     });
 }
 const remove = (index) => {

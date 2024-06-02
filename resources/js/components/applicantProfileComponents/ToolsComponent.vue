@@ -1,15 +1,15 @@
 <template>
-    <div v-if="!editMode" class="rounded-md p-4 bg-white text-sm md:text-xs">
+    <div v-if="!editMode" class="rounded-md p-4 bg-white text-sm md:text-sm">
 
         <div class="space-y-1">
-            <h1 class="text-lg font-semibold text-dark pb-4">Tools & Technologies</h1>
+            <h1 class="text-xl font-semibold text-dark pb-4">Technical skills</h1>
             <div v-if="!value[0]?.item">
                 <p class="text-sm text-zinc-700">
                     Not all data filled yet.
                 </p>
             </div>
             <div v-for="(tool,index) in value" :key="index" class="flex items-center justify-between">
-                <h1 class="font-semibold">{{ tool.item }}</h1>
+                <h1 class="font-semibold text-base">{{ tool.item }}</h1>
 
 
                 <div class="flex items-center space-x-2">
@@ -26,13 +26,13 @@
 
     </div>
 
-    <div v-else class="rounded-md py-4 bg-white text-sm md:text-xs">
+    <div v-else class="rounded-md py-4 bg-white text-sm md:text-sm">
 
-        <div class="px-4 text-sm md:text-xs">
-            <h1 class="text-lg font-semibold text-dark pb-3">Tools & Technologies</h1>
+        <div class="px-4 text-sm md:text-sm">
+            <h1 class="text-xl font-semibold text-dark pb-3">Technical skills</h1>
 
             <div class="relative w-full">
-                <div class="">
+                <div class="space-y-4">
                     <div v-for="(item,index) in value"
                          :key="index"
                          class="rounded-bl-md border-0 border-r-[1px] border-b-[1px]"
@@ -50,7 +50,8 @@
                             </button>
                         </div>
 
-                        <ratingComponent placeholder-label="Tool or technology title" v-model="value[index]"></ratingComponent>
+                        <ratingComponent placeholder-label="Tool or technology"
+                                         v-model="value[index]"></ratingComponent>
                     </div>
 
                 </div>
