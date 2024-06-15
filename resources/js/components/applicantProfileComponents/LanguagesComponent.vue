@@ -3,13 +3,14 @@
 
         <div class="space-y-1">
             <h1 class="text-xl font-semibold text-dark pb-4">Languages</h1>
-            <div v-if="!value[0]?.item">
+
+            <div v-if="!languages[0]?.item">
                 <p class="text-sm text-zinc-700">
                     Not all data filled yet.
                 </p>
             </div>
 
-            <div v-for="(language,index) in value" :key="index" class="flex items-center justify-between">
+            <div v-else v-for="(language,index) in languages" :key="index" class="flex items-center justify-between space-x-2">
 
 
                 <h1 class="font-semibold text-base">{{ language.item }}</h1>
@@ -35,7 +36,7 @@
 
             <div class="relative w-full">
                 <div class="space-y-4">
-                    <div v-for="(item,index) in value"
+                    <div v-for="(item,index) in languages"
                          :key="index"
                          class="border-0 border-r-[1px] border-b-[1px]"
                          :class="hoveredElement===index ? borderColor : 'border-zinc-100'">
@@ -52,7 +53,7 @@
                             </button>
                         </div>
 
-                        <ratingComponent v-model="value[index]"></ratingComponent>
+                        <ratingComponent v-model="languages[index]"></ratingComponent>
                     </div>
 
                 </div>
@@ -72,7 +73,7 @@
 </template>
 <script setup>
 import RatingComponent from './RatingComponent.vue';
-import {onMounted, ref, watch} from 'vue';
+import {onMounted, onUpdated, ref, watch} from 'vue';
 import {editMode} from "../../utils/storeHelpers.js";
 
 const hoveredElement = ref(null)
@@ -82,31 +83,31 @@ const changeBorderColor = (index, color) => {
     borderColor.value = color;
 }
 
-const {modelValue} = defineProps(["modelValue"]);
-const value = ref([])
+const props = defineProps(["modelValue"]);
+const languages = ref([])
+
+onUpdated(() => {
+        languages.value = props.modelValue
+});
+onMounted(() => {
+    languages.value = props.modelValue
+})
 
 const addNew = () => {
-    value.value.push({
+    languages.value.push({
         item: "", rating: ""
     });
 }
 const remove = (index) => {
-    value.value.splice(index, 1)
+    languages.value.splice(index, 1)
 }
 
-onMounted(() => {
-    value.value = modelValue;
-    if (modelValue.length == 0) {
-        addNew();
-    }
-})
+const emit = defineEmits(["update:modelValue"])
 
-
-watch(value, (newValue) => {
+watch(languages, (newValue) => {
     emit('update:modelValue', newValue);
 }, {deep: true})
 
-const emit = defineEmits(["update:modelValue"])
 
 </script>
 

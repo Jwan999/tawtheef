@@ -21,8 +21,11 @@ Route::get('/api/selectables/{key}',[FormControlController::class, 'getSelectabl
 
 Route::post('/api/applicant', [ApplicantController::class, 'store']);
 Route::get('/api/applicants', [ApplicantController::class, 'index']);
-Route::get('/api/applicants/{id}', [ApplicantController::class, 'show']);
-Route::get('/api/auth', [ApplicantController::class, 'getAuthUserId']);
+
+Route::get('/api/profile', [ApplicantController::class, 'showPersonalProfile']);
+Route::get('/api/applicants/{id}', [ApplicantController::class, 'showResume']);
+
+Route::get('/api/auth', [ApplicantController::class, 'getAuthUser']);
 //Route::get('/api/filter/{speciality}', [ApplicantController::class, 'filter']);
 
 Route::post('/login', [AuthController::class, 'login'])->name('login');

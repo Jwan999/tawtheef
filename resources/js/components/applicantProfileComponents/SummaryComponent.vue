@@ -11,7 +11,7 @@
                     Data not filled yet.
                 </p>
             </div>
-            <p>{{ summary }}</p>
+            <p class="capitalize">{{ summary }}</p>
         </div>
         <div v-else class="rounded-md p-4 bg-white">
 
@@ -24,7 +24,7 @@
                     <textarea @input="countWords(summary)" v-model="summary" id="message" rows="4"
                               class="w-full capitalize focus:border-orange focus:ring-0 block p-2.5 w-full text-sm bg-zinc-50 rounded-md md:text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none"
                               placeholder="Write your thoughts here..."></textarea>
-                    <p class="text-sm text-zinc-500 mt-2 text-end">Word count: {{ countWords(summary) }}/300</p>
+                    <p class="text-sm text-zinc-500 mt-2 text-end capitalize">Word count: {{ countWords(summary) }}/300</p>
 
                     <!--                    <h1 class="text-red-500 text-sm mt-1 font-semibold">This field is required.</h1>-->
                 </div>
@@ -37,14 +37,19 @@
 </template>
 
 <script setup>
-import {onMounted, ref, watch, watchEffect} from 'vue'; // Import ref for reactive variables
+import {onMounted, onUpdated, ref, watch} from 'vue'; // Import ref for reactive variables
 import {editMode} from "../../utils/storeHelpers.js";
 import {countWords} from "../../utils/storeHelpers.js";
-// watchEffect(() => {
-// });
-const {modelValue} = defineProps(["modelValue"]);
 
-const summary = ref(modelValue);
+const props = defineProps(["modelValue"])
+const summary = ref('');
+
+onUpdated(() => {
+    summary.value = props.modelValue
+});
+onMounted(() => {
+    summary.value = props.modelValue
+});
 
 const emit = defineEmits(["update:modelValue"])
 

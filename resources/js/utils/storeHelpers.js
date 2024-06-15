@@ -1,17 +1,11 @@
 import {computed} from "vue";
 import store from "../store/index.js";
 import axios from 'axios';
-// import router from "../router/index.js";
 
 export const getAuthUser = async () => {
     try {
-        const response = await axios.get('/api/auth');
-        return {
-            id: response.data.id,
-            name: response.data.name,
-            email: response.data.email,
-            profileType: response.data.profile_type,
-        }
+        const {data} = await axios.get('/api/auth');
+        return data;
 
     } catch (error) {
         console.error('Error fetching data:', error);
@@ -22,18 +16,16 @@ export const editMode = computed({
         return store.getters.editMode;
     },
     set() {
-        store.dispatch('setEditMode', true)
+        store.dispatch('setEditMode', false)
     }
 })
 
+
 export const countWords = (summary) => {
     return computed(() => {
-        // Remove extra white spaces and split the text into words
-        const words = summary.trim().split(/\s+/);
-        // Filter out empty strings
-        const filteredWords = words.filter(word => word !== '');
-        // Update the word count
-        return filteredWords.length;
+        const words = summary?.trim().split(/\s+/);
+        const filteredWords = words?.filter(word => word !== '');
+        return filteredWords?.length;
     });
 };
 

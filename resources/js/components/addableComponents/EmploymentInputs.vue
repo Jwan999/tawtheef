@@ -77,7 +77,7 @@
                 <div v-for="(responsibility,index) in responsibilities" class="flex items-center justify-between">
                     <div class="flex items-start w-full space-x-3">
                         <span class="flex-none mt-2 w-2 h-2 bg-dark rounded-full"></span>
-                        <p class="text-base">{{ responsibility }}</p>
+                        <p class="text-base capitalize">{{ responsibility }}</p>
                     </div>
 
                     <button @click="removeResponsibility(index)" class="appearance-none cursor-pointer">

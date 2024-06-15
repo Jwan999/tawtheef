@@ -5,8 +5,8 @@
 
     <div class="flex justify-center mt-24">
         <div class="w-4/12  bg-white rounded-md">
-            <h2 class="text-lg text-zinc-600 font-semibold mt-8 px-6">Login to your account</h2>
-            <router-link to="/signup" class="text-orange text-sm font-semibold px-6">or sign up</router-link>
+            <h2 class="text-lg text-zinc-600 font-semibold mt-8 px-6">Login to your account <router-link to="/signup" class="text-orange font-semibold hover:text-orange-500">OR SIGN UP</router-link>
+            </h2>
             <div class="pl-6">
                 <hr class="h-px w-full bg-orange  border-0 mt-1 mb-8">
 
@@ -51,11 +51,15 @@
 <script setup>
 import {ref} from 'vue';
 import axios from 'axios';
+import {useRouter} from "vue-router";
+import {useStore} from "vuex";
 
 const email = ref('');
 const password = ref('');
 const hovered = ref(false);
 
+const router = useRouter();
+const store = useStore();
 
 const handleLogin = async () => {
     if (!email.value || !password.value) {
@@ -63,18 +67,14 @@ const handleLogin = async () => {
         return;
     }
     try {
-        const response = await axios.post('/login', {
+        const {data} = await axios.post('/login', {
             email: email.value,
             password: password.value,
         });
+        store.commit('setUser',data.user);
 
-        if (response.status === 200) {
-
-            window.location.href = '/';
-
-        } else {
-            console.error('Login failed:', response.data);
-        }
+        router.back();
+       // router.push()
     } catch (error) {
         console.error('Login error:', error.response.data);
     } finally {

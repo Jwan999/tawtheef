@@ -1,8 +1,9 @@
 <template>
     <div class="flex justify-center mt-14">
-        <div class="w-4/12  bg-white rounded-md">
-            <h2 class="text-lg text-zinc-600 font-semibold mt-8 px-6">Start with creating your account</h2>
-            <router-link to="/login" class="text-orange text-sm font-semibold px-6">or login</router-link>
+        <div class="w-4/12 bg-white rounded-md">
+            <h2 class="text-lg text-zinc-600 font-semibold mt-8 px-6">Start with creating your account <router-link to="/signup" class="text-orange font-semibold hover:text-orange-500">OR LOGIN</router-link>
+
+            </h2>
             <div class="pl-6">
                 <hr class="h-px w-full bg-orange  border-0 mt-1 mb-8">
 
@@ -70,14 +71,16 @@
 <script setup>
 import {ref, defineEmits} from 'vue';
 import axios from 'axios';
+import {useRouter} from "vue-router";
+import {useStore} from "vuex";
 
 const email = ref('');
 const profileType = ref('Applicant');
 const name = ref('');
 const password = ref('');
 const hovered = ref(false);
-
-
+const router = useRouter();
+const store = useStore();
 const handleSignup = async () => {
     // Validate email and password
     if (!email.value || !password.value || !profileType.value || !name.value) {
@@ -92,14 +95,16 @@ const handleSignup = async () => {
             name: name.value,
             password: password.value,
         });
+        store.commit('setUser',response.data.user);
 
         if (response.status === 201) {
-            window.location.href = '/';
+            router.push('/');
+
         } else {
-            // console.error('Signup failed:', response.data);
+            console.error('Signup failed:', response.data);
         }
     } catch (error) {
-        // console.error('Signup error:', error.response.data);
+        console.error('Signup error:', error.response.data);
     }
 };
 </script>

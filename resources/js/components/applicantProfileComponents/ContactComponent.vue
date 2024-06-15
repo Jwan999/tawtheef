@@ -1,11 +1,15 @@
 <template>
     <!--preview-->
     <div v-if="!editMode" class="">
-
-        <div v-if="!showInputs" class="bg-white p-4 text-sm rounded-md">
-
+        <div v-if="city == 'Choose your city...'" class="bg-white p-4 rounded-md">
+            <h1 class="flex-none font-semibold mb-3 text-zinc-500">Contacts & other info</h1>
+            <p class="text-sm text-zinc-700">
+                Not all data filled yet.
+            </p>
+        </div>
+        <div v-else class="bg-white p-4 text-sm rounded-md">
             <div class="flex justify-between items-center">
-                <div class="w-3/12 flex items-center justify-start space-x-4">
+                <div class="w-4/12 flex items-center justify-start space-x-4">
                     <h1 class="flex-none font-semibold text-zinc-500">Contact info</h1>
                     <div class="font-semibold text-base">
                         <h1>{{ email }}</h1>
@@ -13,19 +17,20 @@
                     </div>
 
                 </div>
-                <div class="w-3/12 flex justify-start items-center space-x-4">
+                <div v-if="city" class="w-4/12 flex justify-start items-center space-x-4">
                     <h1 class="flex-none font-semibold text-zinc-500">Residence</h1>
 
-                    <h1 class="font-semibold text-base">{{ city + ', ' + zone }}</h1>
+                    <h1 class="font-semibold text-base">{{ city }}<span v-if="city=='Baghdad'">{{ ', ' + zone }}</span>
+                    </h1>
                 </div>
 
-                <div class="w-3/12 flex justify-start items-center space-x-4">
+                <div v-if="birthdate" class="w-2/12 flex justify-start items-center space-x-4">
 
                     <h1 class="flex-none font-semibold text-zinc-500">Date of birth</h1>
                     <h1 class="font-semibold text-base">{{ birthdate }}</h1>
 
                 </div>
-                <div class="w-3/12 flex justify-start items-center space-x-4">
+                <div v-if="gender" class="w-2/12 flex justify-start items-center space-x-4">
 
                     <h1 class="flex-none font-semibold text-zinc-500">Gender</h1>
                     <h1 class="text-base font-semibold">{{ gender }}</h1>
@@ -36,18 +41,14 @@
                 <h1 class="flex-none font-semibold mb-2 text-zinc-500">Links & Websites</h1>
 
                 <div v-for="(link, index) in links" :key="index">
+
                     <a :href="link.link"
                        class="text-orange text-base font-semibold underline">{{ link.label }}</a>
                 </div>
 
             </div>
         </div>
-        <div v-else class="bg-white p-4 rounded-md">
-            <h1 class="flex-none font-semibold mb-3 text-zinc-500">Contacts & other info</h1>
-            <p class="text-sm text-zinc-700">
-                Not all data filled yet.
-            </p>
-        </div>
+
     </div>
     <!--form-->
     <div v-else>
@@ -80,15 +81,14 @@
                         <div class="flex">
                             <select v-model="city" :value="city"
                                     :class="city == 'Baghdad' ?'rounded-l-md' :'rounded'"
-                                    class="h-[37.1px] text-sm focus:border-orange focus:ring-0 bg-zinc-50 w-full border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none">
-                                <option value="" class="hidden" selected>Choose your city...</option>
+                                    class="h-[40px] text-sm focus:border-orange focus:ring-0 bg-zinc-50 w-full border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none">
+                                <option value="Choose your city..." class="hidden" selected>Choose your city...</option>
                                 <option v-for="city in cities">{{ city }}</option>
-
                             </select>
 
                             <select v-if="city == 'Baghdad'" v-model="zone" :value="zone"
-                                    class="h-[37.1px] text-sm focus:border-orange focus:ring-0 bg-zinc-50 w-full rounded-r-md border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none">
-                                <option value="" class="hidden" selected>Choose your zone...</option>
+                                    class="h-[40px] text-sm focus:border-orange focus:ring-0 bg-zinc-50 w-full rounded-r-md border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none">
+                                <option value="Choose your zone..." class="hidden">Choose your zone...</option>
                                 <option>Karkh</option>
                                 <option>Risafa</option>
                             </select>
@@ -115,8 +115,9 @@
                     <div class="relative w-full">
                         <span class="text-orange absolute top-0 right-0 ml-24 -mt-3">*</span>
                         <select v-model="gender"
-                                class="h-[37.1px] focus:border-orange focus:ring-0 bg-zinc-50 w-full rounded-md md:text-sm text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none">
-                            <option selected>Female</option>
+                                class="h-[40px] focus:border-orange focus:ring-0 bg-zinc-50 w-full rounded-md md:text-sm text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none">
+                            <option value="Gender" class="hidden" selected>Gender</option>
+                            <option>Female</option>
                             <option>Male</option>
                         </select>
                         <!--<h1 class="text-red-500 text-sm mt-1 font-semibold">This field is required.</h1>-->
@@ -125,7 +126,8 @@
                 </div>
 
                 <div>
-                    <label for="message" class="block mb-3 text-sm font-medium text-zinc-700 mt-2">* You can add links to
+                    <label for="message" class="block mb-3 text-sm font-medium text-zinc-700 mt-2">* You can add links
+                        to
                         websites you want hiring managers to see! Perhaps It will be a link to your portfolio, Linkedin
                         profile, or personal website.</label>
 
@@ -137,9 +139,9 @@
                                    class="focus:border-orange focus:ring-0 bg-zinc-50 w-full rounded-r-md md:text-sm text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none"/>
 
                         </div>
-                        <button type="submit" @click="addLink" @keyup:enter="addLink"
+                        <button @click="addLink"
                                 class="absolute top-0 end-0 px-3 h-full text-sm font-semibold text-white bg-orange rounded-e-md hover:bg-dark focus:outline-none">
-                          ADD
+                            ADD
                         </button>
 
                     </div>
@@ -167,17 +169,16 @@
 </template>
 
 <script setup>
-import {onMounted, ref, watch, watchEffect} from 'vue'; // Import ref and computed
-import {editMode, getSelectables, getAuthUser} from "../../utils/storeHelpers.js";
+import {computed, onMounted, onUpdated, ref, watch} from 'vue'; // Import ref and computed
+import {getSelectables} from "../../utils/storeHelpers.js";
+import store from "../../store/index.js";
 
-const showInputs = ref(false)
-const changeShowInputs = () => {
-    if (editMode && birthdate.value === "") {
-        showInputs.value = true
-    } else {
-        showInputs.value = false;
-    }
-}
+const editMode = computed(() => {
+    return store.getters.editMode;
+})
+
+const props = defineProps(["modelValue"])
+
 onMounted(async () => {
     axios.get('/api/selectables/cities').then(async res => {
         cities.value = await getSelectables('cities');
@@ -185,32 +186,27 @@ onMounted(async () => {
     }).catch(error => {
         console.error('Failed to fetch select options:', error);
     });
-    changeShowInputs()
-    getAuthUser().then(response => {
-        email.value = response.email;
-    }).catch(error => {
-        console.error('Error fetching user data:', error);
-    })
+
 });
 
 const cities = ref([])
 
 const city = ref('');
-const gender = ref('Female');
+const gender = ref(props.modelValue.gender);
 const zone = ref('');
 const email = ref('');
 const phone = ref('');
-const birthdate = ref('');
-
-const links = ref([]);
-const link = ref('');
-const label = ref('');
 const isChecked = ref(false);
 
+const birthdate = ref('');
+const links = ref([]);
+
+const link = ref('');
+const label = ref('');
 
 const addLink = () => {
-    if (link.value.trim() !== '') { // Check for non-empty link
-        links.value.push({link: link.value, label: label.value});
+    if (link.value.trim() !== '') {
+        links.value.push({link: link.value, label: label.value})
         link.value = '';
         label.value = '';
     }
@@ -220,8 +216,28 @@ const deleteLink = (index) => {
 };
 
 const emit = defineEmits(["update:modelValue"])
+onMounted(() => {
+    email.value = props?.modelValue?.email;
+    phone.value = props?.modelValue?.phone;
+    city.value = props?.modelValue?.city;
+    zone.value = props?.modelValue?.zone;
+    gender.value = props?.modelValue?.gender;
+    birthdate.value = props?.modelValue?.birthdate;
+    links.value = props?.modelValue?.links;
+    isChecked.value = props?.modelValue?.showPhone
+})
+onUpdated(() => {
+    email.value = props?.modelValue?.email;
+    phone.value = props?.modelValue?.phone;
+    city.value = props?.modelValue?.city;
+    zone.value = props?.modelValue?.zone;
+    gender.value = props?.modelValue?.gender;
+    birthdate.value = props?.modelValue?.birthdate;
+    links.value = props?.modelValue?.links;
+    isChecked.value = props?.modelValue?.showPhone
 
-watch([phone, email, city, zone, gender, birthdate], () => {
+})
+watch([phone, email, city, zone, gender, links, birthdate, isChecked], () => {
 
     emit('update:modelValue',
         {
@@ -231,10 +247,11 @@ watch([phone, email, city, zone, gender, birthdate], () => {
             links: links.value,
             birthdate: birthdate.value,
             city: city.value,
-            zone: zone.value
+            zone: zone.value,
+            showPhone: isChecked.value
         }
     )
-    changeShowInputs()
+
 }, {deep: true})
 
 </script>

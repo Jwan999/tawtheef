@@ -1,25 +1,27 @@
 <template>
-    <div v-if="!editMode && !specializations.includes('Undecided Yet')" class="">
+    <div v-if="!editMode && !specializations?.includes('Undecided Yet')" class="">
         <div class="flex items-center space-x-3 mb-4">
             <h1 class="flex-none text-xl font-semibold text-dark">Specializations</h1>
             <hr class="h-px w-full bg-orange border-0 mt-1">
         </div>
-        <div :class="subSpecialities.length == 0 ?'rounded':'rounded-t-md'"
+        <div :class="specializations ?'rounded':'rounded-t-md'"
              class="bg-orange text-lg text-start px-2 text-white py-3 font-bold tracking-wide">
-            <h1 v-for="(speciality,index) in specializations">
-                {{ specializations.includes('Other') ? subSpecialities.toString() : speciality }}.
-            </h1>
-            <div v-if="!editMode && specializations.length === 0">
+            <div v-if="!specializations.length">
                 <p class="text-sm">
                     Not all data filled yet.
-
                 </p>
             </div>
+            <h1 v-else v-for="(item,index) in specializations">
+                {{ item === 'Other' ? item.toString() : item }}.
+            </h1>
+
         </div>
         <div>
-            <div v-if="subSpecialities.length" class="bg-white rounded-b-md px-4 py-2 space-y-1">
+            <div v-if="children.length" class="bg-white rounded-b-md px-4 py-2 space-y-1">
                 <h1 class="text-orange text-sm font-semibold mb-4">Experienced with the following:</h1>
-                <h1 class="font-semibold text-base" v-for="subSpeciality in subSpecialities">{{ subSpeciality }}.</h1>
+                <h1 class="font-semibold text-base" v-for="subSpeciality in children">{{
+                        subSpeciality
+                    }}.</h1>
             </div>
         </div>
 
@@ -36,36 +38,38 @@
 
             <div class="flex justify-between space-x-6 w-full">
                 <div class="w-full">
-                    <div v-for="(speciality,index) in specialities" :key="index"
+                    <div v-for="(item,index) in specialities" :key="index"
                          class="">
-                        <div @click="toggleSpecialization(speciality.title)"
+                        <div @click="toggleSpecialization(item.title)"
                              :class="{'rounded-t-md': index === 0,
                  'rounded-b-md': index === specialities.length - 1,
-                 'bg-orange text-white': specializations.includes(speciality.title),
-                 'bg-white text-dark': !specializations.includes(speciality.title)}"
+                 'bg-orange text-white': specializations?.includes(item.title),
+                 'bg-white text-dark': !specializations?.includes(item.title)}"
                              class="border-b-[1px] border-orange-400 py-3 cursor-pointer focus:bg-orange focus:text-white hover:bg-dark hover:text-white">
-                            <h1 class="text-center text-lg font-semibold">{{ speciality.title }}</h1>
+                            <h1 class="text-center text-lg font-semibold">{{ item.title }}</h1>
 
                         </div>
 
-                        <div class="w-full bg-white py-4 px-2" v-if="specializations.includes(speciality.title)">
-                            <div class="flex items-start space-y-2 me-4"
-                                 v-for="(subSpeciality, index) in speciality.children"
 
+                        <div class="w-full bg-white py-4 px-2" v-if="specializations?.includes(item.title)">
+                            <div class="flex items-start space-y-2 me-4" v-for="(subSpeciality, index) in item.children"
                                  :key="index">
                                 <div>
-                                    <input v-model="subSpecialities"
-                                           type="checkbox"
-                                           :value="subSpeciality"
-                                           class="w-4 h-4 text-orange bg-white border-zinc-400 rounded focus:ring-orange dark:focus:ring-orange dark:ring-offset-zinc-800 focus:ring-2 dark:bg-zinc-700 dark:border-zinc-600">
+                                    <input
+                                        :id="`subSpeciality-${index}`"
+                                        type="checkbox"
+                                        :value="subSpeciality"
+                                        @change="toggleSubSpeciality(subSpeciality)"
+                                        class="w-4 h-4 text-orange bg-white border-zinc-400 rounded focus:ring-orange dark:focus:ring-orange dark:ring-offset-zinc-800 focus:ring-2 dark:bg-zinc-700 dark:border-zinc-600"
+                                    />
                                     <label :for="`subSpeciality-${index}`"
                                            class="ms-2 text-base font-medium text-zinc-900 dark:text-zinc-300">
                                         {{ subSpeciality }}.
                                     </label>
                                 </div>
-
                             </div>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -74,50 +78,65 @@
 
     </div>
 
-
 </template>
 
 <script setup>
-import {computed, onMounted, ref, watch, watchEffect} from "vue";
+import {computed, onMounted, onUpdated, ref, watch, watchEffect} from "vue";
 
 import {editMode, getSelectables} from "../../utils/storeHelpers.js";
+const props = defineProps(["modelValue"])
 
-const specializations = ref([]);
-const subSpecialities = ref([]);
+const specializations = ref([])
+const children = ref([])
 
-const specialities = ref([])
-
-onMounted(async () => {
-    axios.get('').then(async res => {
-        specialities.value = await getSelectables('specialities');
-
-    }).catch(error => {
-        console.error('Failed to fetch select options:', error);
-
-    });
-
+onUpdated(() => {
+    specializations.value = props?.modelValue?.specializations
+    children.value = props?.modelValue?.children
 });
 
-const toggleSpecialization = (speciality) => {
+const specialities = ref([])
+onMounted(async () => {
+    specializations.value = props?.modelValue?.specializations
+    children.value = props?.modelValue?.children
 
-    if (specializations.value.includes(speciality)) {
-        specializations.value = specializations.value.filter(item => item !== speciality);
-    } else if (specializations.value.length < 2) {
-        specializations.value = [...specializations.value, speciality];
+    axios.get('').then(async res => {
+        specialities.value = await getSelectables('specialities');
+    }).catch(error => {
+        console.error('Failed to fetch select options:', error);
+    });
+});
+
+const toggleSubSpeciality = (subSpeciality) => {
+    const index = children.value.indexOf(subSpeciality);
+    if (index === -1) {
+        children.value.push(subSpeciality);
+    } else {
+        children.value.splice(index, 1);
     }
-
 };
 
-const {modelValue} = defineProps(["modelValue"]);
+const toggleSpecialization = (name) => {
+    if (!specializations?.value?.includes(name)) {
+        if (specializations?.value?.length >= 2) {
+            specializations?.value?.splice(0, 1);
+        }
+        specializations?.value?.push(name);
+    } else {
+        const index = specializations?.value?.indexOf(name);
+        if (index !== -1) {
+            specializations?.value?.splice(index, 1);
+        }
+    }
+};
 
 const emit = defineEmits(["update:modelValue"])
 
-watch([specializations, subSpecialities], () => {
+watch([specializations.value, children.value], () => {
     emit('update:modelValue', {
         specializations: specializations.value,
-        children: subSpecialities.value
-    })
-}, {deep: true})
+        children: children.value
+    });
+}, { deep: true });
 
 
 </script>

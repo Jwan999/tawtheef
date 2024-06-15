@@ -2,15 +2,15 @@
     <div v-if="!editMode" class="rounded-md p-4 bg-white text-sm md:text-sm">
 
         <div class="space-y-1">
-            <h1 class="text-xl font-semibold text-dark pb-4">Technical skills</h1>
+            <h1 class="text-xl font-semibold text-dark pb-4">Tools and Technologies</h1>
             <div v-if="!value[0]?.item">
                 <p class="text-sm text-zinc-700">
                     Not all data filled yet.
                 </p>
             </div>
-            <div v-for="(tool,index) in value" :key="index" class="flex items-center justify-between">
-                <h1 class="font-semibold text-base">{{ tool.item }}</h1>
+            <div v-else v-for="(tool,index) in value" :key="index" class="flex items-center justify-between ">
 
+                <h1 class="font-semibold text-base capitalize">{{ tool.item }}</h1>
 
                 <div class="flex items-center space-x-2">
                     <div v-if="tool.rating"
@@ -29,8 +29,9 @@
     <div v-else class="rounded-md py-4 bg-white text-sm md:text-sm">
 
         <div class="px-4 text-sm md:text-sm">
-            <h1 class="text-xl font-semibold text-dark pb-3">Technical skills</h1>
-
+            <h1 class="text-xl font-semibold text-dark pb-3">Tools and Technologies</h1>
+            <p class="mx-2 text-sm my-2 text-zinc-700">List all the tools and technologies you're familiar with such as (MS Excel,
+                Photoshop, PHP, React, etc...)</p>
             <div class="relative w-full">
                 <div class="space-y-4">
                     <div v-for="(item,index) in value"
@@ -73,7 +74,7 @@
 </template>
 <script setup>
 import RatingComponent from './RatingComponent.vue';
-import {onMounted, ref, watch} from 'vue';
+import {onMounted, onUpdated, ref, watch} from 'vue';
 import {editMode} from "../../utils/storeHelpers.js";
 
 
@@ -84,7 +85,7 @@ const changeBorderColor = (index, color) => {
     borderColor.value = color;
 }
 
-const {modelValue} = defineProps(["modelValue"]);
+const props = defineProps(["modelValue"]);
 const value = ref([])
 
 const addNew = () => {
@@ -96,11 +97,11 @@ const remove = (index) => {
     value.value.splice(index, 1)
 }
 
+onUpdated(() => {
+    value.value = props.modelValue
+});
 onMounted(() => {
-    value.value = modelValue;
-    if (modelValue.length == 0) {
-        addNew();
-    }
+    value.value = props.modelValue
 })
 
 watch(value, (newValue) => {

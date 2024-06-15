@@ -15,21 +15,40 @@ class Applicant extends Model
 
     use HasFactory;
 
+    protected $attributes = [
+        'employment' => '[{"title":"","employer":"","duration":["Start year","End Year"],"responsibilities":[]}]',
+        'courses' => '[{"title": "", "duration": "", "entity": ""}]',
+        'activities' => '[{"title":"","participatedAs":"Participated as","year":"Year"}]',
+        'education' => '[{"degree": "", "institute": "", "duration": ["Start Year", "End Year"]}]',
+        'languages' => '[{"item":"","rating":""}]',
+        'tools' => '[{"item":"","rating":""}]',
+        'speciality' => '{"specializations": [], "children": []}',
+    ];
+
+    protected $casts = [
+        'education' => "json",
+        'employment' => "json",
+        'languages' => "json",
+        'courses' => "json",
+        'skills' => "json",
+        'activities' => "json",
+        'contact' => "json",
+        'details' => 'json',
+        'tools' => "json",
+        'speciality' => "json",
+
+    ];
     protected $fillable = [
-        'email',
-        'password',
-        'first_name',
-        'last_name',
-        'phone',
-        'email',
-        'links',
         'education',
-        'job_status',
         'summary',
         'employment',
         'languages',
         'courses',
         'skills',
         'activities',
+        'contact',
+        'details',
+        'tools',
+        'speciality',
     ];
 }

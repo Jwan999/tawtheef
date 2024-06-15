@@ -30,18 +30,21 @@
 
                     <div class="">
                         <div v-for="(item,index) in skills" class="me-4 mt-2">
-                            <input :disabled="selectedSkills.length>4"
-                                   :id="'checkbox-' + index"
-                                   type="checkbox" :value="item" v-model="selectedSkills"
-                                   class="text-sm w-4 h-4 mr-2 mb-1 text-orange bg-zinc-100 border-zinc-300 rounded focus:ring-orange dark:focus:ring-orange dark:ring-offset-zinc-800 focus:ring-1 dark:bg-zinc-700 dark:border-zinc-600">
+                            <input
+                                :id="'checkbox-' + index"
+                                type="checkbox"
+                                :value="item"
+                                :checked="selectedSkills?.includes(item)"
+                                @click="selectSkill"
+                                class="text-sm w-4 h-4 mr-2 mb-1 text-orange bg-zinc-100 border-zinc-300 rounded focus:ring-orange dark:focus:ring-orange dark:ring-offset-zinc-800 focus:ring-1 dark:bg-zinc-700 dark:border-zinc-600"
+                            />
                             <label :for="'checkbox-' + index" class="mb-2 text-sm font-medium text-zinc-800">
                                 {{ item }}
                             </label>
                         </div>
                     </div>
 
-                    <!--                <h1 class="text-red-500 text-sm font-semibold">This field is required.</h1>-->
-
+                    <!--<h1 class="text-red-500 text-sm font-semibold">This field is required.</h1>-->
 
                 </div>
 
@@ -57,33 +60,48 @@
 </template>
 
 <script setup>
-import {onMounted, ref, watch} from 'vue';
+import {computed, onMounted, onUpdated, ref, watch} from 'vue';
 import {editMode, getSelectables} from "../../utils/storeHelpers.js";
 
-const skills = ref([''])
 
+const skills = ref([''])
+const props = defineProps(["modelValue"]);
+const selectedSkills = ref([])
+
+const selectSkill = (event) => {
+    const skill = event.target.value;
+    const index = selectedSkills.value.indexOf(skill);
+    if(selectedSkills.value.length == 5 && index == -1) {
+        return event.preventDefault();
+    }
+
+    if(index == -1) {
+        selectedSkills.value.push(skill)
+    } else {
+        selectedSkills.value.splice(index,1);
+    }
+}
 
 onMounted(async () => {
+    selectedSkills.value = props?.modelValue;
+
     axios.get('/api/selectables/skills').then(async res => {
         skills.value = await getSelectables('skills');
 
     }).catch(error => {
         console.error('Failed to fetch select options:', error);
-
     });
-
 });
 
-const {modelValue} = defineProps(["modelValue"]);
-const selectedSkills = ref([])
-
+onUpdated(() => {
+    selectedSkills.value = props?.modelValue;
+});
 
 watch(selectedSkills, (newValue) => {
     emit('update:modelValue', newValue);
 }, {deep: true})
 
 const emit = defineEmits(["update:modelValue"])
-
 
 </script>
 

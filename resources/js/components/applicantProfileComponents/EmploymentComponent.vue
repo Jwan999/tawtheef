@@ -5,12 +5,16 @@
             <hr class="h-px w-full bg-orange border-0 mt-1">
         </div>
 
-        <div v-if="!editMode" class="rounded-md p-4 bg-white space-y-8">
 
-            <div v-if="!showInputs"
-                 v-for="(job,index) in value">
+        <div v-if="!editMode" class="rounded-md p-4 bg-white space-y-8">
+            <div v-if="!props?.modelValue[0]?.title">
+                <p class="text-sm text-zinc-700">
+                    Not all data filled yet.
+                </p>
+            </div>
+            <div v-else v-for="(job,index) in value">
                 <!--period of employment-->
-                <div v-if="job.duration[0] !== 'Start Year' && job.duration[1] !== 'End Year'"
+                <div v-if="job.duration[0] !== 'Start Year' && job?.duration[1] !== 'End Year'"
                      class="flex text-dark space-x-1 text-sm font-semibold">
                     <h1 class="text-orange">{{ job.duration[0] }}</h1>
                     <h1>-</h1>
@@ -18,30 +22,27 @@
                 </div>
                 <!--position-->
                 <div class="flex items-center space-x-2 mb-3">
-                    <h1 class="font-semibold text-xl">{{ job.title }}</h1>
+                    <h1 class="font-semibold text-xl capitalize">{{ job.title }}</h1>
                     <h1 v-if="job.employer">at</h1>
-                    <h1 class="font-semibold italic text-sm">{{ job.employer }}</h1>
+                    <h1 class="font-semibold italic capitalize">{{ job.employer }}</h1>
                 </div>
                 <div class="space-y-2">
                     <h1 class="font-semibold text-zinc-500">Responsibilities:</h1>
                     <div v-for="responsibility in job.responsibilities" class="flex items-center space-x-3">
                         <div class="flex items-start w-full space-x-3">
                             <span class="flex-none mt-2 w-2 h-2 bg-dark rounded-full"></span>
-                            <p class="text-base">{{ responsibility }}</p>
+                            <p class="text-base capitalize">{{ responsibility }}</p>
                         </div>
                     </div>
 
                 </div>
 
             </div>
-            <div v-else>
-                <p class="text-sm text-zinc-700">
-                    Not all data filled yet.
-                </p>
-            </div>
+
         </div>
 
         <div v-else class="rounded-md bg-white p-4 pb-6">
+
             <div class="space-y-6">
                 <div v-for="(item,index) in value" :key="index"
                      class="border-0 border-r-[1px] pb-4 border-b-[1px]"
@@ -81,34 +82,32 @@
 
 <script setup>
 
-import {nextTick, onMounted, ref, watch} from "vue";
+import {computed, nextTick, onMounted, onUpdated, ref, watch} from "vue";
 import EmploymentInputs from "../addableComponents/EmploymentInputs.vue";
 
 const hoveredElement = ref(null)
 const borderColor = ref('border-zinc-100')
 
-const {modelValue} = defineProps(["modelValue"]);
+const props = defineProps(["modelValue"]);
 
-import {editMode} from "../../utils/storeHelpers.js";
+import store from "../../store/index.js";
 
-const value = ref([])
+const editMode = computed(() => {
+    return store.getters.editMode;
+})
+
+
+let value = ref([])
 const changeBorderColor = (index, color) => {
     hoveredElement.value = index
     borderColor.value = color;
 }
-const showInputs = ref(false)
-const changeShowInputs = () => {
-    if (editMode && value?.value[0]?.title === "") {
-        showInputs.value = true
-    } else {
-        showInputs.value = false;
-    }
-}
+
 
 watch(value, (newValue) => {
     emit('update:modelValue', newValue);
-    changeShowInputs()
 }, {deep: true})
+
 const addNew = () => {
     const newObject = {
         title: "",
@@ -118,14 +117,12 @@ const addNew = () => {
     };
     value.value.push(newObject);
 }
+
+onUpdated(() => {
+    value.value = props.modelValue;
+});
 onMounted(() => {
-    value.value = modelValue;
-    if (modelValue.length == 0) {
-        nextTick(() => {
-            addNew();
-        })
-    }
-    changeShowInputs()
+    value.value = props.modelValue;
 })
 
 const remove = (index) => {

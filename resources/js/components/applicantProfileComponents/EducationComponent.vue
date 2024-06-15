@@ -3,18 +3,20 @@
 
         <div class="space-y-4">
             <h1 class="text-xl font-semibold text-dark pb-4">Educational Background</h1>
-            <div v-if="modelValue[0]?.degree"
-                 v-for="item in modelValue">
-                <h1 v-if="item.duration[0] !== 'Start Year' && item.duration[1] !== 'End Year'" class="font-semibold text-orange">{{ item.duration[0] + ' - ' + item.duration[1] }}</h1>
-                <h1 class="text-dark font-semibold italic">{{ item.degree }}</h1>
-                <h1 class="font-semibold text-lg">{{ item.institute }}</h1>
-            </div>
 
             <div v-if="!modelValue[0]?.degree">
                 <p class="text-sm text-zinc-700">
                     Not all data filled yet.
                 </p>
             </div>
+            <div v-else v-for="item in modelValue">
+                <h1 v-if="item.duration[0] !== 'Start Year' && item.duration[1] !== 'End Year'"
+                    class="font-semibold text-orange">{{ item.duration[0] + ' - ' + item.duration[1] }}</h1>
+                <h1 class="font-semibold text-lg capitalize">{{ item.institute }}</h1>
+                <h1 class="text-dark font-semibold italic capitalize">{{ item.degree }}</h1>
+
+            </div>
+
 
         </div>
 
@@ -49,7 +51,7 @@
         <button
 
             @click="addNew"
-            class="flex-none w-auto appearance-none px-3 py-1 rounded-bl-md font-semibold text-start text-orange bg-zinc-100 hover:bg-dark hover:text-white text-sm">
+            class="mt-3 flex-none w-auto appearance-none px-3 py-1 rounded-bl-md font-semibold text-start text-orange bg-zinc-100 hover:bg-dark hover:text-white text-sm">
             Add component
 
         </button>
@@ -61,7 +63,7 @@
 
 <script setup>
 import EducationInputs from "../addableComponents/EducationInputs.vue";
-import {onMounted, ref, watch} from 'vue';
+import {computed, onMounted, onUpdated, ref, watch} from 'vue';
 import {editMode} from "../../utils/storeHelpers.js";
 
 
@@ -72,14 +74,19 @@ const changeBorderColor = (index, color) => {
     borderColor.value = color;
 }
 
-const {modelValue} = defineProps(["modelValue"]);
+const props = defineProps(["modelValue"])
 const value = ref([])
-
+onUpdated(() => {
+    value.value = props?.modelValue;
+});
+onMounted(() => {
+    value.value = props?.modelValue;
+})
 const addNew = () => {
     value.value.push({
         degree: "", institute: "", duration: ['Start Year', 'End Year']
     });
-}
+};
 const remove = (index) => {
     value.value.splice(index, 1)
 }
@@ -90,12 +97,6 @@ watch(value, (newValue) => {
     emit('update:modelValue', newValue);
 }, {deep: true})
 
-onMounted(() => {
-    value.value = modelValue;
-    if (modelValue.length == 0) {
-        addNew();
-    }
-})
 
 </script>
 

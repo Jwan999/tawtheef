@@ -27,7 +27,7 @@ class AuthController extends Controller
         // Attempt login using Laravel Auth
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             // Login successful
-            return response()->json(['message' => 'Login successful'], 200);
+            return response()->json(['message' => 'Login successful', 'user' => Auth::user()], 200);
         } else {
             // Login failed
             return response()->json(['message' => 'Invalid login credentials'], 401);
@@ -58,6 +58,6 @@ class AuthController extends Controller
         Auth::login($user);
 
 
-        return response()->json(['message' => 'Signup successful'], 201);
+        return response()->json(['message' => 'Signup successful', 'user' => $user->load("applicant")], 201);
     }
 }

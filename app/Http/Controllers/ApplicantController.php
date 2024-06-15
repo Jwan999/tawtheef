@@ -72,15 +72,6 @@ class ApplicantController extends Controller
     public function store(Request $request)
     {
 
-//        $validator = Validator::make($request->all(), [
-//            'data' => 'required|json',
-//            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-//        ]);
-
-//        if ($validator->fails()) {
-//            return response()->json(['errors' => $validator->errors()], 422);
-//        }
-
         $requestData = json_decode($request->input('data'), true);
 
         $imagePath = null;
@@ -93,20 +84,19 @@ class ApplicantController extends Controller
         $applicant = Applicant::where('user_id', $user->id)->first();
 
         if ($applicant) {
-            // Update existing applicant
-//            dd($imagePath);
+
             $applicant->image = $imagePath ?: $applicant->image;
-            $applicant->speciality = json_encode($requestData['speciality']);
-            $applicant->education = json_encode($requestData['education']);
-            $applicant->languages = json_encode($requestData['languages']);
-            $applicant->skills = json_encode($requestData['skills']);
-            $applicant->tools = json_encode($requestData['tools']);
-            $applicant->details = json_encode($requestData['details']);
+            $applicant->speciality = $requestData['speciality'];
+            $applicant->education = $requestData['education'];
+            $applicant->languages = $requestData['languages'];
+            $applicant->skills = $requestData['skills'];
+            $applicant->tools = $requestData['tools'];
+            $applicant->details = $requestData['details'];
             $applicant->summary = $requestData['summary'];
-            $applicant->courses = json_encode($requestData['courses']);
-            $applicant->contact = json_encode($requestData['contact']);
-            $applicant->employment = json_encode($requestData['employment']);
-            $applicant->activities = json_encode($requestData['activities']);
+            $applicant->courses = $requestData['courses'];
+            $applicant->contact = $requestData['contact'];
+            $applicant->employment = $requestData['employment'];
+            $applicant->activities = $requestData['activities'];
             $applicant->published = $requestData['published'];
 
             $applicant->save();
@@ -115,17 +105,17 @@ class ApplicantController extends Controller
         } else {
             $applicant = new Applicant();
             $applicant->image = $imagePath;
-            $applicant->speciality = json_encode($requestData['speciality']);
-            $applicant->education = json_encode($requestData['education']);
-            $applicant->languages = json_encode($requestData['languages']);
-            $applicant->skills = json_encode($requestData['skills']);
-            $applicant->tools = json_encode($requestData['tools']);
-            $applicant->details = json_encode($requestData['details']);
+            $applicant->speciality = $requestData['speciality'];
+            $applicant->education = $requestData['education'];
+            $applicant->languages = $requestData['languages'];
+            $applicant->skills = $requestData['skills'];
+            $applicant->tools = $requestData['tools'];
+            $applicant->details = $requestData['details'];
             $applicant->summary = $requestData['summary'];
-            $applicant->courses = json_encode($requestData['courses']);
-            $applicant->contact = json_encode($requestData['contact']);
-            $applicant->employment = json_encode($requestData['employment']);
-            $applicant->activities = json_encode($requestData['activities']);
+            $applicant->courses = $requestData['courses'];
+            $applicant->contact = $requestData['contact'];
+            $applicant->employment = $requestData['employment'];
+            $applicant->activities = $requestData['activities'];
             $applicant->published = $requestData['published'];
             $applicant->user_id = $user->id;
 
@@ -139,26 +129,46 @@ class ApplicantController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function showPersonalProfile()
     {
-        $applicant = Applicant::find($id);
-//        dd(Auth::id());
-        if (!$applicant) {
-            return response()->json(['message' => 'Applicant not found'], 404);
+        // Check if the user is authenticated
+        if (!Auth::check()) {
+            return response()->json(['message' => 'Unauthenticated'], 401);
         }
 
-        if (Auth::id() !== $applicant->user_id) { // Assuming you have a user_id column in applicants table
-            return response()->json(['message' => 'Unauthorized'], 403);
+        // Get the ID of the authenticated user
+        $userId = Auth::id();
+
+        // Find the applicant associated with the authenticated user
+        $applicant = Applicant::where('user_id', $userId)->first();
+
+        // If the applicant does not exist, create a new one
+        if (!$applicant) {
+            $applicant = new Applicant();
+            $applicant->user_id = $userId;
+            $applicant->save();
+
+            return response()->json([
+                'message' => 'New applicant created for the authenticated user',
+                'applicant_id' => $applicant->id,
+            ], 200);
         }
-//        dd($applicant);
-        // Return the applicant data as JSON
+
+        // Return the existing applicant data as JSON
+        return response()->json($applicant, 200);
+    }
+    public function showResume($id)
+    {
+        $applicant = Applicant::find($id);
         return response()->json($applicant, 200);
     }
 
 
-    public function getAuthUserId()
+    public function getAuthUser()
     {
-        $user = Auth::user();
+
+        $user = Auth::user()->load("applicant");
+
         return response()->json($user);
     }
 

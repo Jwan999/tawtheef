@@ -6,19 +6,18 @@
         </div>
 
         <div v-if="!editMode" class="rounded-md p-4 bg-white space-y-8">
-            <!--            !value[0].title-->
-
-            <div v-if="!showInputs" v-for="(course,index) in value" :key="index">
-                <h1 class="text-sm font-semibold mb-1">{{ course.duration }}</h1>
-                <h1 class="text-orange text-xl font-semibold">{{ course.title }}</h1>
-                <h1 v-if="course.entity" class="text-zinc-600 text-sm font-semibold mb-4">Provided by: {{
-                        course.entity
-                    }}</h1>
-            </div>
-            <div v-else>
+            <div v-if="!props?.modelValue[0]?.title">
                 <p class="text-sm text-zinc-700">
                     Not all data filled yet.
                 </p>
+            </div>
+
+            <div v-else v-for="(course,index) in value" :key="index">
+                <h1 class="text-orange text-xl font-semibold capitalize mb-2">{{ course.title }}</h1>
+                <h1 v-if="course.entity" class="text-zinc-600 text-sm font-semibold mb-1 capitalize">Provided by: {{
+                        course.entity
+                    }}</h1>
+                <h1 class="text-sm font-semibold mb-2">{{ course.duration }}</h1>
             </div>
         </div>
 
@@ -51,7 +50,7 @@
             <button
 
                 @click="addNew"
-                class="flex-none w-auto appearance-none px-3 py-1 rounded-bl-md font-semibold text-start text-orange bg-zinc-100 hover:bg-dark hover:text-white text-sm">
+                class="mt-3 flex-none w-auto appearance-none px-3 py-1 rounded-bl-md font-semibold text-start text-orange bg-zinc-100 hover:bg-dark hover:text-white text-sm">
                 Add component
 
             </button>
@@ -64,9 +63,8 @@
 
 
 <script setup>
-import {onMounted, ref, watch} from "vue";
+import {computed, onMounted, onUpdated, ref, watch} from "vue";
 import CourseInputs from "../addableComponents/CourseInputs.vue";
-import {editMode} from "../../utils/storeHelpers.js";
 
 const hoveredElement = ref(null)
 const borderColor = ref('border-zinc-100')
@@ -77,7 +75,13 @@ const changeBorderColor = (index, color) => {
 }
 
 const value = ref([])
-const {modelValue} = defineProps(["modelValue"]);
+const props = defineProps(["modelValue"]);
+
+import store from "../../store/index.js";
+
+const editMode = computed(() => {
+    return store.getters.editMode;
+})
 
 const addNew = () => {
     value.value.push({
@@ -90,24 +94,16 @@ const remove = (index) => {
 const emit = defineEmits(["update:modelValue"])
 
 const showInputs = ref(false)
-const changeShowInputs = () => {
-    if (editMode && value?.value[0]?.title === "") {
-        showInputs.value = true;
-    } else {
-        showInputs.value = false;
-    }
-}
 watch(value, (newValue) => {
     emit('update:modelValue', newValue);
-    changeShowInputs()
+
 }, {deep: true})
 
+onUpdated(() => {
+    value.value = props?.modelValue;
+});
 onMounted(() => {
-    value.value = modelValue;
-    if (modelValue.length == 0) {
-        addNew();
-    }
-    changeShowInputs()
+    value.value = props?.modelValue;
 })
 
 

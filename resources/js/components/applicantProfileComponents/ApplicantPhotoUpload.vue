@@ -1,8 +1,13 @@
 <template>
     <div class="relative flex flex-col items-center">
+
         <div class="flex justify-center w-full items-center bg-white h-48 rounded-md dark:bg-zinc-600">
-            <img v-if="previewURL" class="h-48 object-cover w-full rounded-md"
-                 :src="previewURL" alt="">
+            <div class="rounded-md w-full" v-if="image">
+                <img v-if="previewURL.startsWith('data:')" class="h-48 object-cover w-full rounded-md"
+                     :src="previewURL" alt="">
+                <img v-if="!previewURL.startsWith('data:')" class="h-48 object-cover w-full rounded-md"
+                     :src="`/storage/${image}`" alt="">
+            </div>
 
 
             <svg v-else class="h-32 fill-dark" viewBox="-42 0 512 512.002" xmlns="http://www.w3.org/2000/svg">
@@ -21,27 +26,43 @@
             </label>
             <input id="fileInput" type="file" v-on:change="previewImage" class="absolute left-0 hidden">
         </div>
-<!--        <h1 v-if="editMode" class="w-full text-red-500 text-sm mt-1 font-semibold">This field is required.</h1>-->
+        <!--        <h1 v-if="editMode" class="w-full text-red-500 text-sm mt-1 font-semibold">This field is required.</h1>-->
 
     </div>
 
 </template>
 
 <script setup>
-import {computed, ref} from "vue";
+import {computed, onMounted, onUpdated, ref} from "vue";
 import store from "../../store/index.js";
 
-const image = ref(null)
-const previewURL = ref(null);
+const previewURL = ref('');
+
+const props = defineProps(["modelValue"])
+
+let image = computed(() => {
+    return !previewURL.value.startsWith('data:') ? props.modelValue : '';
+
+});
 const previewImage = (event) => {
     const file = event.target.files[0];
-    image.value = file;
     if (file) {
         const reader = new FileReader();
-        previewURL.value = URL.createObjectURL(file);
-        emitImage()
+        reader.onload = () => {
+            console.log(reader.result)
+            previewURL.value = reader.result;
+            console.log(previewURL.value)
+
+        };
+        reader.readAsDataURL(file);
     }
+    changeImage(file)
+    emitImage();
 }
+const changeImage = (file) => {
+    image = file
+}
+
 const editMode = computed({
     get() {
         return store.getters.editMode;
@@ -54,9 +75,7 @@ const editMode = computed({
 const emit = defineEmits(["imageUpdated"])
 
 const emitImage = () => {
-
-
-    emit('update:modelValue', image.value); // Use emit here
+    emit('update:modelValue', image);
 };
 
 

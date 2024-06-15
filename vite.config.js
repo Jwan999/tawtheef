@@ -4,6 +4,9 @@ import vue from '@vitejs/plugin-vue';
 import {defineConfig} from 'vite';
 
 export default defineConfig({
+    build: {
+        sourcemap: true,
+    },
     // optimizeDeps: {
     //     exclude: ['vendor/phpunit/phpunit/src/Event/**'],
     // },
@@ -23,9 +26,24 @@ export default defineConfig({
     alias: {
         '@': '/resources/js',
     },
+    // server: {
+    //     allowedHosts: ['127.0.0.1:8000'],
+    //     sourcemap: true, // Ensure source maps are served
+    //
+    // },
     server: {
-        allowedHosts: ['127.0.0.1:8000'],
+        open: true,
+        sourcemap: true,
+        port: 5173, // Ensure your server is running on the correct port
+        proxy: {
+            '/api': {
+                target: 'http://127.0.0.1:8000', // Laravel API endpoint
+                changeOrigin: true,
+                rewrite: (path) => path.replace(/^\/api/, ''),
+            },
+        },
     },
+
     // server: {
     //     cors: true,
     //     proxy: {

@@ -6,23 +6,23 @@
             <hr class="h-px w-full bg-orange border-0 mt-1">
         </div>
 
-        <div v-if="!editMode" class="rounded-md p-4 bg-white space-y-8">
-
-            <div v-if="!showInputs" v-for="(year, index) in uniqueYears" :key="index">
+        <div v-if="!editMode" class="rounded-md p-4 bg-white space-y-3">
+            <div v-for="(year, index) in uniqueYears" :key="index">
 
                 <h1 v-if="year !== 'Year'" class="text-orange font-semibold text-base mb-2">{{ year }}</h1>
-                <ul class="text-lg">
+                <ul class="text-lg ">
                     <li v-for="event in value.filter(item => item.year === year)"
                         class="flex space-x-2 items-center ml-5">
 
-                        <h1 class="font-semibold">{{ event.title }}</h1>
+                        <h1 class="font-semibold capitalize">{{ event.title }}</h1>
                         <h1 v-if="event.participatedAs !== 'Participated as'">as</h1>
-                        <h1 v-if="event.participatedAs !== 'Participated as'" class="text-orange font-semibold">{{ event.participatedAs }}</h1>
+                        <h1 v-if="event.participatedAs !== 'Participated as'" class="text-orange capitalize font-semibold">
+                            {{ event.participatedAs }}</h1>
                     </li>
 
                 </ul>
             </div>
-            <div v-else>
+            <div v-if="!props?.modelValue[0]?.title">
                 <p class="text-sm text-zinc-700">
                     Not all data filled yet.
                 </p>
@@ -56,11 +56,9 @@
                 </div>
             </div>
             <button
-
                 @click="addNew"
-                class="flex-none w-auto appearance-none px-3 py-1 rounded-bl-md font-semibold text-start text-orange bg-zinc-100 hover:bg-dark hover:text-white text-sm">
+                class="mt-3 flex-none w-auto appearance-none px-3 py-1 rounded-bl-md font-semibold text-start text-orange bg-zinc-100 hover:bg-dark hover:text-white text-sm">
                 Add component
-
             </button>
 
 
@@ -74,7 +72,7 @@
 <script setup>
 import ActivityInputs from "../addableComponents/ActivityInputs.vue";
 
-import {computed, onMounted, ref, watch} from "vue";
+import {computed, onMounted, onUpdated, ref, watch} from "vue";
 import {editMode} from "../../utils/storeHelpers.js";
 
 const hoveredElement = ref(null)
@@ -85,19 +83,8 @@ const changeBorderColor = (index, color) => {
     borderColor.value = color;
 }
 
-const showInputs = ref(false)
-const changeShowInputs = () => {
-    if (editMode && value?.value[0]?.title === "") {
-        showInputs.value = true
-    } else {
-        showInputs.value = false;
-    }
-}
-
-
-const {modelValue} = defineProps(["modelValue"]);
+const props = defineProps(["modelValue"]);
 const value = ref([])
-
 
 const uniqueYears = computed({
     get() {
@@ -118,17 +105,13 @@ const emit = defineEmits(["update:modelValue"])
 
 watch(value, (newValue) => {
     emit('update:modelValue', newValue);
-    showInputs.value = false;
-    changeShowInputs();
 }, {deep: true})
 
+onUpdated(() => {
+    value.value = props?.modelValue;
+});
 onMounted(() => {
-    value.value = modelValue;
-    if (modelValue.length == 0) {
-        addNew();
-    }
-    changeShowInputs()
-
+    value.value = props?.modelValue;
 })
 
 </script>

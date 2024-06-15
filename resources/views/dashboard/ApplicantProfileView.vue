@@ -1,9 +1,10 @@
 <template>
-
-    <button class="px-3 py-1 bg-dark text-white uppercase" @click="fetchApplicantData()">get data</button>
-    <div :class="!isDashboard ? 'px-10 mt-6 mb-10' : ''" class="grid grid-cols-12 gap-6 relative">
+    <div v-if="!dataFetched" class="flex justify-center items-center h-screen">
+        loading...
+    </div>
+    <div v-else :class="!isDashboard ? 'px-10 mt-6 mb-10' : ''" class="grid grid-cols-12 gap-6 relative">
         <!--first row-->
-        <ResumeActionButtonsComponent @saveResume="saveResume" @publishResume="publishResume"
+        <ResumeActionButtonsComponent @saveResume="saveResume" @publishResume="publishResume" :published="published"
                                       class="z-40 absolute top-0 right-0 mr-10"></ResumeActionButtonsComponent>
 
         <div class="col-span-3 space-y-6">
@@ -19,12 +20,11 @@
             <ApplicantDetailsComponent class="w-9/12" v-model="details"></ApplicantDetailsComponent>
 
             <div class="w-full">
-                <ContactComponent :modelValue="contact" @update:modelValue="contact = $event"
+                <ContactComponent
                     v-model="contact"></ContactComponent>
             </div>
 
-            <SummaryComponent :modelValue="summary" @update:modelValue="summary = $event"
-                              v-model="summary"></SummaryComponent>
+            <SummaryComponent v-model="summary"></SummaryComponent>
 
             <EmploymentComponent v-model="employment"></EmploymentComponent>
             <CoursesComponent v-model="courses"></CoursesComponent>
@@ -53,26 +53,30 @@ import ResumeActionButtonsComponent
 import LanguagesComponent from "../../js/components/applicantProfileComponents/LanguagesComponent.vue";
 import ToolsComponent from "../../js/components/applicantProfileComponents/ToolsComponent.vue";
 import ContactComponent from "../../js/components/applicantProfileComponents/ContactComponent.vue";
-import {editMode, getAuthUser} from "../../js/utils/storeHelpers.js";
+import {editMode} from "../../js/utils/storeHelpers.js";
+import router from "../../js/router/index.js";
 
-const image = ref(null);
-const speciality = ref(null);
+const image = ref('');
+const speciality = ref([]);
 const education = ref([]);
 const languages = ref([]);
 const tools = ref([]);
 const skills = ref([]);
 const summary = ref('');
-const details = ref('');
+const details = ref({});
 const courses = ref([]);
 const contact = ref(null);
 const employment = ref([]);
 const activities = ref([]);
 const published = ref(false);
-const user = ref({})
+const user = computed(() => {
+    return store.getters.user;
+})
 const publishResume = (event) => {
     published.value = event.value
 }
 const saveResume = () => {
+    console.log('Tryna save')
     const requestData = {
         image: image.value,
         speciality: speciality.value,
@@ -90,6 +94,7 @@ const saveResume = () => {
     };
 
     const formData = new FormData();
+
     formData.append('data', JSON.stringify(requestData));
     formData.append('image', image.value);
 
@@ -110,61 +115,65 @@ const saveResume = () => {
 const toggleEditMode = () => {
     store.dispatch('setEditMode', !editMode.value);
 };
+const dataFetched = ref(false);
 
+const route = useRoute();
+const routeName = computed(() => {
+    return route.name;
+})
+const routeParams = computed(() => route.params);
+const checkRouteAndFetchData = async () => {
 
-const fetchApplicantData = async () => {
+    if (routeName.value === 'resume-view') {
+        await fetchApplicantData(`/api/applicants/${routeParams.value.id}`);
+    }
+    if (routeName.value === 'profile-edit') {
+        await fetchApplicantData(`/api/profile`);
+    }
+    if (routeName.value === 'profile-view') {
+        await fetchApplicantData(`/api/profile`);
+    }
+
+};
+const fetchApplicantData = async (url) => {
     try {
-        const response = await axios.get(`/api/applicants/${user.value.id}`);
-        const data = response.data;
+        const response = await axios.get(url);
 
-        // console.log(user.value.id)
-        // Assigning the values to the reactive variables
-        image.value = data.image;
+        image.value = response.data.image;
+        speciality.value = response.data.speciality;
+        education.value = response.data.education;
+        languages.value = response.data.languages;
+        tools.value = response.data.tools;
+        skills.value = response.data.skills;
+        summary.value = response.data.summary;
+        details.value = response.data.details;
+        courses.value = response.data.courses;
+        contact.value = response.data.contact;
+        employment.value = response.data.employment;
+        activities.value = response.data.activities;
+        published.value = response.data.published;
+console.log(published.value)
+        dataFetched.value = true;
 
-        // speciality.value = data.speciality;
-        // education.value = data.education;
-        // languages.value = data.languages;
-        // tools.value = data.tools;
-        // skills.value = data.skills;
-        summary.value = data.summary;
-
-        // details.value = data.details;
-        // courses.value = data.courses;
-        contact.value = data.contact;
-        console.log(contact.value)
-
-        // employment.value = data.employment;
-        // activities.value = data.activities;
-        // published.value = data.published;
-        // user.value = data.user; // Assuming 'user' is part of the response
-
-    } catch (err) {
-        alert(err.response ? err.response.data.message : err.message);
+    } catch (error) {
+        if (error.response && error.response.status === 401) {
+            // Redirect to login page
+            await router.push('/login');
+        } else {
+            console.error('Error fetching applicant data:', error);
+        }
     }
 };
 
+
 onMounted(() => {
     checkEditMode();
-
-    getAuthUser().then(response => {
-        user.value = response;
-        fetchApplicantData();
-
-        // console.log
-    }).catch(error => {
-        console.error('Error fetching user data:', error);
-    })
-
-
+    checkRouteAndFetchData();
 });
-
 
 const checkEditMode = () => {
     return store.dispatch('checkEditMode', window.location.href);
 }
-
-
-const route = useRoute();
 
 const isDashboard = computed(() => {
     return route.path.includes('/dashboard');

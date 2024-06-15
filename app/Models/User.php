@@ -12,6 +12,8 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
+    protected $with = ["applicant"];
+
     public function applicant()
     {
         return $this->hasOne(Applicant::class);
@@ -49,4 +51,30 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+
+    protected static function boot()
+    {
+        parent::boot();
+        self::created(function (User $user) {
+            $applicant = new Applicant();
+            $applicant->details = [
+                "fullName" => $user->name,
+            ];
+
+            $applicant->contact = [
+                "email" => $user->email,
+                "city" => "Choose your city...",
+                "zone" => "Choose your zone...",
+                "gender" => "Gender",
+                "phone" => "",
+                "links" => [],
+                "showPhone" => "",
+            ];
+            $applicant->user_id = $user->id;
+            $applicant->save();
+
+
+        });
+    }
 }

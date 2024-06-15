@@ -1,25 +1,27 @@
 <template>
-    <div class="w-10/12 flex justify-start">
-        <div class="border-[1px] border-orange pt-24 pb-40 mt-6 w-full rounded-r-full">
-            <div class="flex justify-center items-center">
-                <div class="w-10/12">
-                    <div class="w-full">
-                        <h1 class="text-5xl font-bold">Build Your <span class="text-orange">Job-Ready</span> Resume,</h1>
-                        <h1 class="text-5xl font-bold">In Minutes.</h1>
-                    </div>
-                    <div class="flex justify-end -mt-2">
-                        <div class="w-4/12">
-                            <button
-                                class="w-full bg-orange hover:bg-dark py-3 text-center font-semibold tracking-wider text-white text-2xl rounded-full outline-none focus:outline-none">
-                                VISIT YOUR RESUME
-                            </button>
+    <div class="flex justify-end">
+        <div class="w-10/12">
+            <div class="border-[1px] border-orange pt-24 pb-40 mt-6 w-full rounded-l-full">
+                <div class="flex justify-center items-center">
+                    <div class="w-10/12">
+                        <div class="w-full">
+                            <h1 class="text-5xl font-bold">Build Your <span class="text-orange">Job-Ready</span> Resume,</h1>
+                            <h1 class="text-5xl font-bold">In Minutes.</h1>
                         </div>
+                        <div class="flex justify-end -mt-2">
+                            <div class="w-4/12">
+                                <router-link :to="`/profile/${user?.applicant?.id}`"
+                                    class="flex justify-center font-semibold w-full text-zinc-800 hover:text-orange border-b-[2px] border-r-[2px] hover:border-orange border-zinc-800 bg-orange hover:bg-dark py-3 text-center font-semibold tracking-wider  text-2xl rounded-full outline-none focus:outline-none">
+                                  YOUR <span class="text-white ml-2">RESUME</span>
+                                </router-link>
+                            </div>
 
+                        </div>
                     </div>
+
                 </div>
 
             </div>
-
         </div>
 
     </div>
@@ -27,17 +29,16 @@
 </template>
 
 <script setup>
-import {onMounted, ref} from "vue";
-import {getAuthUser, getSelectables} from "../../../js/utils/storeHelpers.js";
-
-const userName = ref(null)
-onMounted(() => {
-    getAuthUser().then(response => {
-        userName.value = response.name;
-    }).catch(error => {
-        console.error('Error fetching user data:', error);
-    })
-});
+import {computed, onMounted, ref} from "vue";
+import {useStore} from "vuex";
+import {getSelectables} from "../../../js/utils/storeHelpers.js";
+const store = useStore();
+const userName = computed(() => {
+    return store.getters.user?.name;
+})
+const user = computed(() => {
+    return store.getters.user;
+})
 
 const specialities = ref([])
 

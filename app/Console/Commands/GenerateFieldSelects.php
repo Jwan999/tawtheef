@@ -7,7 +7,7 @@ use Illuminate\Console\Command;
 
 class GenerateFieldSelects extends Command
 {
-    protected $signature = 'app:generate-field-selects';
+    protected $signature = 'generate:selects';
     protected $description = 'Generate field selects data';
 
     protected $formControl;

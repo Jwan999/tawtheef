@@ -9,7 +9,7 @@
                 class="font-semibold text-base font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-orange-900 dark:text-orange-300">
                 {{ workAvailability ? 'Available for Work' : 'Not Available for work' }}
             </span>
-            <h1 class="text-3xl text-orange font-bold mt-4 tracking-wider">{{ fullName }}</h1>
+            <h1 class="text-3xl text-orange font-bold mt-4 tracking-wider capitalize">{{ fullName }}</h1>
 
         </div>
         <div v-else class="col-span-8 w-full">
@@ -42,8 +42,8 @@
 
 
 <script setup>
-import {onMounted, ref, watch} from "vue";
-import {editMode, getAuthUser} from "../../utils/storeHelpers.js";
+import {onMounted, onUpdated, ref, watch} from "vue";
+import {editMode} from "../../utils/storeHelpers.js";
 
 
 const workAvailability = ref(false)
@@ -60,14 +60,18 @@ const updateModelValue = () => {
 };
 watch([workAvailability, fullName], updateModelValue, {deep: true});
 
+const props = defineProps(["modelValue"]);
 onMounted(() => {
     updateModelValue();
-    getAuthUser().then(response => {
-        fullName.value = response.name;
-    }).catch(error => {
-        console.error('Error fetching user data:', error);
-    })
 });
+onMounted(() => {
+    fullName.value = props.modelValue.fullName;
+    workAvailability.value = props.modelValue.workAvailability;
+})
+onUpdated(() => {
+    fullName.value = props.modelValue.fullName;
+    workAvailability.value = props.modelValue.workAvailability;
+})
 
 </script>
 
