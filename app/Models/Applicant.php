@@ -23,6 +23,7 @@ class Applicant extends Model
         'languages' => '[{"item":"","rating":""}]',
         'tools' => '[{"item":"","rating":""}]',
         'skills' => '[]',
+        'summary' => '',
         'speciality' => '{"specializations": [], "children": []}',
     ];
 
