@@ -22,6 +22,7 @@ class Applicant extends Model
         'education' => '[{"degree": "", "institute": "", "duration": ["Start Year", "End Year"]}]',
         'languages' => '[{"item":"","rating":""}]',
         'tools' => '[{"item":"","rating":""}]',
+        'skills' => '[]',
         'speciality' => '{"specializations": [], "children": []}',
     ];
 
