@@ -13,18 +13,21 @@
                     <span v-else>Save</span>
                 </button>
 
-                <button @click="publishResume"
+                <button v-if="editMode" @click="publishResume"
                         class="appearance-none text-sm px-3 py-2 font-semibold text-zinc-500 bg-zinc-200 hover:bg-dark hover:text-white">
                     <span v-if="!published">Publish</span>
                     <span v-else>Un publish</span>
                 </button>
             </template>
             <!--todo show that it works only when you signed in-->
-            <button @click="downloadPDF"
-                    :class="!routeName == 'resume-view' ? '':'rounded-bl-md'"
-                    class="appearance-none text-sm px-3 py-2 font-semibold hover:bg-dark hover:text-white text-zinc-500 bg-zinc-200">
-                <span>Download PDF</span>
-            </button>
+            <div>
+                <button @click="generatePdf" :disabled="isGenerating" class="appearance-none text-sm px-3 py-2 font-semibold hover:bg-dark hover:text-white text-zinc-500 bg-zinc-200">
+                    {{ isGenerating ? 'Generating PDF...' : 'Generate Resume PDF' }}
+                </button>
+                <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
+<!--                <p v-if="pdfGenerated" class="success-message">PDF has been generated and downloaded.</p>-->
+            </div>
+
         </div>
 
         <div v-if="editMode" class="flex justify-end mt-2">
@@ -58,15 +61,69 @@ const userId = computed(() => {
     return store.getters.user?.id;
 });
 const router = useRouter();
+const thisApplicantId = ref(null)
+const getPageApplicantId = () => {
+    const url = new URL(window.location.href);
+    const pathSegments = url.pathname.split('/');
 
-const downloadPDF = () => {
-    if (userId.value) {
-        window.print()
-    } else {
-        window.location.href = '/login';
+    if (pathSegments.length >= 3 && (pathSegments[1] === 'resume' || pathSegments[1] === 'profile')) {
+        thisApplicantId.value = pathSegments[2];
     }
 }
-const saveResume = () => {
+// const pdfGenerated = ref(false);
+// const pdfUrl = ref('');
+
+// href="{{ route('applicant.generate_profile', $applicant->id) }}"
+const isGenerating = ref(false);
+const pdfGenerated = ref(false);
+const errorMessage = ref('');
+const generatePdf = async () => {
+    isGenerating.value = true;
+    errorMessage.value = '';
+    pdfGenerated.value = false;
+
+    try {
+        console.log('Generating PDF for applicant ID:', thisApplicantId.value);
+        const response = await axios.get(`/applicants/${thisApplicantId.value}/generate-profile`, {
+            responseType: 'blob'
+        });
+
+        console.log('Response received:', response);
+
+        // Check if the response is JSON (error message) instead of a PDF
+        const contentType = response.headers['content-type'];
+        if (contentType && contentType.indexOf('application/json') !== -1) {
+            // It's an error response
+            const reader = new FileReader();
+            reader.onload = function() {
+                const result = JSON.parse(reader.result);
+                console.error('Error from server:', result);
+                errorMessage.value = result.error || 'An error occurred while generating the PDF.';
+            };
+            reader.readAsText(response.data);
+            return;
+        }
+
+        // If it's not an error, proceed with PDF download
+        const file = new Blob([response.data], { type: 'application/pdf' });
+        const fileURL = URL.createObjectURL(file);
+        const link = document.createElement('a');
+        link.href = fileURL;
+        link.setAttribute('download', `applicant_profile_${thisApplicantId.value}.pdf`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(fileURL);
+
+        pdfGenerated.value = true;
+        console.log('PDF generated and download triggered');
+    } catch (error) {
+        console.error('Error generating PDF:', error);
+        errorMessage.value = 'An error occurred while generating the PDF. Please try again later.';
+    } finally {
+        isGenerating.value = false;
+    }
+};const saveResume = () => {
     console.log('testing save')
     emit('saveResume')
     toggleEditMode()
@@ -91,6 +148,7 @@ const route = useRoute();
 
 onMounted(async () => {
     published.value = props?.published;
+    getPageApplicantId()
 });
 
 onUpdated(() => {

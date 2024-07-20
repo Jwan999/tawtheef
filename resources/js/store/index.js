@@ -19,6 +19,20 @@ export default createStore({
         searchMode: true,
         invalidFields: [],
         user: getUserFromLocalStorage(),
+        filteredApplicants: [],
+        searchedApplicants:[],
+        filters: {
+            experience: [2, 6],
+            age: [19, 26],
+            gender: null,
+            workAvailability: null,
+            freshGraduate: null,
+            mainSpecializations: [],
+            subSpecialities: [],
+            degree: '',
+            city: '',
+            zone: '',
+        },
     },
     actions: {
         setEditMode({commit}) {
@@ -37,7 +51,6 @@ export default createStore({
             commit('setUser', user);
             return user;
         },
-
         async checkAuthStatus({commit}) {
             try {
                 const response = await axios.get('/api/auth');
@@ -47,7 +60,26 @@ export default createStore({
                 console.error('Error fetching data:', error);
                 commit('setAuthStatus', false);
             }
-        }
+        },
+        async fetchFilteredApplicants({ commit }, filters) {
+            try {
+                const response = await axios.get('/api/applicants/search', { params: filters });
+                commit('setFilteredApplicants', response.data);
+            } catch (error) {
+                console.error('Error fetching filtered applicants:', error);
+            }
+        },
+        async searchApplicants({ commit }, searchTerm) {
+            try {
+                const response = await axios.get('/api/search-applicants', { params: { search: searchTerm } });
+                commit('setSearchedApplicants', response.data);
+            } catch (error) {
+                console.error('Error searching applicants:', error);
+            }
+        },
+        resetFilters({ commit }) {
+            commit('resetFilters');
+        },
     },
     mutations: {
         setUser(state, user) {
@@ -58,8 +90,9 @@ export default createStore({
         setEditMode(state) {
             state.editMode = !state.editMode;
         },
-        setSearchMode(state) {
-            state.searchMode = !state.searchMode;
+        setSearchMode(state, newVal) {
+            console.log(newVal)
+            state.searchMode = newVal;
         },
         clearValidationErrors(state) {
             state.invalidFields = [];
@@ -70,14 +103,46 @@ export default createStore({
         setAuthStatus(state, isAuthenticated) {
             state.isAuthenticated = isAuthenticated;
         },
-
+        setFilteredApplicants(state, applicants) {
+            state.filteredApplicants = applicants;
+        },
+        setSearchedApplicants(state, applicants) {
+            state.searchedApplicants = applicants;
+        },
+        updateFilter(state, { key, value }) {
+            if (key === 'mainSpecializations' || key === 'subSpecialities') {
+                state.filters[key] = Array.isArray(value) ? value : [value].filter(Boolean);
+            } else {
+                state.filters[key] = value;
+            }
+        },
+        resetFilters(state) {
+            state.filters = {
+                experience: [2, 6],
+                age: [19, 26],
+                gender: null,
+                workAvailability: null,
+                freshGraduate: null,
+                mainSpecializations: [],
+                subSpecialities: [],
+                degree: null,
+                city: null,
+                zone: null,
+            };
+        },
     },
     getters: {
         user: (state) => state.user,
         isAuthenticated: (state) => state.user != null,
         invalidFields: (state) => state.invalidFields,
         editMode: state => state.editMode,
-        searchMode: state => state.searchMode
+        searchMode: state => state.searchMode,
+        filteredApplicants: state => state.filteredApplicants,
+        searchedApplicants: state => state.searchedApplicants,
+        filters: state => state.filters,
+
+
+
     }
 });
 

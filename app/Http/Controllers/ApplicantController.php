@@ -3,71 +3,223 @@
 namespace App\Http\Controllers;
 
 use App\Models\Applicant;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
+use Spatie\Browsershot\Browsershot;
+use App\Models\FormControl;
+
 
 class ApplicantController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    public function generateApplicantProfile($id)
+    {
+        try {
+            $applicant = Applicant::findOrFail($id);
+
+            $filename = "applicant_profile_{$id}.pdf";
+
+            $html = view('public.downloadableProfile.DownloadPDFApplicantProfile', compact('applicant'))->render();
+
+            $pdfContent = Browsershot::html($html)
+                ->setNodeBinary('/Users/jwan99/.nvm/versions/node/v22.2.0/bin/node')
+                ->setNpmBinary('/Users/jwan99/.nvm/versions/node/v22.2.0/bin/npm')
+                ->format('A4')
+                ->margins(5, 5, 5, 5)
+                ->waitUntilNetworkIdle()
+                ->delay(500) // Add a small delay to ensure font loading
+                ->pdf();
+
+            if (substr($pdfContent, 0, 4) !== '%PDF') {
+                throw new \Exception('Generated content is not a valid PDF.');
+            }
+
+            return response($pdfContent)
+                ->header('Content-Type', 'application/pdf')
+                ->header('Content-Disposition', "attachment; filename=\"{$filename}\"");
+        } catch (\Exception $e) {
+//            \Log::error('PDF Generation Error: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to generate PDF: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function viewApplicantProfile($id)
+    {
+        $applicant = Applicant::findOrFail($id);
+        return view('public.downloadableProfile.ViewPDFApplicantProfile', compact('applicant'));
+    }
+
+    public function getSelectables(Request $request)
+    {
+        $key = $request->key;
+
+        if (!$key) {
+            return response()->json(['error' => 'Key is required'], 400);
+        }
+
+        $formControl = FormControl::where('key', $key)->first();
+
+        if (!$formControl) {
+            return response()->json(['error' => 'No data found for the given key'], 404);
+        }
+
+        return response()->json(json_decode($formControl->value));
+    }
 
     public function index()
     {
-        $applicants = Applicant::all();
+        $applicants = Applicant::where('published', true)->get();
         return response()->json($applicants);
-
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+    public function searchApplicants(Request $request)
+    {
+        $searchTerm = $request->input('search');
+
+        $query = Applicant::query()->where('published', true);
+
+        if ($searchTerm) {
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where(Applicant::COLUMN_SUMMARY, 'ILIKE', "%{$searchTerm}%")
+                    ->orWhereRaw(Applicant::COLUMN_TOOLS . "::text ILIKE ?", ["%{$searchTerm}%"])
+                    ->orWhereRaw("EXISTS (
+                      SELECT 1 FROM json_array_elements(" . Applicant::COLUMN_EMPLOYMENT . "::json) AS job,
+                      json_array_elements_text(job->'responsibilities') AS responsibility
+                      WHERE responsibility ILIKE ?
+                  )", ["%{$searchTerm}%"])
+                    ->orWhereRaw(Applicant::COLUMN_SPECIALITY . "->>'children' ILIKE ?", ["%{$searchTerm}%"]);
+            });
+        }
+
+        return response()->json($query->get());
+    }
+
+    public function getFilteredApplicants(Request $request)
+    {
+
+        $query = Applicant::query()->where('published', true);
+
+        if ($request->filled('experience')) {
+            $experience_range = $request->input('experience');
+
+            if (is_array($experience_range) && count($experience_range) == 2
+                && ($experience_range !== [2, 6])) { // Check if it's not the default value
+                $experience_min = min($experience_range);
+                $experience_max = max($experience_range);
+
+                $query->whereRaw("
+                COALESCE((
+                    SELECT SUM(
+                        CASE
+                            WHEN (job->>'duration')::json->>1 = 'present' THEN
+                                EXTRACT(YEAR FROM CURRENT_DATE) - ((job->>'duration')::json->>0)::int
+                            ELSE
+                                ((job->>'duration')::json->>1)::int - ((job->>'duration')::json->>0)::int
+                        END
+                    )
+                    FROM json_array_elements(employment::json) AS job
+                ), 0) BETWEEN ? AND ?
+            ", [$experience_min, $experience_max]);
+            }
+        }
+
+        if ($request->filled('age')) {
+            $age_range = $request->input('age');
+
+            if (is_array($age_range) && count($age_range) == 2
+                && ($age_range !== [19, 26])) { // Check if it's not the default value
+                $age_min = min($age_range);
+                $age_max = max($age_range);
+
+                $query->whereRaw("
+                CASE
+                    WHEN contact->>'birthdate' ~ '^\d{4}-\d{2}-\d{2}$' THEN
+                        DATE_PART('year', AGE(CURRENT_DATE, (contact->>'birthdate')::DATE))
+                    ELSE
+                        NULL
+                END BETWEEN ? AND ?
+            ", [$age_min, $age_max]);
+            }
+        }
+
+
+        if ($request->filled('gender')) {
+            $gender = $request->input('gender');
+            $query->whereRaw("contact->>'gender' = ?", [$gender]);
+        }
+
+        if ($request->filled('workAvailability')) {
+            $workAvailability = $request->input('workAvailability');
+            $query->whereRaw("details->>'workAvailability' = ?", [$workAvailability]);
+        }
+
+        // Fresh Graduate filter
+        if ($request->filled('freshGraduate') && $request->input('freshGraduate') == true) {
+            $currentYear = date('Y');
+            $twoYearsAgo = $currentYear - 2;
+
+            $query->whereRaw("
+            EXISTS (
+            SELECT 1 FROM jsonb_array_elements(education::jsonb) AS edu
+            WHERE (edu->'duration'->>1) ~ '^[0-9]+$' AND (edu->'duration'->>1)::int BETWEEN ? AND ?
+            )
+            ", [$twoYearsAgo, $currentYear]);
+        }
+
+//        if ($request->filled('degree')) {
+//            $degree = $request->input('degree');
+//            $query->whereRaw("EXISTS (
+//            SELECT 1 FROM jsonb_array_elements(education::jsonb) AS edu
+//            WHERE edu->>'degree' = ?)", [$degree]);
+//        }
+
+        if ($request->filled('city')) {
+            $city = $request->input('city');
+            $query->whereRaw("contact->>'city' = ?", [$city]);
+        }
+
+
+        if ($request->filled('zone') && $request->input('city') === 'Baghdad') {
+            $zone = $request->input('zone');
+            $query->whereRaw("contact->>'zone' = ?", [$zone]);
+        }
+
+        $totalCount = $query->count();
+        \Log::info("Total applicants before filtering: " . $totalCount);
+
+        if ($request->filled('mainSpecializations')) {
+            $mainSpecializations = $request->input('mainSpecializations');
+            \Log::info("Filtering by main specialization: " . json_encode($mainSpecializations));
+            $query->whereJsonContains('speciality->title', $mainSpecializations[0]);
+
+            // Debugging: Get the count after applying main specialization filter
+            $countAfterMain = $query->count();
+            \Log::info("Applicants after main specialization filter: " . $countAfterMain);
+        }
+
+        if ($request->filled('subSpecialities')) {
+            $subSpecialities = $request->input('subSpecialities');
+            \Log::info("Filtering by sub specialities: " . json_encode($subSpecialities));
+            $query->where(function ($q) use ($subSpecialities) {
+                foreach ($subSpecialities as $subSpeciality) {
+                    $q->orWhereJsonContains('speciality->children', $subSpeciality);
+                }
+            });
+
+            // Debugging: Get the count after applying sub specialities filter
+            $countAfterSub = $query->count();
+            \Log::info("Applicants after sub specialities filter: " . $countAfterSub);
+        }
+
+        $applicants = $query->get();
+//        dd($applicants);
+        return response()->json($applicants, 200);
+    }
+
     public function create()
     {
-        //
-    }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-//    public function store(Request $request)
-//    {
-//        $applicant = new Applicant;
-////        dd($request);
-//        if ($request->hasFile('image')) {
-//            // Store image
-//            $path = $request->file('image')->store('images', 'public');
-//            $applicant->image = $path;
-//        }
-//
-//        $applicant->speciality_title = json_decode($request->speciality, true)['specializations'];
-//        $applicant->speciality_children = json_decode($request->speciality, true)['children'];
-//        $applicant->education = json_decode($request->education, true);
-//        $applicant->languages = json_decode($request->languages, true);
-//        $applicant->skills = explode(',', $request->skills);
-//        $applicant->tools = json_decode($request->tools, true);
-//        $applicant->work_availability = $request->input('details.workAvailability');
-//        $applicant->full_name = $request->input('details.fullName');
-//        $applicant->summary = $request->input('summary');
-//        $applicant->courses = json_encode($request->input('courses'));
-//        $applicant->phone = $request->input('contact.phone');
-//        $applicant->gender = $request->input('contact.gender');
-//        $applicant->email = $request->input('contact.email');
-//        $applicant->links = json_encode($request->input('contact.links'));
-//        $applicant->birthdate = $request->input('contact.birthdate');
-//        $applicant->city = $request->input('contact.city');
-//        $applicant->zone = $request->input('contact.zone');
-//        $applicant->employment = json_encode($request->input('employment'));
-//        $applicant->activities = json_encode($request->input('activities'));
-//        $applicant->profileable_id = $request->input('profileable_id');
-//        $applicant->profileable_type = $request->input('profileable_type');
-//
-//        $applicant->save();
-//
-//        return response()->json($applicant, 201);
-//    }
+    }
 
     public function store(Request $request)
     {
@@ -126,9 +278,6 @@ class ApplicantController extends Controller
     }
 
 
-    /**
-     * Display the specified resource.
-     */
     public function showPersonalProfile()
     {
         // Check if the user is authenticated
@@ -157,12 +306,12 @@ class ApplicantController extends Controller
         // Return the existing applicant data as JSON
         return response()->json($applicant, 200);
     }
+
     public function showResume($id)
     {
         $applicant = Applicant::find($id);
         return response()->json($applicant, 200);
     }
-
 
     public function getAuthUser()
     {
@@ -172,28 +321,18 @@ class ApplicantController extends Controller
         return response()->json($user);
     }
 
-
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Applicant $applicant)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Applicant $applicant)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Applicant $applicant)
     {
-        //
+
     }
 }

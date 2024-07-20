@@ -3,6 +3,7 @@
 
         <div class="flex justify-center w-full items-center bg-white h-48 rounded-md dark:bg-zinc-600">
             <div class="rounded-md w-full" v-if="image">
+                <!--todo what the fuck is this?-->
                 <img v-if="previewURL.startsWith('data:')" class="h-48 object-cover w-full rounded-md"
                      :src="previewURL" alt="">
                 <img v-if="!previewURL.startsWith('data:')" class="h-48 object-cover w-full rounded-md"

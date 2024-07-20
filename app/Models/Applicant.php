@@ -8,6 +8,11 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class Applicant extends Model
 {
+
+    const COLUMN_SUMMARY = 'summary';
+    const COLUMN_TOOLS = 'tools';
+    const COLUMN_EMPLOYMENT = 'employment';
+    const COLUMN_SPECIALITY = 'speciality';
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -37,8 +42,7 @@ class Applicant extends Model
         'contact' => "json",
         'details' => 'json',
         'tools' => "json",
-        'speciality' => "json",
-
+        'speciality' => "json"
     ];
     protected $fillable = [
         'education',

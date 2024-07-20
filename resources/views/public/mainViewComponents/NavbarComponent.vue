@@ -1,31 +1,31 @@
 <template>
-    <div class="px-6 py-2 flex justify-between items-center">
+    <div class="px-6 flex justify-between items-center">
         <div>
             <router-link to="/"
-                         class="self-center text-base font-semibold sm:text-2xl whitespace-nowrap dark:text-white">
+                         class="self-center text-3xl font-semibold whitespace-nowrap zinc-800:text-white">
                 TAWTHEEF
             </router-link>
         </div>
-        <div class="flex items-center justify-between space-x-3">
+        <div class="flex items-center justify-between space-x-6">
             <template v-if="!isAuthenticated">
                 <router-link
-                    class="font-semibold cursor-pointer text-dark text-base border border-transparent transition-colors ease-in delay-100 hover:text-orange hover:border-orange rounded-full lg:px-5 px-4 py-2"
+                    class="font-semibold border-[1px] border-zinc-600 border-t-0 rounded-full px-8 py-2 cursor-pointer text-zinc-800 text-base border transition-colors ease-in delay-100 hover:text-orange hover:border-orange rounded-full"
                     to="/login">Login
                 </router-link>
                 <router-link
-                    class="font-semibold cursor-pointer text-dark text-base border border-transparent transition-colors ease-in delay-100 hover:text-orange hover:border-orange rounded-full lg:px-5 px-4 py-2"
+                    class="font-semibold border-[1px] border-zinc-600 border-t-0 rounded-full px-8 py-2 cursor-pointer text-zinc-800 text-base border transition-colors ease-in delay-100 hover:text-orange hover:border-orange rounded-full"
                     to="/login">
                     Create Resume
                 </router-link>
             </template>
             <template v-else>
                 <router-link
-                    class="font-semibold cursor-pointer text-dark text-base border border-transparent transition-colors ease-in delay-100 hover:text-orange hover:border-orange rounded-full lg:px-5 px-4 py-2"
+                    class="font-semibold border-[1px] border-zinc-600 border-t-0 rounded-full px-8 py-2 cursor-pointer text-zinc-800 text-base border transition-colors ease-in delay-100 hover:text-orange hover:border-orange rounded-full"
                     :to="`/profile/${user?.applicant?.id}`">
                     Resume
                 </router-link>
                 <button @click="logout"
-                        class="font-semibold cursor-pointer text-dark text-base border border-transparent transition-colors ease-in delay-100 hover:text-orange hover:border-orange rounded-full lg:px-5 px-4 py-2">
+                        class="font-semibold border-[1px] border-zinc-600 border-t-0 rounded-full px-8 py-2 cursor-pointer text-zinc-800 text-base border transition-colors ease-in delay-100 hover:text-orange hover:border-orange rounded-full">
                     Logout
                 </button>
             </template>

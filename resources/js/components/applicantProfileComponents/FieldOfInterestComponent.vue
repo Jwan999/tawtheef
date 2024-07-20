@@ -84,6 +84,7 @@
 import {computed, onMounted, onUpdated, ref, watch, watchEffect} from "vue";
 
 import {editMode, getSelectables} from "../../utils/storeHelpers.js";
+
 const props = defineProps(["modelValue"])
 
 const specializations = ref([])
@@ -99,11 +100,8 @@ onMounted(async () => {
     specializations.value = props?.modelValue?.specializations
     children.value = props?.modelValue?.children
 
-    axios.get('').then(async res => {
-        specialities.value = await getSelectables('specialities');
-    }).catch(error => {
-        console.error('Failed to fetch select options:', error);
-    });
+    specialities.value = await getSelectables('specialities');
+
 });
 
 const toggleSubSpeciality = (subSpeciality) => {
@@ -136,7 +134,7 @@ watch([specializations.value, children.value], () => {
         specializations: specializations.value,
         children: children.value
     });
-}, { deep: true });
+}, {deep: true});
 
 
 </script>

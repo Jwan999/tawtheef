@@ -14,8 +14,9 @@ import SlidersComponent from "./mainViewComponents/SlidersComponent.vue";
 import PreviewAllComponent from "./mainViewComponents/PreviewAllComponent.vue";
 import FooterComponent from "./mainViewComponents/FooterComponent.vue";
 import HeroComponent from "./mainViewComponents/HeroComponent.vue";
-import {computed} from "vue";
+import {computed, onMounted, ref} from "vue";
 import store from "../../js/store/index.js";
+
 
 const searchMode = computed({
     get() {
@@ -25,4 +26,8 @@ const searchMode = computed({
         store.dispatch('setSearchMode', !searchMode)
     }
 })
+
+
+
+
 </script>

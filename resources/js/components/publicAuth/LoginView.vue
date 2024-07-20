@@ -73,7 +73,7 @@ const handleLogin = async () => {
         });
         store.commit('setUser',data.user);
 
-        router.back();
+        await router.push('/');
        // router.push()
     } catch (error) {
         console.error('Login error:', error.response.data);

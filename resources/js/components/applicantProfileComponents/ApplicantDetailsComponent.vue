@@ -7,7 +7,7 @@
             <span
                 :class="workAvailability ? 'bg-orange text-white':'bg-zinc-200 text-zinc-400'"
                 class="font-semibold text-base font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-orange-900 dark:text-orange-300">
-                {{ workAvailability ? 'Available for Work' : 'Not Available for work' }}
+                {{ workAvailability ? 'Available for Work' : 'Not currently looking' }}
             </span>
             <h1 class="text-3xl text-orange font-bold mt-4 tracking-wider capitalize">{{ fullName }}</h1>
 

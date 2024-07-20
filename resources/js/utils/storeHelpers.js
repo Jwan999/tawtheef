@@ -31,9 +31,7 @@ export const countWords = (summary) => {
 
 export const getSelectables = async (key) => {
     const response = await axios.get(`/api/selectables/${key}`)
-    const {data} = response;
-    return data;
-
+    return response.data;
 };
 
 
