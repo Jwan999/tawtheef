@@ -1,8 +1,12 @@
 <template>
+    <div class="flex items-center space-x-3">
+        <h1 class="flex-none text-xl font-semibold text-dark">Spoken Languages</h1>
+        <hr class="h-px w-full bg-orange border-0 mt-1">
+    </div>
     <div v-if="!editMode" class="rounded-md p-4 bg-white text-sm md:text-xs">
 
         <div class="space-y-1">
-            <h1 class="text-xl font-semibold text-dark pb-4">Languages</h1>
+<!--            <h1 class="text-xl font-semibold text-dark pb-4">Languages</h1>-->
 
             <div v-if="!languages[0]?.item">
                 <p class="text-sm text-zinc-700">
@@ -32,8 +36,6 @@
     <div v-else class="rounded-md py-4 bg-white text-sm md:text-sm">
 
         <div class="px-4 text-sm md:text-sm">
-            <h1 class="text-xl font-semibold text-dark pb-3">Languages</h1>
-
             <div class="relative w-full">
                 <div class="space-y-4">
                     <div v-for="(item,index) in languages"

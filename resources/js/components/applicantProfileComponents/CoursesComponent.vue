@@ -1,7 +1,7 @@
 <template>
     <div class="w-full space-y-4">
         <div class="flex items-center space-x-3">
-            <h1 class="flex-none text-xl font-semibold text-dark">Courses</h1>
+            <h1 class="flex-none text-xl font-semibold text-dark">Courses Taken</h1>
             <hr class="h-px w-full bg-orange border-0 mt-1">
         </div>
 

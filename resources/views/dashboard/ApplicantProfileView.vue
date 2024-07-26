@@ -1,14 +1,20 @@
 <template>
     <div v-if="!dataFetched" class="flex justify-center items-center h-screen">
-        loading...
+        <LottieLoader/>
     </div>
-    <div v-else :class="!isDashboard ? 'px-10 mt-6 mb-10' : ''" class="grid grid-cols-12 gap-6 relative">
+    <div v-else :class="!isDashboard ? 'px-4 md:px-10 mt-6 mb-10' : ''" class="grid grid-cols-12 grid-flow-row gap-6 md:mb-0 mb-10">
+
         <!--first row-->
         <ResumeActionButtonsComponent @saveResume="saveResume" @publishResume="publishResume" :published="published"
-                                      class="z-40 absolute top-0 right-0 mr-10"></ResumeActionButtonsComponent>
+                                      class="col-span-12"></ResumeActionButtonsComponent>
 
-        <div class="col-span-3 space-y-6">
+        <div class="md:hidden block col-span-12">
             <ApplicantPhotoUpload v-model="image"></ApplicantPhotoUpload>
+        </div>
+        <div class="col-span-12 md:col-span-3 space-y-6 md:order-1 order-2">
+            <div class="hidden md:block">
+                <ApplicantPhotoUpload v-model="image"></ApplicantPhotoUpload>
+            </div>
             <FieldOfInterestComponent v-model="speciality"></FieldOfInterestComponent>
             <EducationComponent v-model="education"></EducationComponent>
             <LanguagesComponent v-model="languages"></LanguagesComponent>
@@ -16,12 +22,10 @@
             <ToolsComponent v-model="tools"></ToolsComponent>
         </div>
 
-        <div class="col-span-9 space-y-8">
-            <ApplicantDetailsComponent class="w-9/12" v-model="details"></ApplicantDetailsComponent>
+        <div class="col-span-12 md:col-span-9 space-y-8 md:order-2 order-1">
 
             <div class="w-full">
-                <ContactComponent
-                    v-model="contact"></ContactComponent>
+                <ContactComponent v-model="contact"></ContactComponent>
             </div>
 
             <SummaryComponent v-model="summary"></SummaryComponent>
@@ -55,6 +59,8 @@ import ToolsComponent from "../../js/components/applicantProfileComponents/Tools
 import ContactComponent from "../../js/components/applicantProfileComponents/ContactComponent.vue";
 import {editMode} from "../../js/utils/storeHelpers.js";
 import router from "../../js/router/index.js";
+import LottieLoader from "../../js/components/LottieLoader.vue";
+import PublishState from "../../js/components/applicantProfileComponents/PublishState.vue";
 
 const image = ref('');
 const speciality = ref([]);
@@ -84,7 +90,7 @@ const saveResume = () => {
         languages: languages.value,
         skills: skills.value,
         tools: tools.value,
-        details: details.value,
+        // details: details.value,
         summary: summary.value,
         courses: courses.value,
         contact: contact.value,
@@ -152,7 +158,7 @@ const fetchApplicantData = async (url) => {
         employment.value = response.data.employment;
         activities.value = response.data.activities;
         published.value = response.data.published;
-console.log(published.value)
+        console.log(published.value)
         dataFetched.value = true;
 
     } catch (error) {

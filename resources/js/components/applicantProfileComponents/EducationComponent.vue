@@ -1,8 +1,11 @@
 <template>
+    <div class="flex items-center space-x-3">
+        <h1 class="flex-none text-xl font-semibold text-dark">Educational Background</h1>
+        <hr class="h-px w-full bg-orange border-0 mt-1">
+    </div>
     <div v-if="!editMode" class="rounded-md p-4 bg-white text-sm md:text-sm">
 
         <div class="space-y-4">
-            <h1 class="text-xl font-semibold text-dark pb-4">Educational Background</h1>
 
             <div v-if="!modelValue[0]?.degree">
                 <p class="text-sm text-zinc-700">
@@ -23,7 +26,6 @@
     </div>
 
     <div v-else class="rounded-md p-4 pb-6 bg-white text-sm md:text-sm">
-        <h1 class="text-xl font-semibold text-dark pb-4">Educational Background</h1>
         <div class="relative w-full space-y-3">
 
             <div v-for="(item,index) in value"

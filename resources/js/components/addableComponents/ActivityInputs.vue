@@ -1,7 +1,7 @@
 <template>
 
     <div class="w-full pr-0">
-        <label for="message" class="block mb-2 text-sm font-medium text-zinc-700">These fields are optional, and their
+        <label for="message" class="block mb-3 text-zinc-500 mt-2">* These fields are optional, and their
             purpose is to show if the individual has other related activities.</label>
 
         <div class="flex space-x-3 items-center w-full mt-4">

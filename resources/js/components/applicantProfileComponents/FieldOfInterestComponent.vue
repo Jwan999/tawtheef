@@ -5,7 +5,7 @@
             <hr class="h-px w-full bg-orange border-0 mt-1">
         </div>
         <div :class="specializations ?'rounded':'rounded-t-md'"
-             class="bg-orange text-lg text-start px-2 text-white py-3 font-bold tracking-wide">
+             class="bg-orange text-lg tracking-wider text-start px-2 text-white py-3 font-semibold tracking-wide">
             <div v-if="!specializations.length">
                 <p class="text-sm">
                     Not all data filled yet.
@@ -32,7 +32,7 @@
             <hr class="h-px w-full bg-orange border-0 mt-1">
         </div>
         <div class="mt-2 mb-1">
-            <h1 class="text-sm font-semibold text-zinc-600">* You can pick two main specializations only.</h1>
+            <h1 class="block mb-3 text-zinc-500 mt-2">* You can pick two main specializations only.</h1>
         </div>
         <div class="flex">
 

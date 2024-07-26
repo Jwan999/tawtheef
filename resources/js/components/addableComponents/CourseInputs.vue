@@ -1,6 +1,6 @@
 <template>
     <div class="w-full space-y-4 pr-0">
-        <label for="message" class="block mb-2 text-sm font-medium text-zinc-700">List the courses you've completed, that can show the skills you have.</label>
+        <label for="message" class="block mb-3 text-zinc-500 mt-2">* List the courses you've completed, that can show the skills you have.</label>
 
         <div class="flex space-x-3 items-center">
 

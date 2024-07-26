@@ -1,7 +1,10 @@
 <template>
+    <div class="flex items-center space-x-3">
+        <h1 class="flex-none text-xl font-semibold text-dark">Personal Skills</h1>
+        <hr class="h-px w-full bg-orange border-0 mt-1">
+    </div>
     <div v-if="!editMode" class="rounded-md p-4 bg-white text-sm md:text-sm">
         <div class="space-y-1">
-            <h1 class="text-xl font-semibold text-dark pb-4">Personal Skills</h1>
             <div v-if="!editMode && selectedSkills.length == 0">
                 <p class="text-sm text-zinc-700">
                     Not all data filled yet.
@@ -22,9 +25,8 @@
     <div v-else>
         <div class="rounded-md p-4 bg-white text-sm md:text-sm">
             <div class="space-y-1">
-                <h1 class="text-xl font-semibold text-dark pb-4">Personal Skills</h1>
                 <div class="py-2">
-                    <h1 class="text-sm font-semibold text-zinc-600">* You can pick five personal-skills only.</h1>
+                    <h1 class="block mb-3 text-zinc-500 mt-2">* You can pick five personal-skills only.</h1>
                 </div>
                 <div class="space-y-3">
 

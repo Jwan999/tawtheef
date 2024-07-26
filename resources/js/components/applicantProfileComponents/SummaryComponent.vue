@@ -16,7 +16,7 @@
         <div v-else class="rounded-md p-4 bg-white">
 
             <div class="w-full">
-                <label for="message" class="block mb-2 text-sm font-medium text-zinc-700">Your professional summary is a
+                <label for="message" class="block mb-3 text-zinc-500 mt-2">* Your professional summary is a
                     brief overview of your skills, experiences, and career goals. It's the first section employers will
                     read, so it's important to make it impactful and concise.</label>
                 <div class="relative w-full mt-3">

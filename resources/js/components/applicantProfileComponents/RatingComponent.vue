@@ -25,7 +25,6 @@ watchEffect(() => {
 });
 
 
-
 const languages = ref([])
 onMounted(async () => {
     axios.get('/api/selectables/languages').then(async res => {
@@ -69,17 +68,20 @@ const setRatingValue = (value) => {
 
         </div>
 
-        <div class="flex items-center justify-between mt-6">
-            <h1 class="flex-none font-semibold text-zinc-500">Competency Level</h1>
+        <div class="mt-6">
+            <h1 class="flex-none font-semibold text-zinc-500">Competency Level:</h1>
 
-            <button
-                v-for="(value,index) in 5"
-                :key="index"
-                @click="setRatingValue(value)"
-                :class="rating >= value ? 'bg-orange':'bg-zinc-100'"
-                class="rounded-full w-8 h-3 hover:bg-orange">
+            <div class="space-x-2 flex mt-3">
+                <button
+                    v-for="(value,index) in 5"
+                    :key="index"
+                    @click="setRatingValue(value)"
+                    :class="rating >= value ? 'bg-orange':'bg-zinc-100'"
+                    class="rounded-full w-8 h-3 hover:bg-orange">
 
-            </button>
+                </button>
+            </div>
+
 
         </div>
         <!--        <h1 class="text-red-500 text-sm mt-1 font-semibold">This field is required.</h1>-->

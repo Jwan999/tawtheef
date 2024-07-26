@@ -27,7 +27,7 @@
                 <div class="relative">
                     <input v-model="fullName"
                            placeholder="Full name"
-                           class="bg-zinc-50 capitalize w-full rounded-md text-xl text-dark py-1 tracking-wider font-semibold border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none focus:border-orange focus:ring-0"
+                           class="text-sm block w-full p-2.5 bg-zinc-50 w-full rounded-md border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none focus:border-orange focus:ring-0"
                            type="text">
                     <span class="text-orange absolute top-0 right-0 ml-24 -mt-4">*</span>
 

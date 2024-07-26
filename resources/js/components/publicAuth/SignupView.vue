@@ -1,6 +1,6 @@
 <template>
-    <div class="flex justify-center mt-14">
-        <div class="w-4/12 bg-white rounded-md">
+    <div class="flex justify-center mt-14 md:mb-0 mb-10">
+        <div class="w-full mx-4 md:w-4/12 bg-white rounded-md">
             <h2 class="text-lg text-zinc-600 font-semibold mt-8 px-6">Start with creating your account <router-link to="/login" class="text-orange font-semibold hover:text-orange-500">OR LOGIN</router-link>
 
             </h2>
@@ -43,10 +43,8 @@
                 </div>
                 <div class="form-group flex flex-col space-y-3">
                     <h1 class="text-sm text-zinc-500 font-semibold tracking-wider">Password</h1>
+                    <PasswordInput ref="passwordInput" />
 
-                    <input type="password" v-model="password"
-                           class=" block w-full p-2.5 bg-zinc-50 w-full rounded-md text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none focus:border-orange focus:ring-0"
-                           placeholder="password">
                 </div>
             </div>
 
@@ -73,18 +71,26 @@ import {ref, defineEmits} from 'vue';
 import axios from 'axios';
 import {useRouter} from "vue-router";
 import {useStore} from "vuex";
+import PasswordInput from "./PasswordInput.vue";
 
 const email = ref('');
 const profileType = ref('Applicant');
 const name = ref('');
-const password = ref('');
+// const password = ref('');
+const passwordInput = ref(null);
 const hovered = ref(false);
 const router = useRouter();
 const store = useStore();
 const handleSignup = async () => {
-    // Validate email and password
-    if (!email.value || !password.value || !profileType.value || !name.value) {
-        console.error('Fill out the empty fields!');
+    // Check if passwordInput ref is properly set
+    if (!passwordInput.value) {
+        console.error('Password input component not found');
+        return;
+    }
+
+    // Validate all fields including password
+    if (!email.value || !profileType.value || !name.value || !passwordInput.value.isValid) {
+        console.error('Please fill out all fields correctly and ensure passwords match');
         return;
     }
 
@@ -93,18 +99,18 @@ const handleSignup = async () => {
             email: email.value,
             profileType: profileType.value,
             name: name.value,
-            password: password.value,
+            password: passwordInput.value.password, // Use the password from the PasswordInput component
         });
-        store.commit('setUser',response.data.user);
+
+        store.commit('setUser', response.data.user);
 
         if (response.status === 201) {
             router.push('/');
-
         } else {
             console.error('Signup failed:', response.data);
         }
     } catch (error) {
-        console.error('Signup error:', error.response.data);
+        console.error('Signup error:', error.response?.data || error.message);
     }
 };
 </script>

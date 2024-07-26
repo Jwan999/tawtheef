@@ -19,6 +19,9 @@ module.exports = {
                 'dark': '#3F3F46',
                 'light': '#F4F4F5',
             },
+            borderRadius: {
+                'custom': '40%',  // You can replace '15px' with your desired value
+            },
         },
     },
     plugins: [

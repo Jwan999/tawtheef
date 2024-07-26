@@ -243,7 +243,6 @@ class ApplicantController extends Controller
             $applicant->languages = $requestData['languages'];
             $applicant->skills = $requestData['skills'];
             $applicant->tools = $requestData['tools'];
-            $applicant->details = $requestData['details'];
             $applicant->summary = $requestData['summary'];
             $applicant->courses = $requestData['courses'];
             $applicant->contact = $requestData['contact'];
@@ -262,7 +261,6 @@ class ApplicantController extends Controller
             $applicant->languages = $requestData['languages'];
             $applicant->skills = $requestData['skills'];
             $applicant->tools = $requestData['tools'];
-            $applicant->details = $requestData['details'];
             $applicant->summary = $requestData['summary'];
             $applicant->courses = $requestData['courses'];
             $applicant->contact = $requestData['contact'];

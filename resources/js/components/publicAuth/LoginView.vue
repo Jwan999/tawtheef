@@ -1,10 +1,7 @@
 <template>
-    <div class="bg-red-400 text-red-600 w-3/12 ">
-
-    </div>
 
     <div class="flex justify-center mt-24">
-        <div class="w-4/12  bg-white rounded-md">
+        <div class="w-full mx-4 md:w-4/12 bg-white rounded-md">
             <h2 class="text-lg text-zinc-600 font-semibold mt-8 px-6">Login to your account <router-link to="/signup" class="text-orange font-semibold hover:text-orange-500">OR SIGN UP</router-link>
             </h2>
             <div class="pl-6">

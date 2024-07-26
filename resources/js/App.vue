@@ -12,8 +12,10 @@
         </div>
     </div>
     <div v-else>
-        loading
+        <LottieLoader />
     </div>
+
+
 </template>
 
 <script setup>
@@ -22,6 +24,7 @@ import NavigationComponent from '../js/components/NavigationComponent.vue';
 import {computed, onMounted, ref} from "vue";
 import NavbarComponent from "../views/public/mainViewComponents/NavbarComponent.vue";
 import {useStore} from "vuex";
+import LottieLoader from "./components/LottieLoader.vue";
 
 const route = useRoute();
 const user = computed(() => {

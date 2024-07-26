@@ -54,7 +54,7 @@
 
         </div>
         <div class="w-full">
-            <label for="message" class="block mb-2 text-sm font-medium text-zinc-700 mt-2">List your responsibilities
+            <label for="message" class="block mb-3 text-zinc-500 mt-2">* List all of your responsibilities
                 within this period of employment.</label>
 
 

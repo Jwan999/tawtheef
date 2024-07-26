@@ -1,14 +1,17 @@
 <template>
+    <div class="flex items-center space-x-3">
+        <h1 class="flex-none text-xl font-semibold text-dark">Tools & Technologies</h1>
+        <hr class="h-px w-full bg-orange border-0 mt-1">
+    </div>
     <div v-if="!editMode" class="rounded-md p-4 bg-white text-sm md:text-sm">
 
         <div class="space-y-1">
-            <h1 class="text-xl font-semibold text-dark pb-4">Tools and Technologies</h1>
             <div v-if="!value[0]?.item">
                 <p class="text-sm text-zinc-700">
                     Not all data filled yet.
                 </p>
             </div>
-            <div v-else v-for="(tool,index) in value" :key="index" class="flex items-center justify-between ">
+            <div v-else v-for="(tool,index) in value" :key="index" class="flex items-center justify-between">
 
                 <h1 class="font-semibold text-base capitalize">{{ tool.item }}</h1>
 
@@ -29,8 +32,7 @@
     <div v-else class="rounded-md py-4 bg-white text-sm md:text-sm">
 
         <div class="px-4 text-sm md:text-sm">
-            <h1 class="text-xl font-semibold text-dark pb-3">Tools and Technologies</h1>
-            <p class="mx-2 text-sm my-2 text-zinc-700">List all the tools and technologies you're familiar with such as (MS Excel,
+            <p class="block mb-3 text-zinc-500 mt-2">* List all the tools and technologies you're familiar with such as (MS Excel,
                 Photoshop, PHP, React, etc...)</p>
             <div class="relative w-full">
                 <div class="space-y-4">

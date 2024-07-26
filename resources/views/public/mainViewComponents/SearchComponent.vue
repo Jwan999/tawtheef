@@ -1,21 +1,21 @@
 <template>
 
     <div class="flex justify-start -mt-32">
-        <div :class="showAdvanceSearch ? 'pt-28 pb-10' : 'py-28'"
-             class="w-10/12 bg-zinc-800 text-white rounded-r-full">
+        <div :class="showAdvanceSearch ? 'pt-14 pb-10 md:pt-28 md:pb-10' : 'py-14 md:py-28'"
+             class="w-full md:w-10/12 mr-6 md:mr-0 md:px-0 px-4 bg-zinc-800 text-white rounded-r-[4rem] md:rounded-r-full">
             <div class="flex justify-center items-center w-full">
-                <div class="w-10/12">
-                    <div class="w-8/12 flex flex-wrap">
-                        <h1 class="text-5xl font-bold">Discover Exceptional Talent or Inspiring Resumes <span
+                <div class="w-full md:w-10/12">
+                    <div class="w-full md:w-8/12 flex flex-wrap">
+                        <h1 class="text-3xl md:text-5xl font-bold">Discover Exceptional Talent or Inspiring Resumes <span
                             class="text-orange">Right Here</span></h1>
                     </div>
-                    <div class="w-7/12 flex items-center space-x-4 mt-14">
+                    <div class="w-full md:w-7/12 flex items-center space-x-4 mt-10 md:mt-14">
                         <div class="relative group w-full">
                             <div class="search-container">
-                                <div class="search-description text-xl mb-3 text-zinc-100">
+                                <div class="search-description text-base md:text-xl mb-3 text-zinc-100">
                                     Search for applicants using <span class="text-orange tracking-wider font-semibold">keywords</span>.
                                     You can search through:
-                                    <ul class="mt-1 italic text-zinc-200 pl-8 text-lg mt-2">
+                                    <ul class="mt-1 italic text-zinc-200 pl-4 md:pl-8 text-sm md:text-lg mt-2">
                                         <li>Skills or tools (e.g., "Python", "Photoshop")</li>
                                         <li>Job titles or roles (e.g., "Frontend Developer", "UX Designer")</li>
                                         <li>Specific responsibilities (e.g., "project management", "client relations")
@@ -29,7 +29,7 @@
                                             v-model="searchTerm"
                                             @keyup.enter="handleSearch"
                                             placeholder="Enter keywords to find the perfect candidate..."
-                                            class="w-full text-dark text-base focus:border-orange py-3 pl-4 pr-16 focus:ring-0 bg-white rounded-full border-[1px] border-zinc-200 group-hover:border-orange focus:outline-none focus:border-orange transition-colors duration-300"
+                                            class="w-full text-dark text-md md:text-base focus:border-orange py-3 pl-4 pr-16 focus:ring-0 bg-white rounded-full border-[1px] border-zinc-200 group-hover:border-orange focus:outline-none focus:border-orange transition-colors duration-300"
                                             type="text">
                                         <button
                                             @click="handleSearch"
@@ -96,12 +96,12 @@
         </div>
     </div>
     <div class="flex space-x-10">
-        <transition class="w-7/12" name="slide-down">
+        <transition class="w-10/12 md:w-7/12" name="slide-down">
             <div id="advanceSearch" v-if="showAdvanceSearch" class="relative">
                 <div
-                    class="advance-search bg-zinc-800 rounded-br-[7rem] pl-28 pb-10 border-[4px] border-t-0 border-orange rounded-rt-[5rem] z-40">
+                    class="advance-search bg-zinc-800 rounded-br-[4rem] md:rounded-br-[7rem] pl-4 md:pl-28 pb-10 border-[2px] md:border-[4px] border-t-0 border-orange rounded-rt-[5rem] z-40">
 
-                    <div class="grid grid-cols-1 gap-12 pr-32">
+                    <div class="grid grid-cols-1 gap-12 pr-4 md:pr-32">
                         <!--gender-->
                         <div class="group cursor-pointer">
                             <h1 class="text-xl text-white group-  mb-2 tracking-wider font-bold capitalize">
