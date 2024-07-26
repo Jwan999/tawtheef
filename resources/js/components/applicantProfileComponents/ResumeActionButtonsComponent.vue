@@ -29,7 +29,7 @@
             </div>
         </div>
 
-        <PublishState class="md:w-auto w-full" :isPublished="published"/>
+        <PublishState v-if="isEditable" class="md:w-auto w-full" :isPublished="published"/>
 
 
     </div>
