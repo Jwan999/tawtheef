@@ -52,8 +52,17 @@
                                         </div>
                                     </div>
                                     <p class="text-sm mt-4 text-wrap text-justify">
-                                        {{ applicant.summary }}
+                                        {{ truncatedSummary(applicant) }}
+                                        <button
+                                            v-if="isTruncated(applicant)"
+                                            @click.stop="goToResume(applicant.id)"
+                                            class="inline-block text-orange hover:underline focus:outline-none">
+                                            See more...
+                                        </button>
+<!--                                        <span v-if="isTruncated(applicant)">...</span>-->
+
                                     </p>
+
                                 </div>
                             </div>
 
@@ -61,7 +70,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
 
     </div>
@@ -76,8 +84,19 @@ import {useRouter} from "vue-router";
 const applicants = ref([])
 const specialities = ref([])
 
-
 const applicantsWithSpecialization = ref([])
+const wordLimit = 14;
+
+const isTruncated = (applicant) => {
+    return applicant.summary.split(' ').length > wordLimit;
+};
+
+const truncatedSummary = (applicant) => {
+    if (isTruncated(applicant)) {
+        return applicant.summary.split(' ').slice(0, wordLimit).join(' ');
+    }
+    return applicant.summary;
+};
 const getApplicants = async () => {
     try {
         const response = await axios.get('/api/applicants');
