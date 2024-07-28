@@ -1,108 +1,105 @@
 <template>
-    <div v-if="!editMode && !specializations?.includes('Undecided Yet')" class="">
+    <div>
         <div class="flex items-center space-x-3 mb-4">
             <h1 class="flex-none text-xl font-semibold text-dark">Specializations</h1>
             <hr class="h-px w-full bg-orange border-0 mt-1">
         </div>
-        <div :class="specializations ?'rounded':'rounded-t-md'"
-             class="bg-orange text-lg tracking-wider text-start px-2 text-white py-3 font-semibold tracking-wide">
-            <div v-if="!specializations.length">
-                <p class="text-sm">
-                    Not all data filled yet.
-                </p>
+
+        <div v-if="!editMode" class="bg-white rounded-md shadow-sm">
+            <div class="bg-orange text-lg text-white py-3 px-4 font-semibold rounded-t-md">
+                <h2 v-if="specializations.length">Selected Specializations:</h2>
+                <p v-else class="text-sm">No specializations selected yet.</p>
             </div>
-            <h1 v-else v-for="(item,index) in specializations">
-                {{ item === 'Other' ? item.toString() : item }}.
-            </h1>
-
-        </div>
-        <div>
-            <div v-if="children.length" class="bg-white rounded-b-md px-4 py-2 space-y-1">
-                <h1 class="text-orange text-sm font-semibold mb-4">Experienced with the following:</h1>
-                <h1 class="font-semibold text-base" v-for="subSpeciality in children">{{
-                        subSpeciality
-                    }}.</h1>
+            <div class="p-4">
+                <ul v-if="specializations.length" class="list-disc list-inside space-y-4">
+                    <li v-for="spec in specializations" :key="spec" class="text-dark">
+                        {{ spec }}
+                        <template v-if="getSubSpecializations(spec).length">
+                            <p class="text-orange text-sm font-semibold mt-2 ml-6">Experienced with the following:</p>
+                            <ul class="list-circle list-inside ml-8 mt-1 space-y-1">
+                                <li v-for="subSpec in getSubSpecializations(spec)" :key="subSpec" class="text-zinc-600 text-sm">
+                                    {{ subSpec }}
+                                </li>
+                            </ul>
+                        </template>
+                    </li>
+                </ul>
             </div>
         </div>
 
-    </div>
-    <div v-else :class="!editMode ? 'hidden':''">
-        <div class="flex items-center space-x-3 mb-5">
-            <h1 class="flex-none text-xl font-semibold text-dark">Specializations</h1>
-            <hr class="h-px w-full bg-orange border-0 mt-1">
-        </div>
-        <div class="mt-2 mb-1">
-            <h1 class="block mb-3 text-zinc-500 mt-2">* You can pick two main specializations only.</h1>
-        </div>
-        <div class="flex">
-
-            <div class="flex justify-between space-x-6 w-full">
-                <div class="w-full">
-                    <div v-for="(item,index) in specialities" :key="index"
-                         class="">
-                        <div @click="toggleSpecialization(item.title)"
-                             :class="{'rounded-t-md': index === 0,
-                 'rounded-b-md': index === specialities.length - 1,
-                 'bg-orange text-white': specializations?.includes(item.title),
-                 'bg-white text-dark': !specializations?.includes(item.title)}"
-                             class="border-b-[1px] border-orange-400 py-3 cursor-pointer focus:bg-orange focus:text-white hover:bg-dark hover:text-white">
-                            <h1 class="text-center text-lg font-semibold">{{ item.title }}</h1>
-
+        <div v-else class="bg-white rounded-md shadow-sm">
+            <div class="bg-orange text-lg text-white py-3 px-4 font-semibold rounded-t-md">
+                <h2>Select Your Specializations (Max 2)</h2>
+            </div>
+            <div class="p-4">
+                <p class="text-zinc-500 mb-4">* You can pick two main specializations only.</p>
+                <div class="space-y-4">
+                    <div v-for="(item, index) in specialities" :key="index" class="border-b border-orange-200 pb-4 last:border-b-0">
+                        <div class="flex items-center space-x-2 mb-2">
+                            <input
+                                :id="`specialization-${index}`"
+                                type="checkbox"
+                                :value="item.title"
+                                :checked="specializations.includes(item.title)"
+                                @change="toggleSpecialization(item.title)"
+                                class="w-5 h-5 text-orange border-zinc-300 rounded focus:ring-orange"
+                                :disabled="specializations.length >= 2 && !specializations.includes(item.title)"
+                            >
+                            <label :for="`specialization-${index}`" class="text-lg font-semibold text-dark cursor-pointer">
+                                {{ item.title }}
+                            </label>
                         </div>
-
-
-                        <div class="w-full bg-white py-4 px-2" v-if="specializations?.includes(item.title)">
-                            <div class="flex items-start space-y-2 me-4" v-for="(subSpeciality, index) in item.children"
-                                 :key="index">
-                                <div>
-                                    <input
-                                        :id="`subSpeciality-${index}`"
-                                        type="checkbox"
-                                        :value="subSpeciality"
-                                        @change="toggleSubSpeciality(subSpeciality)"
-                                        class="w-4 h-4 text-orange bg-white border-zinc-400 rounded focus:ring-orange dark:focus:ring-orange dark:ring-offset-zinc-800 focus:ring-2 dark:bg-zinc-700 dark:border-zinc-600"
-                                    />
-                                    <label :for="`subSpeciality-${index}`"
-                                           class="ms-2 text-base font-medium text-zinc-900 dark:text-zinc-300">
-                                        {{ subSpeciality }}.
-                                    </label>
-                                </div>
+                        <div v-if="specializations.includes(item.title)" class="ml-7 mt-2 space-y-2">
+                            <div v-for="(subSpec, subIndex) in item.children" :key="subIndex" class="flex items-center space-x-2">
+                                <input
+                                    :id="`subSpec-${index}-${subIndex}`"
+                                    type="checkbox"
+                                    :value="subSpec"
+                                    :checked="children.includes(subSpec)"
+                                    @change="toggleSubSpeciality(subSpec)"
+                                    class="w-4 h-4 text-orange border-zinc-300 rounded focus:ring-orange"
+                                >
+                                <label :for="`subSpec-${index}-${subIndex}`" class="text-base text-zinc-600 cursor-pointer">
+                                    {{ subSpec }}
+                                </label>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>
-
         </div>
-
     </div>
-
 </template>
 
 <script setup>
-import {computed, onMounted, onUpdated, ref, watch, watchEffect} from "vue";
+import { ref, watch, computed } from 'vue';
+import { editMode, getSelectables } from "../../utils/storeHelpers.js";
 
-import {editMode, getSelectables} from "../../utils/storeHelpers.js";
+const props = defineProps(["modelValue"]);
+const emit = defineEmits(["update:modelValue"]);
 
-const props = defineProps(["modelValue"])
+const specializations = ref([]);
+const children = ref([]);
+const specialities = ref([]);
 
-const specializations = ref([])
-const children = ref([])
+watch(() => props.modelValue, (newValue) => {
+    specializations.value = newValue?.specializations || [];
+    children.value = newValue?.children || [];
+}, { immediate: true, deep: true });
 
-onUpdated(() => {
-    specializations.value = props?.modelValue?.specializations
-    children.value = props?.modelValue?.children
-});
-
-const specialities = ref([])
-onMounted(async () => {
-    specializations.value = props?.modelValue?.specializations
-    children.value = props?.modelValue?.children
-
-    specialities.value = await getSelectables('specialities');
-
-});
+const toggleSpecialization = (name) => {
+    const index = specializations.value.indexOf(name);
+    if (index === -1 && specializations.value.length < 2) {
+        specializations.value.push(name);
+    } else if (index !== -1) {
+        specializations.value.splice(index, 1);
+        // Remove related sub-specialities
+        children.value = children.value.filter(child =>
+            !specialities.value.find(s => s.title === name)?.children.includes(child)
+        );
+    }
+    updateModelValue();
+};
 
 const toggleSubSpeciality = (subSpeciality) => {
     const index = children.value.indexOf(subSpeciality);
@@ -111,31 +108,28 @@ const toggleSubSpeciality = (subSpeciality) => {
     } else {
         children.value.splice(index, 1);
     }
+    updateModelValue();
 };
 
-const toggleSpecialization = (name) => {
-    if (!specializations?.value?.includes(name)) {
-        if (specializations?.value?.length >= 2) {
-            specializations?.value?.splice(0, 1);
-        }
-        specializations?.value?.push(name);
-    } else {
-        const index = specializations?.value?.indexOf(name);
-        if (index !== -1) {
-            specializations?.value?.splice(index, 1);
-        }
-    }
-};
-
-const emit = defineEmits(["update:modelValue"])
-
-watch([specializations.value, children.value], () => {
+const updateModelValue = () => {
     emit('update:modelValue', {
         specializations: specializations.value,
         children: children.value
     });
-}, {deep: true});
+};
 
+const getSubSpecializations = (specialization) => {
+    const specItem = specialities.value.find(item => item.title === specialization);
+    return specItem ? children.value.filter(child => specItem.children.includes(child)) : [];
+};
 
+(async () => {
+    specialities.value = await getSelectables('specialities');
+})();
 </script>
 
+<style scoped>
+.list-circle {
+    list-style-type: circle;
+}
+</style>
