@@ -3,12 +3,9 @@
     <div class="relative flex flex-col items-center">
 
         <div class="flex justify-center w-full items-center bg-white h-56 rounded-md dark:bg-zinc-600">
-            <div class="rounded-md w-full" v-if="image">
-
-                <img v-if="previewURL.startsWith('data:')" class="h-56 object-cover w-full rounded-md"
-                     :src="previewURL" alt="">
-                <img v-if="!previewURL.startsWith('data:')" class="h-56 object-cover w-full rounded-md"
-                     :src="`/storage/${image}`" alt="">
+            <div class="rounded-md w-full" v-if="displayImage">
+                <img class="h-56 object-cover w-full rounded-md"
+                     :src="displayImage" alt="Uploaded image">
             </div>
 
             <svg v-else class="h-32 fill-dark" viewBox="-42 0 512 512.002" xmlns="http://www.w3.org/2000/svg">
@@ -22,10 +19,10 @@
 
         <div v-if="editMode" class="absolute top-0 right-0 mt-[2.5px]">
             <label for="fileInput"
-                   class="appearance-none relative appearance-none text-sm rounded-bl-md rounded-tr-md px-3 py-2 font-semibold text-white bg-orange hover:bg-dark cursor-pointer">
+                   class="appearance-none relative text-sm rounded-bl-md rounded-tr-md px-3 py-2 font-semibold text-white bg-orange hover:bg-dark cursor-pointer">
                 Upload photo
             </label>
-            <input id="fileInput" type="file" v-on:change="previewImage" class="absolute left-0 hidden">
+            <input id="fileInput" type="file" @change="handleFileUpload" class="absolute left-0 hidden" accept="image/*">
         </div>
         <!--        <h1 v-if="editMode" class="w-full text-red-500 text-sm mt-1 font-semibold">This field is required.</h1>-->
 
@@ -34,52 +31,51 @@
 </template>
 
 <script setup>
-import {computed, onMounted, onUpdated, ref} from "vue";
+import { computed, ref, watch } from "vue";
 import store from "../../store/index.js";
+
+const props = defineProps({
+    modelValue: {
+        type: [String, File, null],
+        default: null
+    }
+});
+const emit = defineEmits(["update:modelValue"]);
 
 const previewURL = ref('');
 
-const props = defineProps(["modelValue"])
-
-let image = computed(() => {
-    return !previewURL.value.startsWith('data:') ? props.modelValue : '';
-
+const displayImage = computed(() => {
+    if (previewURL.value) {
+        return previewURL.value;
+    } else if (props.modelValue) {
+        if (typeof props.modelValue === 'string') {
+            return props.modelValue.startsWith('data:') ? props.modelValue : `/storage/${props.modelValue}`;
+        } else if (props.modelValue instanceof File) {
+            return URL.createObjectURL(props.modelValue);
+        }
+    }
+    return '';
 });
-const previewImage = (event) => {
+
+const handleFileUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
-        const reader = new FileReader();
-        reader.onload = () => {
-            console.log(reader.result)
-            previewURL.value = reader.result;
-            console.log(previewURL.value)
-
-        };
-        reader.readAsDataURL(file);
+        previewURL.value = URL.createObjectURL(file);
+        emit('update:modelValue', file);
     }
-    changeImage(file)
-    emitImage();
-}
-const changeImage = (file) => {
-    image = file
-}
-
-const editMode = computed({
-    get() {
-        return store.getters.editMode;
-    },
-    set() {
-        store.dispatch('setEditMode', true)
-    }
-})
-
-const emit = defineEmits(["imageUpdated"])
-
-const emitImage = () => {
-    emit('update:modelValue', image);
 };
 
+const editMode = computed(() => store.getters.editMode);
 
+watch(() => props.modelValue, (newValue) => {
+    if (!newValue) {
+        previewURL.value = '';
+    } else if (typeof newValue === 'string' && !newValue.startsWith('data:')) {
+        previewURL.value = '';
+    } else if (newValue instanceof File) {
+        previewURL.value = URL.createObjectURL(newValue);
+    }
+});
 </script>
 
 <style scoped>

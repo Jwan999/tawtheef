@@ -63,7 +63,7 @@ import router from "../../js/router/index.js";
 import LottieLoader from "../../js/components/LottieLoader.vue";
 import PublishState from "../../js/components/applicantProfileComponents/PublishState.vue";
 
-const image = ref('');
+const image = ref(null);
 const speciality = ref([]);
 const education = ref([]);
 const languages = ref([]);
@@ -103,7 +103,16 @@ const saveResume = () => {
     const formData = new FormData();
 
     formData.append('data', JSON.stringify(requestData));
-    formData.append('image', image.value);
+    // formData.append('image', image.value);
+
+    if (image.value instanceof File) {
+        formData.append('image', image.value);
+    } else if (typeof image.value === 'string') {
+        // If it's a path to an existing image, you might not need to send it again
+        // But if you do need to send it:
+        formData.append('image', image.value);
+    }
+
 
     axios.post('/api/applicant', formData, {
         headers: {
