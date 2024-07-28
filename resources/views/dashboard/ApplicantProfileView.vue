@@ -10,6 +10,7 @@
 
         <div class="md:hidden block col-span-12">
             <ApplicantPhotoUpload v-model="image"></ApplicantPhotoUpload>
+            {{image}}
         </div>
         <div class="col-span-12 md:col-span-3 space-y-6 md:order-1 order-2">
             <div class="hidden md:block">
