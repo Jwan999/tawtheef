@@ -1,5 +1,5 @@
 <template>
-    {{image}}
+
     <div class="relative flex flex-col items-center">
 
         <div class="flex justify-center w-full items-center bg-white h-56 rounded-md dark:bg-zinc-600">
