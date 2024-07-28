@@ -23,7 +23,7 @@
                 </div>
             </div>
 
-            <div v-if="localLinks.length === 0" class="text-center py-4 text-zinc-500 italic">
+            <div v-if="localLinks.length === 0" class="text-center py-4 text-sm text-zinc-700">
                 No links added yet.
             </div>
         </div>
@@ -35,10 +35,10 @@
 
             <div class="relative flex mt-2">
                 <input
-                    type="url"
+                    type="text"
                     id="link"
                     v-model="link"
-                    placeholder="https://www.linkedin.com/in/yourprofile"
+                    placeholder="www.linkedin.com/in/yourprofile"
                     @input="validateInputs"
                     class="flex-grow focus:border-orange focus:ring-0 bg-zinc-50 rounded-l-md md:text-sm text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none p-2"
                 />
@@ -53,9 +53,9 @@
                     @click="addLink"
                     :disabled="!isValid"
                     :class="[
-            'px-4 py-2 text-sm font-semibold text-white rounded-r-md transition-colors duration-200 ease-in-out focus:outline-none',
-            isValid ? 'bg-orange hover:bg-dark' : 'bg-zinc-300 cursor-not-allowed'
-          ]"
+                        'px-4 py-2 text-sm font-semibold text-white rounded-r-md transition-colors duration-200 ease-in-out focus:outline-none',
+                        isValid ? 'bg-orange hover:bg-dark' : 'bg-zinc-300 cursor-not-allowed'
+                    ]"
                 >
                     ADD
                 </button>
@@ -113,6 +113,14 @@ const validateInputs = () => {
 };
 
 const isValidUrl = (url) => {
+    // Remove leading/trailing whitespace
+    url = url.trim();
+
+    // If the URL doesn't start with a protocol, add 'https://'
+    if (!/^https?:\/\//i.test(url)) {
+        url = 'https://' + url;
+    }
+
     try {
         new URL(url);
         return true;
@@ -123,7 +131,11 @@ const isValidUrl = (url) => {
 
 const addLink = () => {
     if (isValid.value) {
-        localLinks.value.push({ link: link.value.trim(), label: label.value.trim() });
+        let finalLink = link.value.trim();
+        if (!/^https?:\/\//i.test(finalLink)) {
+            finalLink = 'https://' + finalLink;
+        }
+        localLinks.value.push({ link: finalLink, label: label.value.trim() });
         emit('update:links', localLinks.value);
         link.value = '';
         label.value = '';
