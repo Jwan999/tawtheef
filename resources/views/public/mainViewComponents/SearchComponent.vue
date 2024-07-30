@@ -1,5 +1,4 @@
 <template>
-
     <div class="flex justify-start -mt-32">
         <div :class="showAdvanceSearch ? 'pt-14 pb-10 md:pt-28 md:pb-10' : 'py-14 md:py-28'"
              class="w-full md:w-10/12 mr-6 md:mr-0 md:px-0 px-4 bg-zinc-800 text-white rounded-r-[4rem] md:rounded-r-full">
@@ -52,7 +51,7 @@
                                     <div>
                                         <button @click="showAdvanceSearch = !showAdvanceSearch" class="mt-1">
                                             <svg
-                                                class="bg-white w-[40px] h-[40px] hover:fill-orange border-0 border-zinc-200 border-[1px] border-transparent hover:border-orange rounded-full px-2 py-1 fill-zinc-600"
+                                                class="bg-white w-[40px] h-[40px] hover:fill-orange border-0 border-zinc-200 border-[1px] border-transparent hover:border-orange rounded-full px-2 py-1 fill-zinc-600 md:hidden"
                                                 id="fi_3024539" viewBox="0 0 189.524 189.524"
                                                 xmlns="http://www.w3.org/2000/svg">
                                                 <g>
@@ -77,31 +76,25 @@
                                                     </g>
                                                 </g>
                                             </svg>
+                                            <span class="hidden md:inline bg-white text-zinc-600 hover:text-orange hover:border-orange border border-zinc-200 rounded-full px-4 py-2 font-semibold transition-colors duration-300 whitespace-nowrap">Advance Search</span>
                                         </button>
                                     </div>
                                 </div>
-
                             </div>
                         </div>
-
-
                     </div>
                     <h1 v-if="showAdvanceSearch"
                         class="mt-10 font-semibold text-4xl capitalize tracking-wider text-white">Advance search</h1>
-
                 </div>
-
             </div>
-
         </div>
     </div>
-    <div class="flex space-x-10">
-        <transition class="w-10/12 md:w-7/12" name="slide-down">
-            <div id="advanceSearch" v-if="showAdvanceSearch" class="relative">
-                <div
-                    class="advance-search bg-zinc-800 rounded-br-[4rem] md:rounded-br-[7rem] pl-4 md:pl-28 pb-10 border-[2px] md:border-[4px] border-t-0 border-orange rounded-rt-[5rem] z-40">
 
-                    <div class="grid grid-cols-1 gap-12 pr-4 md:pr-32">
+    <div class="space-y-16">
+        <transition name="slide-down" appear>
+            <div v-if="showAdvanceSearch" id="advanceSearch" class="relative w-9/12 md:w-7/12">
+                <div class="advance-search flex justify-center bg-zinc-800 rounded-br-[4rem] md:rounded-br-[7rem] pb-10 border-[2px] md:border-[4px] md:border-t-0 border-t-0 border-orange rounded-rt-[5rem] z-40">
+                    <div class="grid grid-cols-1 gap-12 w-10/12">
                         <!--gender-->
                         <div class="group cursor-pointer">
                             <h1 class="text-xl text-white group-  mb-2 tracking-wider font-bold capitalize">
@@ -125,31 +118,22 @@
                                 <select v-model="filters.city"
                                         :class="filters.city == 'Baghdad' ?'rounded-l-md' :'rounded-md'"
                                         class="h-10 focus:border-orange focus:ring-0 bg-zinc-50 w-full rounded-l-md md:text-sm text-sm border-0 border-[1px] border-zinc-300 hover:border-orange focus:outline-none">
-
                                     <option value="" disabled selected>Choose a city...</option>
-
-
-                                    <!--                                <option value="Choose your city..." class="hidden" selected>Choose your city...</option>-->
                                     <option v-for="city in cities">{{ city }}</option>
                                 </select>
-
                                 <select v-if="filters.city == 'Baghdad'" v-model="filters.zone"
                                         class="h-10 focus:border-orange focus:ring-0 bg-zinc-50 w-full rounded-r-md md:text-sm text-sm border-0 border-[1px] border-zinc-300 hover:border-orange focus:outline-none">
                                     <option value="" disabled selected>Choose a zone...</option>
-
                                     <option>Karkh</option>
                                     <option>Risafa</option>
                                 </select>
-
                             </div>
                         </div>
                         <!--age-->
                         <div class="group cursor-pointer">
                             <h1 class="text-xl text-white group-  mb-2 tracking-wider font-bold capitalize">
-                                Based on
-                                age</h1>
+                                Based on age</h1>
                             <div class="mt-12">
-
                                 <VueSimpleRangeSlider
                                     active-bar-color="#f97316"
                                     class="w-full text-orange font-bold"
@@ -159,53 +143,43 @@
                                     exponential>
                                     <template #suffix="{value}"> Y</template>
                                 </VueSimpleRangeSlider>
-
                             </div>
-
                         </div>
                         <!--degree-->
                         <div class="group cursor-pointer">
                             <h1 class="text-xl text-white group-  mb-2 tracking-wider font-bold">
-                                Educational
-                                degree</h1>
+                                Educational degree</h1>
                             <select v-model="filters.degree"
                                     class="h-10 focus:border-orange focus:ring-0 bg-zinc-50 w-full rounded-md md:text-sm text-sm border-0 border-[1px] border-zinc-300 hover:border-orange focus:outline-none">
                                 <option value="" disabled selected>Choose a degree...</option>
-
                                 <template v-for="option in degrees">
                                     <option>{{ option }}</option>
                                 </template>
-
                             </select>
                         </div>
                         <!--fresh graduates-->
                         <div class="group cursor-pointer flex items-center space-x-2">
                             <input
-                                :id="'checkbox-' + 'index'"
+                                id="fresh-graduate-checkbox"
                                 type="checkbox"
-                                :value="filters.freshGraduate"
-                                :checked="filters.freshGraduate"
+                                v-model="filters.freshGraduate"
                                 class="text-sm w-4 h-4 mr-2 mb-1 text-orange bg-zinc-100 border-zinc-300 rounded focus:ring-orange dark:focus:ring-orange dark:ring-offset-zinc-800 focus:ring-1 dark:bg-zinc-700 dark:border-zinc-600"
                             />
-                            <label :for="'checkbox-' + 'index'"
+                            <label for="fresh-graduate-checkbox"
                                    class="text-xl text-white group-  mb-2 tracking-wider font-bold capitalize">
                                 Fresh Graduates
                             </label>
-                            <!--                        <h1 class="text-xl text-white group-  mb-2 tracking-wider font-semibold capitalize">-->
-                            <!--                            Gender</h1>-->
                         </div>
                         <!--work availability -->
                         <div class="group cursor-pointer">
                             <h1 class="text-xl text-white  mb-2 tracking-wider font-bold capitalize">
-                                Work
-                                availability</h1>
-                            <span @click="filters.workAvailability = !filters.workAvailability"
-                                  :class="filters.workAvailability?'bg-orange text-white':'bg-zinc-200 text-zinc-600'"
+                                Work availability</h1>
+                            <span @click="filters.workAvailability = true"
+                                  :class="filters.workAvailability ? 'bg-orange text-white' : 'bg-zinc-200 text-zinc-600'"
                                   class="font-semibold hover:bg-dark hover:text-white text-base font-medium me-2 px-2.5 py-0.5 rounded-full">
                           Available for Work
                     </span>
-                            <span @click="filters.workAvailability = !filters.workAvailability"
-                                  :class="filters.workAvailability?'bg-orange text-white':'bg-zinc-200 text-zinc-600'"
+                            <span @click="filters.workAvailability = false" :class="!filters.workAvailability ? 'bg-orange text-white' : 'bg-zinc-200 text-zinc-600'"
                                   class="font-semibold hover:bg-dark hover:text-white  text-base font-medium me-2 px-2.5 py-0.5 rounded-full">
                      Not Available for work
                     </span>
@@ -215,7 +189,6 @@
                             <h1 class="text-xl text-white group-  mb-2 tracking-wider font-bold capitalize">Work
                                 experience</h1>
                             <div class="mt-12">
-
                                 <VueSimpleRangeSlider
                                     active-bar-color="#f97316"
                                     class="w-full text-orange font-bold"
@@ -225,107 +198,66 @@
                                     exponential>
                                     <template #suffix="{value}"> Y</template>
                                 </VueSimpleRangeSlider>
-
                             </div>
                         </div>
-                        <!--Specialization-->
-                        <div class="group cursor-pointer">
-                            <!-- Main Specialization Select -->
-                            <div class="group cursor-pointer">
-                                <h1 class="text-xl text-white mb-2 tracking-wider font-bold">Main Specializations</h1>
-                                <select
-                                    :value="selectedMainSpecializations"
-                                    @change="updateMainSpecializations"
-                                    class="h-auto focus:border-orange focus:ring-0 bg-zinc-50 w-full rounded-md md:text-sm text-sm border-0 border-[1px] border-zinc-300 hover:border-orange focus:outline-none">
-                                    <option value="" disabled selected>Choose a main specializations...</option>
-
-                                    <option v-for="speci in specializations" :key="speci.title" :value="speci.title">
-                                        {{ speci.title }}
-                                    </option>
-                                </select>
-                            </div>
-
-                            <!-- Sub Specialty Select -->
-                            <div v-if="selectedMainSpecializations.length > 0" class="mt-6">
-                                <h1 class="text-xl text-white mb-2 tracking-wider font-bold">
-                                    Sub Specialties
-                                </h1>
-                                <select
-                                    :value="selectedSubSpecialities"
-                                    @change="updateSubSpecialities"
-                                    class="h-auto focus:border-orange focus:ring-0 bg-zinc-50 w-full rounded-md md:text-sm text-sm border-0 border-[1px] border-zinc-300 hover:border-orange focus:outline-none">
-                                    <option value="" disabled selected>Choose a sub specializations...</option>
-
-                                    <option
-                                        v-for="subSpec in availableSubSpecialties"
-                                        :key="subSpec"
-                                        :value="subSpec">
-                                        {{ subSpec }}
-                                    </option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="flex w-full">
-                            <div class="w-6/12">
-                                <button @click="searchApplicants"
-                                        class="hover:text-orange capitalize mt-3 w-full appearance-none px-8 py-1.5 rounded-bl-md font-bold text-white bg-orange hover:bg-zinc-100  ">
+                        <SpecializationSelectsAdvanceSearch />
+                        <div class="flex justify-center w-full">
+                            <div class="md:w-full w-11/12">
+                                <button @click="handleAdvancedSearch"
+                                        class="hover:text-orange capitalize mt-3 w-full appearance-none px-8 py-1.5 rounded-bl-lg font-bold text-white bg-orange hover:bg-zinc-100">
                                     APPLY SEARCH
                                 </button>
                             </div>
-                            <div class="w-6/12">
-                                <button @click=""
-                                        class=" capitalize mt-3 w-full appearance-none px-8 py-1.5 font-semibold text-orange font-bold bg-zinc-800 hover:bg-zinc-100  ">
-                                    CLEAR SEARCH
-                                </button>
-                            </div>
                         </div>
-
                     </div>
-
                 </div>
             </div>
         </transition>
-        <div class="w-4/12" v-if="searchApplied">
-            <div class="active-filters mt-6 flex flex-wrap gap-2">
-                <ActiveFilters/>
-            </div>
-
+        <div class="flex justify-center" v-if="searchApplied">
+            <ActiveFilters class="md:w-8/12 w-11/12" />
         </div>
-
     </div>
-
-
 </template>
 
-<script setup>
 
-import {computed, onMounted, ref, watch} from "vue";
-import {getSelectables} from "../../../js/utils/storeHelpers.js";
+<script setup>
+import { ref, computed, onMounted, watch } from "vue";
+import { getSelectables } from "../../../js/utils/storeHelpers.js";
 import store from "../../../js/store/index.js";
 import VueSimpleRangeSlider from "vue-simple-range-slider";
 import "vue-simple-range-slider/css";
 import ActiveFilters from "./ActiveFilters.vue";
+import SpecializationSelectsAdvanceSearch from "./SpecializationSelectsAdvanceSearch.vue";
 
+const showAdvanceSearch = ref(false);
 const searchApplied = ref(false);
-
-const showAdvanceSearch = ref(false)
-const specializations = ref([])
-const cities = ref([])
-const degrees = ref([])
+const specializations = ref([]);
+const cities = ref([]);
+const degrees = ref([]);
 const searchTerm = ref('');
 const filters = computed(() => store.state.filters);
 
 const selectedMainSpecializations = computed(() => store.state.filters.mainSpecializations);
-const selectedSubSpecialities = computed(() => store.state.filters.subSpecialities)
-const updateMainSpecializations = (event) => {
-    const selected = Array.from(event.target.selectedOptions, option => option.value);
-    store.commit('updateFilter', {key: 'mainSpecializations', value: selected});
+const selectedSubSpecialities = computed(() => store.state.filters.subSpecialities);
+
+const updateFilters = (newFilters) => {
+    store.commit('updateFilters', newFilters);
 };
 
-const updateSubSpecialities = (event) => {
-    const selected = Array.from(event.target.selectedOptions, option => option.value);
-    store.commit('updateFilter', {key: 'subSpecialities', value: selected});
+const handleAdvancedSearch = async () => {
+    const advancedFilters = {
+        ...filters.value,
+        searchTerm: searchTerm.value
+    };
+
+    try {
+        await store.dispatch('fetchFilteredApplicants', advancedFilters);
+        searchApplied.value = true;
+        searchMode.value = true;
+    } catch (error) {
+        console.error("Error in advanced search:", error);
+        // Handle error (e.g., show an error message to the user)
+    }
 };
 
 const availableSubSpecialties = computed(() => {
@@ -335,57 +267,46 @@ const availableSubSpecialties = computed(() => {
 });
 
 watch(() => filters.value.mainSpecializations, (newValue) => {
-    // console.log('Main specializations changed:', newValue);
     updateFilter('subSpecialities', []);
 });
-
 
 const resetFilters = () => {
     store.dispatch('resetFilters');
     searchApplied.value = false;
-
+    searchMode.value = false;
 };
 
 const updateFilter = (key, value) => {
     if (key === 'mainSpecializations' && !Array.isArray(value)) {
-        console.error('Attempting to set mainSpecializations to a non-array value:', value);
         value = Array.isArray(value) ? value : [value].filter(Boolean);
     }
     store.commit('updateFilter', {key, value});
 };
 
-const searchApplicants = () => {
-    store.dispatch('fetchFilteredApplicants', filters.value);
-    searchMode.value = true
-    searchApplied.value = true;
-
-};
-const handleSearch = async (searchTerm) => {
+const handleSearch = async () => {
     await store.dispatch('searchApplicants', searchTerm.value);
     searchMode.value = true;
-
 };
+
 const searchMode = computed({
     get() {
         return store.getters.searchMode;
     },
-    set() {
-        store.dispatch('setSearchMode', !searchMode)
+    set(value) {
+        store.dispatch('setSearchMode', value);
     }
-})
+});
 
 onMounted(async () => {
     degrees.value = await getSelectables('degrees');
     cities.value = await getSelectables('cities');
     specializations.value = await getSelectables('specialities');
-
 });
-
 
 </script>
 
-<style>
 
+<style>
 .simple-range-slider .simple-range-slider-bg-bar[data-v-f6e84873] {
     margin: 0;
 }
@@ -413,5 +334,4 @@ input[type="range"]::-moz-range-progress {
     opacity: 1;
     overflow: hidden;
 }
-
 </style>

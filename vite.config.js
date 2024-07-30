@@ -13,6 +13,8 @@ export default defineConfig({
     optimizeDeps: {
         // include: ['@vueuse/core'], // Example external path
         exclude: ['vendor/phpunit/phpunit/src/Event/*'], // Check this line
+        include: ['vue-simple-range-slider']
+
     },
     plugins: [
         laravel({

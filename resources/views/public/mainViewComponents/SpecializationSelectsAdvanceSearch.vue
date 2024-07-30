@@ -1,5 +1,5 @@
 <template>
-    <nav class="px-6 flex justify-between items-center">
+    <nav class="px-6 py-4 flex justify-between items-center bg-white shadow-sm">
         <div>
             <router-link to="/" class="self-center text-xl md:text-3xl font-semibold whitespace-nowrap text-zinc-800">
                 TAWTHEEF
@@ -26,33 +26,42 @@
 
         <!-- Dropdown menu for smaller screens -->
         <div class="md:hidden relative dropdown">
-            <button @click="toggleDropdown" class="p-2 text-zinc-800 hover:text-orange transition-colors duration-300">
+            <button @click="toggleDropdown" class="p-2 text-zinc-800 hover:text-orange transition-colors duration-300 focus:outline-none">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
                 </svg>
             </button>
             <transition
                 enter-active-class="transition ease-out duration-200"
-                enter-from-class="opacity-0 scale-95"
-                enter-to-class="opacity-100 scale-100"
+                enter-from-class="opacity-0 transform scale-95"
+                enter-to-class="opacity-100 transform scale-100"
                 leave-active-class="transition ease-in duration-150"
-                leave-from-class="opacity-100 scale-100"
-                leave-to-class="opacity-0 scale-95"
+                leave-from-class="opacity-100 transform scale-100"
+                leave-to-class="opacity-0 transform scale-95"
             >
-                <div v-if="isDropdownOpen" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10">
+                <div v-if="isDropdownOpen" class="absolute right-0 mt-2 w-52 bg-zinc-50 rounded-md shadow-lg py-1 z-10">
+                    <div class="px-4 py-2 text-xs text-zinc-400 uppercase tracking-wider">Menu</div>
                     <template v-if="!isAuthenticated">
                         <router-link v-slot="{ navigate }" custom to="/login">
-                            <button @click="navigate" class="nav-link block w-full text-left px-4 py-2 text-sm">Login</button>
+                            <a @click="navigate" class="block px-4 py-2 text-sm text-zinc-800 hover:bg-orange hover:text-white">
+                                Login
+                            </a>
                         </router-link>
                         <router-link v-slot="{ navigate }" custom to="/login">
-                            <button @click="navigate" class="nav-link block w-full text-left px-4 py-2 text-sm">Create Resume</button>
+                            <a @click="navigate" class="block px-4 py-2 text-sm text-zinc-800 hover:bg-orange hover:text-white">
+                                Create Resume
+                            </a>
                         </router-link>
                     </template>
                     <template v-else>
                         <router-link v-slot="{ navigate }" custom :to="`/profile/${user?.applicant?.id}`">
-                            <button @click="navigate" class="nav-link block w-full text-left px-4 py-2 text-sm">Resume</button>
+                            <a @click="navigate" class="block px-4 py-2 text-sm text-zinc-800 hover:bg-orange hover:text-white">
+                                Resume
+                            </a>
                         </router-link>
-                        <button @click="logout" class="nav-link block w-full text-left px-4 py-2 text-sm">Logout</button>
+                        <a @click="logout" class="block px-4 py-2 text-sm text-zinc-800 hover:bg-orange hover:text-white cursor-pointer">
+                            Logout
+                        </a>
                     </template>
                 </div>
             </transition>
