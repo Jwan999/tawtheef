@@ -28,8 +28,10 @@ class ApplicantController extends Controller
             $baseUrl = rtrim(config('app.url'), '/');
 
             $pdf = Browsershot::html($html)
+                ->setNodeBinary('/usr/bin/node')  // Add this line
+                ->setNpmBinary('/usr/bin/npm')    // Add this line
+                ->setChromePath('/usr/bin/chromium-browser')  // Add this line
                 ->format('A4')
-                ->margins(10, 10, 10, 10)
                 ->waitUntilNetworkIdle()
                 ->showBackground()
                 ->timeout(120000) // 2 minutes timeout
