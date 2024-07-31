@@ -37,7 +37,8 @@ class ApplicantController extends Controller
                 $chromiumPath = base_path('node_modules/puppeteer/.local-chromium/mac-*/chrome-mac/Chromium.app/Contents/MacOS/Chromium');
             } elseif (strtoupper(substr($os, 0, 3)) === 'LIN') {
                 // Linux (Ubuntu)
-                $chromiumPath = base_path('node_modules/puppeteer/.local-chromium/linux-*/chrome-linux/chrome');
+                $chromiumPath = '/usr/bin/chromium-browser';
+//                $chromiumPath = base_path('node_modules/puppeteer/.local-chromium/linux-*/chrome-linux/chrome');
             } else {
                 throw new \Exception('Unsupported operating system');
             }
