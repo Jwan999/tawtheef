@@ -16,28 +16,56 @@ class ApplicantController extends Controller
         try {
             $applicant = Applicant::findOrFail($id);
 
-            // Ensure the image path is correct
             if ($applicant->image) {
                 $applicant->image = str_replace('/storage//', '/storage/', Storage::url($applicant->image));
             }
 
             $filename = "applicant_profile_{$id}.pdf";
-
             $html = view('public.downloadableProfile.DownloadPDFApplicantProfile', compact('applicant'))->render();
-
             $baseUrl = rtrim(config('app.url'), '/');
 
+            // Determine the operating system
+            $os = PHP_OS;
+
+            // Find Node.js and npm paths
+            $nodePath = trim(shell_exec('which node'));
+            $npmPath = trim(shell_exec('which npm'));
+
+            // Find Chromium path based on the operating system
+            if (strtoupper(substr($os, 0, 3)) === 'DAR') {
+                // macOS
+                $chromiumPath = base_path('node_modules/puppeteer/.local-chromium/mac-*/chrome-mac/Chromium.app/Contents/MacOS/Chromium');
+            } elseif (strtoupper(substr($os, 0, 3)) === 'LIN') {
+                // Linux (Ubuntu)
+                $chromiumPath = base_path('node_modules/puppeteer/.local-chromium/linux-*/chrome-linux/chrome');
+            } else {
+                throw new \Exception('Unsupported operating system');
+            }
+
+            // Use glob to find the actual path
+            $chromiumPaths = glob($chromiumPath);
+            $chromiumPath = !empty($chromiumPaths) ? $chromiumPaths[0] : null;
+
+            if (!$chromiumPath) {
+                // Fallback: try to get the path from Puppeteer
+                $chromiumPath = trim(shell_exec('node -e "console.log(require(\'puppeteer\').executablePath())"'));
+            }
+
+            if (!$chromiumPath) {
+                throw new \Exception('Chromium executable not found');
+            }
+
             $pdf = Browsershot::html($html)
-                ->setNodeBinary('/usr/bin/node')  // Add this line
-                ->setNpmBinary('/usr/bin/npm')    // Add this line
-                ->setChromePath('/usr/bin/chromium-browser')  // Add this line
+                ->setNodeBinary($nodePath)
+                ->setNpmBinary($npmPath)
+                ->setChromePath($chromiumPath)
                 ->format('A4')
                 ->waitUntilNetworkIdle()
                 ->showBackground()
-                ->timeout(120000) // 2 minutes timeout
+                ->timeout(120000)
                 ->noSandbox()
                 ->ignoreHttpsErrors()
-                ->setOption('args', ['--disable-web-security'])
+                ->setOption('args', ['--no-sandbox', '--disable-setuid-sandbox', '--disable-web-security'])
                 ->setBaseUrl($baseUrl)
                 ->setOption('addStyleTag', json_encode(['content' => '
                 img { visibility: hidden; }
@@ -61,11 +89,17 @@ class ApplicantController extends Controller
         } catch (\Exception $e) {
             \Log::error('PDF Generation Error: ' . $e->getMessage());
             \Log::error('Stack trace: ' . $e->getTraceAsString());
+            \Log::error('OS: ' . PHP_OS);
+            \Log::error('Node path: ' . ($nodePath ?? 'Not found'));
+            \Log::error('NPM path: ' . ($npmPath ?? 'Not found'));
+            \Log::error('Chromium path: ' . ($chromiumPath ?? 'Not found'));
+
             return response()->json([
                 'error' => 'Failed to generate PDF',
                 'message' => $e->getMessage(),
                 'file' => $e->getFile(),
-                'line' => $e->getLine()
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
             ], 500);
         }
     }
