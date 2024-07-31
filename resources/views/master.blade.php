@@ -8,7 +8,7 @@
     @vite('resources/css/app.css')
     <title>Tawtheef</title>
 </head>
-<body class="bg-light">
+<body class="bg-light font-sans">
 {{--<div v-if="{{auth()->user()}}">--}}
 {{--    {{ auth()->user() }}!--}}
 {{--</div>--}}

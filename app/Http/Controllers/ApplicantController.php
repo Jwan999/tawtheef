@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Storage;
 use Spatie\Browsershot\Browsershot;
 use App\Models\FormControl;
 
-
 class ApplicantController extends Controller
 {
     public function generateApplicantProfile($id)
@@ -17,32 +16,57 @@ class ApplicantController extends Controller
         try {
             $applicant = Applicant::findOrFail($id);
 
+            // Ensure the image path is correct
+            if ($applicant->image) {
+                $applicant->image = str_replace('/storage//', '/storage/', Storage::url($applicant->image));
+            }
+
             $filename = "applicant_profile_{$id}.pdf";
 
             $html = view('public.downloadableProfile.DownloadPDFApplicantProfile', compact('applicant'))->render();
 
-            $pdfContent = Browsershot::html($html)
-                ->setNodeBinary('/Users/jwan99/.nvm/versions/node/v22.2.0/bin/node')
-                ->setNpmBinary('/Users/jwan99/.nvm/versions/node/v22.2.0/bin/npm')
+            $baseUrl = rtrim(config('app.url'), '/');
+
+            $pdf = Browsershot::html($html)
                 ->format('A4')
-                ->margins(5, 5, 5, 5)
+                ->margins(10, 10, 10, 10)
                 ->waitUntilNetworkIdle()
-                ->delay(500) // Add a small delay to ensure font loading
+                ->showBackground()
+                ->timeout(120000) // 2 minutes timeout
+                ->noSandbox()
+                ->ignoreHttpsErrors()
+                ->setOption('args', ['--disable-web-security'])
+                ->setBaseUrl($baseUrl)
+                ->setOption('addStyleTag', json_encode(['content' => '
+                img { visibility: hidden; }
+                img[src^="data:"], img[src^="http"] { visibility: visible; }
+            ']))
+                ->setOption('evaluateScript', '
+                setTimeout(() => {
+                    const images = document.querySelectorAll("img");
+                    images.forEach(img => {
+                        if (img.complete) img.style.visibility = "visible";
+                        img.onload = () => img.style.visibility = "visible";
+                        img.onerror = () => console.error("Failed to load image:", img.src);
+                    });
+                }, 1000);
+            ')
                 ->pdf();
 
-            if (substr($pdfContent, 0, 4) !== '%PDF') {
-                throw new \Exception('Generated content is not a valid PDF.');
-            }
-
-            return response($pdfContent)
+            return response($pdf)
                 ->header('Content-Type', 'application/pdf')
                 ->header('Content-Disposition', "attachment; filename=\"{$filename}\"");
         } catch (\Exception $e) {
-//            \Log::error('PDF Generation Error: ' . $e->getMessage());
-            return response()->json(['error' => 'Failed to generate PDF: ' . $e->getMessage()], 500);
+            \Log::error('PDF Generation Error: ' . $e->getMessage());
+            \Log::error('Stack trace: ' . $e->getTraceAsString());
+            return response()->json([
+                'error' => 'Failed to generate PDF',
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ], 500);
         }
     }
-
     public function viewApplicantProfile($id)
     {
         $applicant = Applicant::findOrFail($id);

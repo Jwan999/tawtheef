@@ -1,4 +1,5 @@
 /** @type {import('tailwindcss').Config} */
+const defaultTheme = require('tailwindcss/defaultTheme');
 
 module.exports = {
     content: [
@@ -10,6 +11,9 @@ module.exports = {
     ],
     theme: {
         extend: {
+            fontFamily: {
+                'sans': ['Dosis', ...defaultTheme.fontFamily.sans],
+            },
             colors: {
                 'orange': '#E26600',
                 'orange-50': '#fefbf8',

@@ -3,146 +3,214 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>John Doe - Resume</title>
+    <title>{{ $applicant->details['fullName'] ?? 'Applicant' }} - Resume</title>
+    @vite('resources/css/app.css')
     <style>
-        html, body {
-            font-family: "Dosis", sans-serif;
-            font-optical-sizing: auto;
-            font-style: normal;
+        body {
+            font-family: 'Dosis', sans-serif;
+        }
+
+        .rating-block {
+            width: 30px;
+            height: 10px;
+            display: inline-block;
+            margin-right: 2px;
+        }
+
+        .rating-block-filled {
+            background-color: #E26600;
+        }
+
+        .rating-block-empty {
+            background-color: #E2E8F0;
+        }
+
+        .list-circle {
+            list-style-type: circle;
+        }
+
+        .section-header {
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: #000;
+            border-bottom: 2px solid #E26600;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
         }
     </style>
-    @vite('resources/css/app.css')
 </head>
-<body class="bg-gray-100 font-sans">
-<div class="max-w-5xl mx-auto bg-white shadow-lg">
-
+<body class="font-sans text-dark bg-light">
+<div class="max-w-7xl mx-auto p-8">
     <div class="flex">
         <!-- Left Column -->
-        <div class="w-1/3 p-6 bg-gray-50">
-            <div class="mb-6">
-                <img src="https://via.placeholder.com/150" alt="John Doe" class="w-32 h-32 rounded-full mx-auto mb-4">
-                <h2 class="text-2xl font-bold text-center" >John Doe</h2>
+        <div class="w-1/3 pr-8">
+            <div class="mb-8 text-center">
+                @php
+                    $imagePath = storage_path('app/public/' . str_replace('storage/', '', $applicant->image));
+                    $imageData = base64_encode(file_get_contents($imagePath));
+                    $src = 'data:' . mime_content_type($imagePath) . ';base64,' . $imageData;
+                @endphp
+
+                <img src="{{ $src }}" alt="Profile Picture" class="h-44 w-52 rounded-md object-cover mx-auto mb-4">
+                <h1 class="text-2xl font-bold text-orange mb-2">{{ $applicant->details['fullName'] ?? 'Applicant Name' }}</h1>
+            </div>            <div class="mb-8">
+                <h2 class="section-header">Personal Information</h2>
+                <div class="space-y-2 text-sm">
+                    <p>{{ $applicant->contact['fullName'] ?? '' }}</p>
+                    <p>{{ $applicant->contact['email'] ?? '' }}</p>
+                    <p>{{ $applicant->contact['phone'] ?? '' }}</p>
+                    <p>{{ $applicant->contact['birthdate'] ?? '' }}</p>
+                    <p>{{ $applicant->contact['city'] ?? '' }}{{ !empty($applicant->contact['zone']) ? ', ' . $applicant->contact['zone'] : '' }}</p>
+                </div>
             </div>
 
-            <section class="mb-6">
-                <h3 class="text-lg font-semibold mb-2 text-orange-500">Specializations</h3>
-                <div class="bg-orange-500 text-white p-2 mb-2">
-                    Development, Creative & Design
+            <div class="mb-8">
+                <h2 class="section-header">Specializations</h2>
+                <div class="rounded-lg overflow-hidden text-sm">
+                    <div class="p-4 text-sm">
+                        <ul class="list-disc pl-5 space-y-4">
+                            @foreach($applicant->speciality['specializations'] ?? [] as $specialization)
+                                <li class="font-semibold">
+                                    {{ $specialization }}
+                                    @if(!empty($applicant->speciality['children']))
+                                        <p class="font-normal text-orange-500 mt-2">Experienced with the following:</p>
+                                        <ul class="list-circle pl-5 mt-1">
+                                            @foreach($applicant->speciality['children'] as $subSpecialization)
+                                                <li class="font-normal">{{ $subSpecialization }}</li>
+                                            @endforeach
+                                        </ul>
+                                    @endif
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
                 </div>
-                <p class="font-semibold">Experienced with the following:</p>
-                <ul class="list-disc list-inside">
-                    <li>Full-Stack Development</li>
-                    <li>User Experience (UX) Design</li>
-                    <li>User Interface (UI) Design</li>
-                    <li>Mobile App Development</li>
-                </ul>
-            </section>
+            </div>
+            @php
+                // Custom classes for rating blocks
+                $ratingBlockBase = 'w-6 h-2 mr-0.5 inline-block rounded-full';
+                $ratingBlockFilled = $ratingBlockBase . ' bg-orange-500';
+                $ratingBlockEmpty = $ratingBlockBase . ' bg-gray-300';
+            @endphp
 
-            <section class="mb-6">
-                <h3 class="text-lg font-semibold mb-2 text-orange-500">Educational Background</h3>
-                <p>2015 - 2019</p>
-                <p class="font-semibold">University of Technology</p>
-                <p>Bachelor's Degree in Computer Science</p>
-            </section>
-
-            <section class="mb-6">
-                <h3 class="text-lg font-semibold mb-2 text-orange-500">Languages</h3>
-                <p>English <span class="inline-block w-24 h-2 bg-orange-200"><span class="inline-block h-2 bg-orange-500" style="width: 100%"></span></span></p>
-                <p>Arabic <span class="inline-block w-24 h-2 bg-orange-200"><span class="inline-block h-2 bg-orange-500" style="width: 75%"></span></span></p>
-                <p>French <span class="inline-block w-24 h-2 bg-orange-200"><span class="inline-block h-2 bg-orange-500" style="width: 50%"></span></span></p>
-            </section>
-
-            <section class="mb-6">
-                <h3 class="text-lg font-semibold mb-2 text-orange-500">Personal Skills</h3>
-                <div class="flex flex-wrap">
-                    <span class="bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">Problem Solving</span>
-                    <span class="bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">Teamwork</span>
-                    <span class="bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">Communication</span>
-                    <span class="bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">Creativity</span>
+                <!-- Tools & Technologies Section -->
+            <div class="mb-8">
+                <h2 class="section-header">Tools & Technologies</h2>
+                <div class="text-sm">
+                    @foreach($applicant->tools ?? [] as $tool)
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-sm">{{ $tool['item'] }}</span>
+                            <div>
+                                @for ($i = 1; $i <= 5; $i++)
+                                    <span
+                                        class="{{ $i <= $tool['rating'] ? $ratingBlockFilled : $ratingBlockEmpty }}"></span>
+                                @endfor
+                            </div>
+                        </div>
+                    @endforeach
                 </div>
-            </section>
+            </div>
 
-            <section class="mb-6">
-                <h3 class="text-lg font-semibold mb-2 text-orange-500">Tools and Technologies</h3>
-                <p>JavaScript <span class="inline-block w-24 h-2 bg-orange-200"><span class="inline-block h-2 bg-orange-500" style="width: 90%"></span></span></p>
-                <p>React <span class="inline-block w-24 h-2 bg-orange-200"><span class="inline-block h-2 bg-orange-500" style="width: 85%"></span></span></p>
-                <p>Node.js <span class="inline-block w-24 h-2 bg-orange-200"><span class="inline-block h-2 bg-orange-500" style="width: 80%"></span></span></p>
-                <p>Python <span class="inline-block w-24 h-2 bg-orange-200"><span class="inline-block h-2 bg-orange-500" style="width: 75%"></span></span></p>
-            </section>
+            <!-- Languages Section -->
+            <div class="mb-8">
+                <h2 class="section-header">Languages</h2>
+                <div class="text-sm">
+                    @foreach($applicant->languages ?? [] as $language)
+                        @if(!empty($language['item']))
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-sm">{{ $language['item'] }}</span>
+                                <div>
+                                    @for ($i = 1; $i <= 5; $i++)
+                                        <span
+                                            class="{{ $i <= $language['rating'] ? $ratingBlockFilled : $ratingBlockEmpty }}"></span>
+                                    @endfor
+                                </div>
+                            </div>
+                        @endif
+                    @endforeach
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h2 class="section-header">Skills</h2>
+                <div class="flex flex-wrap gap-2 text-sm">
+                    @foreach($applicant->skills ?? [] as $skill)
+                        <span class="bg-orange-50 text-orange px-3 py-1 rounded-full text-sm">{{ $skill }}</span>
+                    @endforeach
+                </div>
+            </div>
         </div>
 
         <!-- Right Column -->
-        <div class="w-2/3 p-6">
-            <section class="mb-6">
-                <h3 class="text-xl font-semibold mb-2 border-b-2 border-orange-500 pb-1">Contact Info</h3>
-                <p><strong>Email:</strong> john.doe@example.com</p>
-                <p><strong>Phone:</strong> +1 234 567 8900</p>
-                <p><strong>Residence:</strong> Baghdad, Iraq</p>
-                <p><strong>Date of birth:</strong> 1990-01-15</p>
-                <p><strong>Gender:</strong> Male</p>
+        <div class="w-2/3 pl-8 border-l border-orange-50">
+            <div class="mb-8">
+                <h2 class="section-header">Summary</h2>
+                <p class="text-justify text-sm">{{ $applicant->summary }}</p>
+            </div>
 
-                <h4 class="font-semibold mt-2">Links & Websites</h4>
-                <ul>
-                    <li>Portfolio: www.johndoe-portfolio.com</li>
-                    <li>LinkedIn: linkedin.com/in/johndoe</li>
-                    <li>GitHub: github.com/johndoe</li>
-                </ul>
-            </section>
+            <div class="mb-8">
+                <h2 class="section-header">Employment History</h2>
+                @foreach($applicant->employment ?? [] as $job)
+                    <div class="mb-4 text-sm">
+                        <p class="font-semibold text-orange-500 text-xs">
+                            {{ $job['duration'][0] ?? '' }} - {{ $job['duration'][1] ?? 'Present' }}
+                        </p>
+                        <p class="font-semibold">{{ $job['title'] ?? '' }} at {{ $job['employer'] ?? '' }}</p>
+                        @if(!empty($job['responsibilities']))
+                            <p class="my-3 text-xs">Responsibilities:</p>
+                            <ul class="list-disc list-inside ml-4">
+                                @foreach($job['responsibilities'] as $responsibility)
+                                    <li>{{ $responsibility }}</li>
+                                @endforeach
+                            </ul>
+                        @endif
+                    </div>
+                @endforeach
+            </div>
 
-            <section class="mb-6">
-                <h3 class="text-xl font-semibold mb-2 border-b-2 border-orange-500 pb-1">Summary</h3>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-            </section>
+            <div class="mb-8">
+                <h2 class="section-header">Educational Background</h2>
+                @foreach($applicant->education ?? [] as $education)
+                    @if(!empty($education['institute']) || !empty($education['degree']))
+                        <div class="mb-4 text-sm">
+                            <p class="font-semibold text-orange-500 text-xs">
+                                {{ $education['duration'][0] ?? '' }} - {{ $education['duration'][1] ?? 'Present' }}
+                            </p>
+                            <p class="font-semibold">{{ $education['degree'] ?? '' }}</p>
+                            <p>{{ $education['institute'] ?? '' }}</p>
+                        </div>
+                    @endif
+                @endforeach
+            </div>
 
-            <section class="mb-6">
-                <h3 class="text-xl font-semibold mb-2 border-b-2 border-orange-500 pb-1">Employment</h3>
-                <div class="mb-4">
-                    <p class="text-sm">2020 - Present</p>
-                    <p class="font-semibold">Senior Developer at TechCorp</p>
-                    <p class="font-semibold">Responsibilities:</p>
-                    <ul class="list-disc list-inside">
-                        <li>Lead development of web applications</li>
-                        <li>Mentor junior developers</li>
-                        <li>Implement best practices and coding standards</li>
-                    </ul>
-                </div>
-                <div class="mb-4">
-                    <p class="text-sm">2017 - 2020</p>
-                    <p class="font-semibold">Full Stack Developer at WebSolutions</p>
-                    <p class="font-semibold">Responsibilities:</p>
-                    <ul class="list-disc list-inside">
-                        <li>Developed and maintained client websites</li>
-                        <li>Collaborated with design team for UI/UX improvements</li>
-                        <li>Optimized application performance</li>
-                    </ul>
-                </div>
-            </section>
+            <div class="mb-8">
+                <h2 class="section-header">Courses Taken</h2>
+                @forelse($applicant->courses ?? [] as $course)
+                    @if(!empty($course['title']))
+                        <div class="mb-4 text-sm">
+                            <p class="font-semibold">{{ $course['title'] ?? '' }}</p>
+                            <p class="text-xs">Provided by: {{ $course['entity'] ?? '' }}</p>
+                            <p class="text-xs">Duration: {{ $course['duration'] ?? '' }}</p>
+                        </div>
+                    @endif
+                @empty
+                    <p class="text-sm">No courses listed.</p>
+                @endforelse
+            </div>
 
-            <section class="mb-6">
-                <h3 class="text-xl font-semibold mb-2 border-b-2 border-orange-500 pb-1">Courses</h3>
-                <div class="mb-2">
-                    <p class="font-semibold">Advanced React Patterns</p>
-                    <p>Provided By: Frontend Masters</p>
-                    <p>Duration: 6 weeks</p>
-                </div>
-                <div class="mb-2">
-                    <p class="font-semibold">Machine Learning Fundamentals</p>
-                    <p>Provided By: Coursera</p>
-                    <p>Duration: 12 weeks</p>
-                </div>
-            </section>
-
-            <section class="mb-6">
-                <h3 class="text-xl font-semibold mb-2 border-b-2 border-orange-500 pb-1">Events and Activities</h3>
-                <div class="mb-2">
-                    <p>2023</p>
-                    <p>TechConf Middle East as <span class="text-orange-500">Speaker</span></p>
-                </div>
-                <div class="mb-2">
-                    <p>2022</p>
-                    <p>Local Hackathon as <span class="text-orange-500">Participant</span></p>
-                </div>
-            </section>
+            <div class="mb-8">
+                <h2 class="section-header">Activities and Events</h2>
+                @forelse($applicant->activities ?? [] as $activity)
+                    @if(!empty($activity['title']))
+                        <div class="mb-4 text-sm">
+                            <p class="font-semibold">{{ $activity['title'] ?? '' }}</p>
+                            <p>{{ $activity['participatedAs'] ?? '' }} ({{ $activity['year'] ?? '' }})</p>
+                        </div>
+                    @endif
+                @empty
+                    <p class="text-sm">No activities listed.</p>
+                @endforelse
+            </div>
         </div>
     </div>
 </div>
