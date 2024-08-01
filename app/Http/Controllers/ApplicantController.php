@@ -14,32 +14,40 @@ class ApplicantController extends Controller
     public function generateApplicantProfile($id)
     {
         try {
+            \Log::info("Starting PDF generation for applicant ID: $id");
+
             $applicant = Applicant::findOrFail($id);
+            \Log::info("Applicant found");
 
             if ($applicant->image) {
                 $applicant->image = str_replace('/storage//', '/storage/', Storage::url($applicant->image));
+                \Log::info("Applicant image URL processed");
             }
 
             $filename = "applicant_profile_{$id}.pdf";
             $html = view('public.downloadableProfile.DownloadPDFApplicantProfile', compact('applicant'))->render();
+            \Log::info("HTML content generated");
+
             $baseUrl = rtrim(config('app.url'), '/');
+            \Log::info("Base URL: $baseUrl");
 
-            // Dynamically find paths using 'which'
-            $chromiumPath = trim(shell_exec('which chromium'));
-            $nodePath = trim(shell_exec('which node'));
-            $npmPath = trim(shell_exec('which npm'));
+            // Create a custom user data directory in /tmp
+            $userDataDir = '/tmp/chrome-user-data-' . uniqid();
+            if (!file_exists($userDataDir)) {
+                mkdir($userDataDir, 0755, true);
+            }
+            \Log::info("Created custom user data directory: $userDataDir");
 
-            // Log the paths for debugging
+            $chromiumPath = '/usr/local/bin/chromium';
+            $nodePath = '/usr/local/bin/node';
+            $npmPath = '/usr/local/bin/npm';
+
             \Log::info("Chromium path: $chromiumPath");
             \Log::info("Node path: $nodePath");
             \Log::info("NPM path: $npmPath");
 
-            // Ensure we have valid paths
-            if (empty($chromiumPath) || empty($nodePath) || empty($npmPath)) {
-                throw new \Exception("Unable to locate required executables");
-            }
-
-            $pdf = Browsershot::html($html)
+            \Log::info("Initializing Browsershot");
+            $browsershot = Browsershot::html($html)
                 ->setChromePath($chromiumPath)
                 ->noSandbox()
                 ->ignoreHttpsErrors()
@@ -50,27 +58,23 @@ class ApplicantController extends Controller
                     '--disable-setuid-sandbox',
                     '--disable-gpu',
                     '--disable-web-security',
+                    "--user-data-dir=$userDataDir",
                 ])
                 ->format('A4')
                 ->waitUntilNetworkIdle()
                 ->showBackground()
                 ->timeout(120000)
-                ->setBaseUrl($baseUrl)
-                ->setOption('addStyleTag', json_encode(['content' => '
-                img { visibility: hidden; }
-                img[src^="data:"], img[src^="http"] { visibility: visible; }
-            ']))
-                ->setOption('evaluateScript', '
-                setTimeout(() => {
-                    const images = document.querySelectorAll("img");
-                    images.forEach(img => {
-                        if (img.complete) img.style.visibility = "visible";
-                        img.onload = () => img.style.visibility = "visible";
-                        img.onerror = () => console.error("Failed to load image:", img.src);
-                    });
-                }, 1000);
-            ')
-                ->pdf();
+                ->setBaseUrl($baseUrl);
+
+            \Log::info("Browsershot configuration complete");
+
+            \Log::info("Generating PDF");
+            $pdf = $browsershot->pdf();
+            \Log::info("PDF generated successfully");
+
+            // Clean up the temporary user data directory
+            $this->recursiveRemoveDirectory($userDataDir);
+            \Log::info("Cleaned up temporary user data directory");
 
             return response($pdf)
                 ->header('Content-Type', 'application/pdf')
@@ -79,6 +83,12 @@ class ApplicantController extends Controller
             \Log::error('PDF Generation Error: ' . $e->getMessage());
             \Log::error('Stack trace: ' . $e->getTraceAsString());
 
+            // Log additional system information
+            \Log::error('Current working directory: ' . getcwd());
+            \Log::error('PHP version: ' . phpversion());
+            \Log::error('Server software: ' . $_SERVER['SERVER_SOFTWARE']);
+            \Log::error('Server user: ' . shell_exec('whoami'));
+
             return response()->json([
                 'error' => 'Failed to generate PDF',
                 'message' => $e->getMessage(),
@@ -86,8 +96,7 @@ class ApplicantController extends Controller
         }
     }
 
-    // Helper function to recursively remove a directory
-
+// Helper function to recursively remove a directory
     private function recursiveRemoveDirectory($dir) {
         if (is_dir($dir)) {
             $objects = scandir($dir);
