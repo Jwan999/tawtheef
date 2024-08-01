@@ -25,6 +25,7 @@ class ApplicantController extends Controller
             $baseUrl = rtrim(config('app.url'), '/');
 
             $pdf = Browsershot::html($html)
+                ->usePuppeteer()
                 ->noSandbox()
                 ->ignoreHttpsErrors()
                 ->setOption('args', [
@@ -67,7 +68,6 @@ class ApplicantController extends Controller
             ], 500);
         }
     }
-
 // Helper function to recursively remove a directory
     private function recursiveRemoveDirectory($dir) {
         if (is_dir($dir)) {
