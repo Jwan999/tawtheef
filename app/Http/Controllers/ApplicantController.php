@@ -24,31 +24,11 @@ class ApplicantController extends Controller
             $html = view('public.downloadableProfile.DownloadPDFApplicantProfile', compact('applicant'))->render();
             $baseUrl = rtrim(config('app.url'), '/');
 
-            // Determine the operating system
-            $os = PHP_OS;
+            // Use system-wide Chromium installation
+            $chromiumPath = '/usr/bin/chromium-browser';
 
-            // Find Node.js and npm paths
-            $nodePath = trim(shell_exec('which node'));
-            $npmPath = trim(shell_exec('which npm'));
-
-            // Find Chromium path based on the operating system
-            if (strtoupper(substr($os, 0, 3)) === 'DAR') {
-                // macOS
-                $chromiumPath = base_path('node_modules/puppeteer/.local-chromium/mac-*/chrome-mac/Chromium.app/Contents/MacOS/Chromium');
-            } elseif (strtoupper(substr($os, 0, 3)) === 'LIN') {
-                // Linux (Ubuntu)
-                $chromiumPath = '/usr/bin/chromium-browser';
-//                $chromiumPath = base_path('node_modules/puppeteer/.local-chromium/linux-*/chrome-linux/chrome');
-            } else {
-                throw new \Exception('Unsupported operating system');
-            }
-
-            // Use glob to find the actual path
-            $chromiumPaths = glob($chromiumPath);
-            $chromiumPath = !empty($chromiumPaths) ? $chromiumPaths[0] : null;
-
-            if (!$chromiumPath) {
-                // Fallback: try to get the path from Puppeteer
+            // If system-wide Chromium is not available, fall back to Puppeteer's Chromium
+            if (!file_exists($chromiumPath)) {
                 $chromiumPath = trim(shell_exec('node -e "console.log(require(\'puppeteer\').executablePath())"'));
             }
 
@@ -56,17 +36,32 @@ class ApplicantController extends Controller
                 throw new \Exception('Chromium executable not found');
             }
 
+            // Create a temporary directory that PHP can write to
+            $tempDir = sys_get_temp_dir() . '/browsershot_' . uniqid();
+            if (!file_exists($tempDir)) {
+                mkdir($tempDir, 0755, true);
+            }
+
             $pdf = Browsershot::html($html)
-                ->setNodeBinary($nodePath)
-                ->setNpmBinary($npmPath)
+                ->setNodeBinary('/usr/bin/node')
+                ->setNpmBinary('/usr/bin/npm')
                 ->setChromePath($chromiumPath)
+                ->noSandbox()
+                ->ignoreHttpsErrors()
+                ->setOption('args', [
+                    '--no-sandbox',
+                    '--disable-setuid-sandbox',
+                    '--disable-gpu',
+                    '--disable-web-security',
+                    '--user-data-dir=' . $tempDir,
+                ])
+                ->setOption('env', [
+                    'PUPPETEER_CACHE_DIR' => $tempDir,
+                ])
                 ->format('A4')
                 ->waitUntilNetworkIdle()
                 ->showBackground()
                 ->timeout(120000)
-                ->noSandbox()
-                ->ignoreHttpsErrors()
-                ->setOption('args', ['--no-sandbox', '--disable-setuid-sandbox', '--disable-web-security'])
                 ->setBaseUrl($baseUrl)
                 ->setOption('addStyleTag', json_encode(['content' => '
                 img { visibility: hidden; }
@@ -84,15 +79,15 @@ class ApplicantController extends Controller
             ')
                 ->pdf();
 
+            // Clean up the temporary directory
+            $this->recursiveRemoveDirectory($tempDir);
+
             return response($pdf)
                 ->header('Content-Type', 'application/pdf')
                 ->header('Content-Disposition', "attachment; filename=\"{$filename}\"");
         } catch (\Exception $e) {
             \Log::error('PDF Generation Error: ' . $e->getMessage());
             \Log::error('Stack trace: ' . $e->getTraceAsString());
-            \Log::error('OS: ' . PHP_OS);
-            \Log::error('Node path: ' . ($nodePath ?? 'Not found'));
-            \Log::error('NPM path: ' . ($npmPath ?? 'Not found'));
             \Log::error('Chromium path: ' . ($chromiumPath ?? 'Not found'));
 
             return response()->json([
@@ -104,6 +99,25 @@ class ApplicantController extends Controller
             ], 500);
         }
     }
+
+// Helper function to recursively remove a directory
+    private function recursiveRemoveDirectory($dir) {
+        if (is_dir($dir)) {
+            $objects = scandir($dir);
+            foreach ($objects as $object) {
+                if ($object != "." && $object != "..") {
+                    if (is_dir($dir. DIRECTORY_SEPARATOR .$object) && !is_link($dir."/".$object))
+                        $this->recursiveRemoveDirectory($dir. DIRECTORY_SEPARATOR .$object);
+                    else
+                        unlink($dir. DIRECTORY_SEPARATOR .$object);
+                }
+            }
+            rmdir($dir);
+        }
+    }
+
+
+
     public function viewApplicantProfile($id)
     {
         $applicant = Applicant::findOrFail($id);
