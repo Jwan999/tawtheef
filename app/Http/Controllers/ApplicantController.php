@@ -24,12 +24,31 @@ class ApplicantController extends Controller
             $html = view('public.downloadableProfile.DownloadPDFApplicantProfile', compact('applicant'))->render();
             $baseUrl = rtrim(config('app.url'), '/');
 
-            // Use system-wide Chromium installation
-            $chromiumPath = '/usr/bin/chromium-browser';
+            // Determine the operating system
+            $isWindows = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
+            $isMac = strtoupper(substr(PHP_OS, 0, 3)) === 'DAR';
 
-            // If system-wide Chromium is not available, fall back to Puppeteer's Chromium
+            // Find Node.js and npm paths
+            $nodePath = $isWindows ? 'node' : trim(shell_exec('which node'));
+            $npmPath = $isWindows ? 'npm' : trim(shell_exec('which npm'));
+
+            // Find Chromium path based on the operating system
+            if ($isMac) {
+                $chromiumPath = base_path('node_modules/puppeteer/.local-chromium/mac-*/chrome-mac/Chromium.app/Contents/MacOS/Chromium');
+                $chromiumPaths = glob($chromiumPath);
+                $chromiumPath = !empty($chromiumPaths) ? $chromiumPaths[0] : null;
+            } elseif ($isWindows) {
+                $chromiumPath = base_path('node_modules/puppeteer/.local-chromium/win64-*/chrome-win/chrome.exe');
+                $chromiumPaths = glob($chromiumPath);
+                $chromiumPath = !empty($chromiumPaths) ? $chromiumPaths[0] : null;
+            } else {
+                // Linux
+                $chromiumPath = '/usr/bin/chromium-browser';
+            }
+
+            // If Chromium is not found, fall back to Puppeteer's Chromium
             if (!file_exists($chromiumPath)) {
-                $chromiumPath = trim(shell_exec('node -e "console.log(require(\'puppeteer\').executablePath())"'));
+                $chromiumPath = trim(shell_exec($nodePath . ' -e "console.log(require(\'puppeteer\').executablePath())"'));
             }
 
             if (!$chromiumPath) {
@@ -43,8 +62,8 @@ class ApplicantController extends Controller
             }
 
             $pdf = Browsershot::html($html)
-                ->setNodeBinary('/usr/bin/node')
-                ->setNpmBinary('/usr/bin/npm')
+                ->setNodeBinary($nodePath)
+                ->setNpmBinary($npmPath)
                 ->setChromePath($chromiumPath)
                 ->noSandbox()
                 ->ignoreHttpsErrors()
@@ -79,15 +98,21 @@ class ApplicantController extends Controller
             ')
                 ->pdf();
 
+            // Log PDF content length for debugging
+            \Log::info('PDF Content Length: ' . strlen($pdf));
+
             // Clean up the temporary directory
             $this->recursiveRemoveDirectory($tempDir);
 
             return response($pdf)
                 ->header('Content-Type', 'application/pdf')
-                ->header('Content-Disposition', "attachment; filename=\"{$filename}\"");
+                ->header('Content-Disposition', 'inline; filename="' . $filename . '"');
         } catch (\Exception $e) {
             \Log::error('PDF Generation Error: ' . $e->getMessage());
             \Log::error('Stack trace: ' . $e->getTraceAsString());
+            \Log::error('OS: ' . PHP_OS);
+            \Log::error('Node path: ' . ($nodePath ?? 'Not found'));
+            \Log::error('NPM path: ' . ($npmPath ?? 'Not found'));
             \Log::error('Chromium path: ' . ($chromiumPath ?? 'Not found'));
 
             return response()->json([
