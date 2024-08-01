@@ -24,15 +24,27 @@ class ApplicantController extends Controller
             $html = view('public.downloadableProfile.DownloadPDFApplicantProfile', compact('applicant'))->render();
             $baseUrl = rtrim(config('app.url'), '/');
 
-            // Set the Chrome executable path explicitly
-            $chromePath = '/usr/local/bin/chromium';
+            // Dynamically find paths using 'which'
+            $chromiumPath = trim(shell_exec('which chromium'));
+            $nodePath = trim(shell_exec('which node'));
+            $npmPath = trim(shell_exec('which npm'));
+
+            // Log the paths for debugging
+            \Log::info("Chromium path: $chromiumPath");
+            \Log::info("Node path: $nodePath");
+            \Log::info("NPM path: $npmPath");
+
+            // Ensure we have valid paths
+            if (empty($chromiumPath) || empty($nodePath) || empty($npmPath)) {
+                throw new \Exception("Unable to locate required executables");
+            }
 
             $pdf = Browsershot::html($html)
-                ->setChromePath($chromePath)
+                ->setChromePath($chromiumPath)
                 ->noSandbox()
                 ->ignoreHttpsErrors()
-                ->setNodeBinary('/root/.nvm/versions/node/v22.5.1/bin/node')
-                ->setNpmBinary('/root/.nvm/versions/node/v22.5.1/bin/npm')
+                ->setNodeBinary($nodePath)
+                ->setNpmBinary($npmPath)
                 ->setOption('args', [
                     '--no-sandbox',
                     '--disable-setuid-sandbox',
@@ -72,7 +84,10 @@ class ApplicantController extends Controller
                 'message' => $e->getMessage(),
             ], 500);
         }
-    }// Helper function to recursively remove a directory
+    }
+
+    // Helper function to recursively remove a directory
+
     private function recursiveRemoveDirectory($dir) {
         if (is_dir($dir)) {
             $objects = scandir($dir);
