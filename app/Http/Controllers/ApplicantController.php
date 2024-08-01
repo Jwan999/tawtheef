@@ -24,61 +24,7 @@ class ApplicantController extends Controller
             $html = view('public.downloadableProfile.DownloadPDFApplicantProfile', compact('applicant'))->render();
             $baseUrl = rtrim(config('app.url'), '/');
 
-            // Determine the environment
-            $isProduction = app()->environment('production');
-
-            // Set paths based on environment
-            if ($isProduction) {
-                // Server (Ubuntu) paths
-                $nodePath = '/root/.nvm/versions/node/v22.5.1/bin/node';
-                $npmPath = '/root/.nvm/versions/node/v22.5.1/bin/npm';
-                $chromiumPath = '/snap/bin/chromium';
-            } else {
-                // Local (macOS) paths
-                $nodePath = trim(shell_exec('which node'));
-                $npmPath = trim(shell_exec('which npm'));
-                $chromiumPaths = [
-                    '/Applications/Chromium.app/Contents/MacOS/Chromium',
-                    '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
-                    base_path('node_modules/puppeteer/.local-chromium/mac-*/chrome-mac/Chromium.app/Contents/MacOS/Chromium'),
-                ];
-
-                foreach ($chromiumPaths as $path) {
-                    if (file_exists($path)) {
-                        $chromiumPath = $path;
-                        break;
-                    }
-                }
-
-                if (!isset($chromiumPath)) {
-                    $chromiumPath = trim(shell_exec('which chromium'));
-                }
-            }
-
-            // If Chromium is not found, fall back to Puppeteer's Chromium
-            if (!$chromiumPath || !file_exists($chromiumPath)) {
-                \Log::info('Falling back to Puppeteer Chromium');
-                $chromiumPath = trim(shell_exec($nodePath . ' -e "console.log(require(\'puppeteer\').executablePath())"'));
-            }
-
-            if (!$chromiumPath) {
-                throw new \Exception('Chromium executable not found');
-            }
-
-            \Log::info('Using Node at: ' . $nodePath);
-            \Log::info('Using NPM at: ' . $npmPath);
-            \Log::info('Using Chromium at: ' . $chromiumPath);
-
-            // Create a temporary directory that PHP can write to
-            $tempDir = sys_get_temp_dir() . '/browsershot_' . uniqid();
-            if (!file_exists($tempDir)) {
-                mkdir($tempDir, 0755, true);
-            }
-
             $pdf = Browsershot::html($html)
-                ->setNodeBinary($nodePath)
-                ->setNpmBinary($npmPath)
-                ->setChromePath($chromiumPath)
                 ->noSandbox()
                 ->ignoreHttpsErrors()
                 ->setOption('args', [
@@ -86,10 +32,6 @@ class ApplicantController extends Controller
                     '--disable-setuid-sandbox',
                     '--disable-gpu',
                     '--disable-web-security',
-                    '--user-data-dir=' . $tempDir,
-                ])
-                ->setOption('env', [
-                    'PUPPETEER_CACHE_DIR' => $tempDir,
                 ])
                 ->format('A4')
                 ->waitUntilNetworkIdle()
@@ -97,26 +39,20 @@ class ApplicantController extends Controller
                 ->timeout(120000)
                 ->setBaseUrl($baseUrl)
                 ->setOption('addStyleTag', json_encode(['content' => '
-                img { visibility: hidden; }
-                img[src^="data:"], img[src^="http"] { visibility: visible; }
-            ']))
+            img { visibility: hidden; }
+            img[src^="data:"], img[src^="http"] { visibility: visible; }
+        ']))
                 ->setOption('evaluateScript', '
-                setTimeout(() => {
-                    const images = document.querySelectorAll("img");
-                    images.forEach(img => {
-                        if (img.complete) img.style.visibility = "visible";
-                        img.onload = () => img.style.visibility = "visible";
-                        img.onerror = () => console.error("Failed to load image:", img.src);
-                    });
-                }, 1000);
-            ')
+            setTimeout(() => {
+                const images = document.querySelectorAll("img");
+                images.forEach(img => {
+                    if (img.complete) img.style.visibility = "visible";
+                    img.onload = () => img.style.visibility = "visible";
+                    img.onerror = () => console.error("Failed to load image:", img.src);
+                });
+            }, 1000);
+        ')
                 ->pdf();
-
-            // Log PDF content length for debugging
-            \Log::info('PDF Content Length: ' . strlen($pdf));
-
-            // Clean up the temporary directory
-            $this->recursiveRemoveDirectory($tempDir);
 
             return response($pdf)
                 ->header('Content-Type', 'application/pdf')
@@ -124,17 +60,10 @@ class ApplicantController extends Controller
         } catch (\Exception $e) {
             \Log::error('PDF Generation Error: ' . $e->getMessage());
             \Log::error('Stack trace: ' . $e->getTraceAsString());
-            \Log::error('Environment: ' . (app()->environment('production') ? 'Production' : 'Local'));
-            \Log::error('Node path: ' . ($nodePath ?? 'Not found'));
-            \Log::error('NPM path: ' . ($npmPath ?? 'Not found'));
-            \Log::error('Chromium path: ' . ($chromiumPath ?? 'Not found'));
 
             return response()->json([
                 'error' => 'Failed to generate PDF',
                 'message' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-                'trace' => $e->getTraceAsString()
             ], 500);
         }
     }
