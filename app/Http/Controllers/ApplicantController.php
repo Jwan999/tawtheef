@@ -24,10 +24,15 @@ class ApplicantController extends Controller
             $html = view('public.downloadableProfile.DownloadPDFApplicantProfile', compact('applicant'))->render();
             $baseUrl = rtrim(config('app.url'), '/');
 
+            // Set the Chrome executable path explicitly
+            $chromePath = '/usr/local/bin/chromium';
+
             $pdf = Browsershot::html($html)
-                ->usePuppeteer()
+                ->setChromePath($chromePath)
                 ->noSandbox()
                 ->ignoreHttpsErrors()
+                ->setNodeBinary('/root/.nvm/versions/node/v22.5.1/bin/node')
+                ->setNpmBinary('/root/.nvm/versions/node/v22.5.1/bin/npm')
                 ->setOption('args', [
                     '--no-sandbox',
                     '--disable-setuid-sandbox',
@@ -40,19 +45,19 @@ class ApplicantController extends Controller
                 ->timeout(120000)
                 ->setBaseUrl($baseUrl)
                 ->setOption('addStyleTag', json_encode(['content' => '
-            img { visibility: hidden; }
-            img[src^="data:"], img[src^="http"] { visibility: visible; }
-        ']))
+                img { visibility: hidden; }
+                img[src^="data:"], img[src^="http"] { visibility: visible; }
+            ']))
                 ->setOption('evaluateScript', '
-            setTimeout(() => {
-                const images = document.querySelectorAll("img");
-                images.forEach(img => {
-                    if (img.complete) img.style.visibility = "visible";
-                    img.onload = () => img.style.visibility = "visible";
-                    img.onerror = () => console.error("Failed to load image:", img.src);
-                });
-            }, 1000);
-        ')
+                setTimeout(() => {
+                    const images = document.querySelectorAll("img");
+                    images.forEach(img => {
+                        if (img.complete) img.style.visibility = "visible";
+                        img.onload = () => img.style.visibility = "visible";
+                        img.onerror = () => console.error("Failed to load image:", img.src);
+                    });
+                }, 1000);
+            ')
                 ->pdf();
 
             return response($pdf)
@@ -67,8 +72,7 @@ class ApplicantController extends Controller
                 'message' => $e->getMessage(),
             ], 500);
         }
-    }
-// Helper function to recursively remove a directory
+    }// Helper function to recursively remove a directory
     private function recursiveRemoveDirectory($dir) {
         if (is_dir($dir)) {
             $objects = scandir($dir);
