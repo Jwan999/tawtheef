@@ -46,12 +46,23 @@
         <div class="w-1/3 pr-8">
             <div class="mb-8 text-center">
                 @php
-                    $imagePath = storage_path('app/public/' . str_replace('storage/', '', $applicant->image));
-                    $imageData = base64_encode(file_get_contents($imagePath));
-                    $src = 'data:' . mime_content_type($imagePath) . ';base64,' . $imageData;
-                @endphp
+                    $imagePath = $applicant->image ? storage_path('app/public/' . str_replace('storage/', '', $applicant->image)) : null;
+                    $src = '';
+                    if ($imagePath && file_exists($imagePath) && is_file($imagePath)) {
+                        $imageData = base64_encode(file_get_contents($imagePath));
+                        $mimeType = mime_content_type($imagePath);
+                        $src = "data:{$mimeType};base64,{$imageData}";
+                    }
+//                @endphp
 
-                <img src="{{ $src }}" alt="Profile Picture" class="h-44 w-52 rounded-md object-cover mx-auto mb-4">
+                @if($src)
+                    <img src="{{ $src }}" alt="Profile Picture" class="h-44 w-52 rounded-md object-cover mx-auto mb-4">
+                @else
+                    <div class="h-44 w-52 bg-gray-200 rounded-md mx-auto mb-4 flex items-center justify-center">
+                        <span class="text-gray-500">No Image</span>
+                    </div>
+                @endif
+
                 <h1 class="text-2xl font-bold text-orange mb-2">{{ $applicant->details['fullName'] ?? 'Applicant Name' }}</h1>
             </div>            <div class="mb-8">
                 <h2 class="section-header">Personal Information</h2>
