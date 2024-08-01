@@ -24,36 +24,50 @@ class ApplicantController extends Controller
             $html = view('public.downloadableProfile.DownloadPDFApplicantProfile', compact('applicant'))->render();
             $baseUrl = rtrim(config('app.url'), '/');
 
-            // Determine the operating system
-            $isWindows = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
-            $isMac = strtoupper(substr(PHP_OS, 0, 3)) === 'DAR';
+            // Determine the environment
+            $isProduction = app()->environment('production');
 
-            // Find Node.js and npm paths
-            $nodePath = $isWindows ? 'node' : trim(shell_exec('which node'));
-            $npmPath = $isWindows ? 'npm' : trim(shell_exec('which npm'));
-
-            // Find Chromium path based on the operating system
-            if ($isMac) {
-                $chromiumPath = base_path('node_modules/puppeteer/.local-chromium/mac-*/chrome-mac/Chromium.app/Contents/MacOS/Chromium');
-                $chromiumPaths = glob($chromiumPath);
-                $chromiumPath = !empty($chromiumPaths) ? $chromiumPaths[0] : null;
-            } elseif ($isWindows) {
-                $chromiumPath = base_path('node_modules/puppeteer/.local-chromium/win64-*/chrome-win/chrome.exe');
-                $chromiumPaths = glob($chromiumPath);
-                $chromiumPath = !empty($chromiumPaths) ? $chromiumPaths[0] : null;
+            // Set paths based on environment
+            if ($isProduction) {
+                // Server (Ubuntu) paths
+                $nodePath = '/root/.nvm/versions/node/v22.5.1/bin/node';
+                $npmPath = '/root/.nvm/versions/node/v22.5.1/bin/npm';
+                $chromiumPath = '/snap/bin/chromium';
             } else {
-                // Linux
-                $chromiumPath = '/usr/bin/chromium-browser';
+                // Local (macOS) paths
+                $nodePath = trim(shell_exec('which node'));
+                $npmPath = trim(shell_exec('which npm'));
+                $chromiumPaths = [
+                    '/Applications/Chromium.app/Contents/MacOS/Chromium',
+                    '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+                    base_path('node_modules/puppeteer/.local-chromium/mac-*/chrome-mac/Chromium.app/Contents/MacOS/Chromium'),
+                ];
+
+                foreach ($chromiumPaths as $path) {
+                    if (file_exists($path)) {
+                        $chromiumPath = $path;
+                        break;
+                    }
+                }
+
+                if (!isset($chromiumPath)) {
+                    $chromiumPath = trim(shell_exec('which chromium'));
+                }
             }
 
             // If Chromium is not found, fall back to Puppeteer's Chromium
-            if (!file_exists($chromiumPath)) {
+            if (!$chromiumPath || !file_exists($chromiumPath)) {
+                \Log::info('Falling back to Puppeteer Chromium');
                 $chromiumPath = trim(shell_exec($nodePath . ' -e "console.log(require(\'puppeteer\').executablePath())"'));
             }
 
             if (!$chromiumPath) {
                 throw new \Exception('Chromium executable not found');
             }
+
+            \Log::info('Using Node at: ' . $nodePath);
+            \Log::info('Using NPM at: ' . $npmPath);
+            \Log::info('Using Chromium at: ' . $chromiumPath);
 
             // Create a temporary directory that PHP can write to
             $tempDir = sys_get_temp_dir() . '/browsershot_' . uniqid();
@@ -110,7 +124,7 @@ class ApplicantController extends Controller
         } catch (\Exception $e) {
             \Log::error('PDF Generation Error: ' . $e->getMessage());
             \Log::error('Stack trace: ' . $e->getTraceAsString());
-            \Log::error('OS: ' . PHP_OS);
+            \Log::error('Environment: ' . (app()->environment('production') ? 'Production' : 'Local'));
             \Log::error('Node path: ' . ($nodePath ?? 'Not found'));
             \Log::error('NPM path: ' . ($npmPath ?? 'Not found'));
             \Log::error('Chromium path: ' . ($chromiumPath ?? 'Not found'));
@@ -140,8 +154,6 @@ class ApplicantController extends Controller
             rmdir($dir);
         }
     }
-
-
 
     public function viewApplicantProfile($id)
     {
