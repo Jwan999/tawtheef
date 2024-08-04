@@ -14,40 +14,40 @@ class ApplicantController extends Controller
     public function generateApplicantProfile($id)
     {
         try {
-            \Log::info("Starting PDF generation for applicant ID: $id");
+            dump("Starting PDF generation for applicant ID: $id");
 
             $applicant = Applicant::findOrFail($id);
-            \Log::info("Applicant found");
+            dump("Applicant found");
 
             if ($applicant->image) {
                 $applicant->image = str_replace('/storage//', '/storage/', Storage::url($applicant->image));
-                \Log::info("Applicant image URL processed");
+                dump("Applicant image URL processed");
             }
 
             $filename = "applicant_profile_{$id}.pdf";
             $html = view('public.downloadableProfile.DownloadPDFApplicantProfile', compact('applicant'))->render();
-            \Log::info("HTML content generated");
+            dump("HTML content generated");
 
             $baseUrl = rtrim(config('app.url'), '/');
-            \Log::info("Base URL: $baseUrl");
+            dump("Base URL: $baseUrl");
 
             // Create a custom user data directory in the system's temp directory
             $userDataDir = sys_get_temp_dir() . '/chrome-user-data-' . uniqid();
             if (!file_exists($userDataDir)) {
                 mkdir($userDataDir, 0755, true);
             }
-            \Log::info("Created custom user data directory: $userDataDir");
+            dump("Created custom user data directory: $userDataDir");
 
             // Get the paths from configuration
             $chromePath = config('browsershot.chrome_path');
             $nodePath = config('browsershot.node_path');
             $npmPath = config('browsershot.npm_path');
 
-            \Log::info("Chrome path: $chromePath");
-            \Log::info("Node path: $nodePath");
-            \Log::info("NPM path: $npmPath");
+            dump("Chrome path: $chromePath");
+            dump("Node path: $nodePath");
+            dump("NPM path: $npmPath");
 
-            \Log::info("Initializing Browsershot");
+            dump("Initializing Browsershot");
             $browsershot = new Browsershot();
             $browsershot->setChromePath($chromePath)
                 ->setNodeBinary($nodePath)
@@ -68,29 +68,26 @@ class ApplicantController extends Controller
                 ->timeout(60000)
                 ->setBaseUrl($baseUrl);
 
-            \Log::info("Generating PDF");
+            dump("Generating PDF");
             $pdf = $browsershot->pdf();
-            \Log::info("PDF generated successfully");
+            dump("PDF generated successfully");
 
             // Clean up the temporary user data directory
             $this->recursiveRemoveDirectory($userDataDir);
-            \Log::info("Cleaned up temporary user data directory");
+            dump("Cleaned up temporary user data directory");
 
             return response($pdf)
                 ->header('Content-Type', 'application/pdf')
                 ->header('Content-Disposition', 'inline; filename="' . $filename . '"');
         } catch (\Exception $e) {
-            \Log::error('PDF Generation Error: ' . $e->getMessage());
-            \Log::error('Stack trace: ' . $e->getTraceAsString());
+            dump('PDF Generation Error: ' . $e->getMessage());
+            dump('Stack trace: ' . $e->getTraceAsString());
 
             // Log additional system information
-            \Log::error('Current working directory: ' . getcwd());
-            \Log::error('PHP version: ' . phpversion());
-            \Log::error('Server software: ' . $_SERVER['SERVER_SOFTWARE'] ?? 'Unknown');
-            \Log::error('Current user: ' . shell_exec('whoami'));
-            \Log::error('Chrome path: ' . $chromePath);
-            \Log::error('Node path: ' . $nodePath);
-            \Log::error('NPM path: ' . $npmPath);
+            dump('Current working directory: ' . getcwd());
+            dump('PHP version: ' . phpversion());
+            dump('Server software: ' . $_SERVER['SERVER_SOFTWARE'] ?? 'Unknown');
+            dump('Current user: ' . shell_exec('whoami'));
 
             return response()->json([
                 'error' => 'Failed to generate PDF',
