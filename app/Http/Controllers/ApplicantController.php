@@ -53,6 +53,7 @@ class ApplicantController extends Controller
             dump("NPM path: $npmPath");
 
             dump("Initializing Browsershot");
+            dump("Chrome version: " . shell_exec("$chromePath --version"));
             $browsershot = new Browsershot();
             $browsershot->setChromePath($chromePath)
                 ->setNodeBinary($nodePath)
@@ -73,13 +74,30 @@ class ApplicantController extends Controller
                 ->timeout(120000)  // Increased timeout to 2 minutes
                 ->setBaseUrl($baseUrl)
                 ->debugCss()
-                ->debugJavascript();
+                ->debugJavascript()
+                ->setOption('output', 'pdf')
+                ->setOption('logOutputDir', storage_path('app'))
+                ->setOption('logOutputName', "chrome_debug_{$id}.log");
 
-            // Add a delay to ensure all content is loaded
+// Add a delay to ensure all content is loaded
             $browsershot->delay(2000);  // 2 seconds delay
 
             dump("Generating PDF");
 
+// Try to generate PDF and capture any output
+            $output = $browsershot->callBrowser();
+            dump("Chrome output: " . $output);
+
+            $storageAppPath = storage_path('app');
+            dump("Storage app path: $storageAppPath");
+            dump("Storage app path writable: " . (is_writable($storageAppPath) ? 'Yes' : 'No'));
+
+// Save PDF to a file
+            $tempPdfPath = storage_path("app/temp_pdf_{$id}.pdf");
+            file_put_contents($tempPdfPath, $output);
+
+            dump("PDF saved to temporary file: $tempPdfPath");
+            dump("PDF file size: " . filesize($tempPdfPath) . " bytes");
             // Save PDF to a file instead of keeping it in memory
             $tempPdfPath = storage_path("app/temp_pdf_{$id}.pdf");
             $browsershot->save($tempPdfPath);
@@ -122,15 +140,16 @@ class ApplicantController extends Controller
     }
 
 // Helper function to recursively remove a directory (unchanged)
-    private function recursiveRemoveDirectory($dir) {
+    private function recursiveRemoveDirectory($dir)
+    {
         if (is_dir($dir)) {
             $objects = scandir($dir);
             foreach ($objects as $object) {
                 if ($object != "." && $object != "..") {
-                    if (is_dir($dir. DIRECTORY_SEPARATOR .$object) && !is_link($dir."/".$object))
-                        $this->recursiveRemoveDirectory($dir. DIRECTORY_SEPARATOR .$object);
+                    if (is_dir($dir . DIRECTORY_SEPARATOR . $object) && !is_link($dir . "/" . $object))
+                        $this->recursiveRemoveDirectory($dir . DIRECTORY_SEPARATOR . $object);
                     else
-                        unlink($dir. DIRECTORY_SEPARATOR .$object);
+                        unlink($dir . DIRECTORY_SEPARATOR . $object);
                 }
             }
             rmdir($dir);
