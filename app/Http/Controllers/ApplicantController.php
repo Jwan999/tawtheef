@@ -28,6 +28,11 @@ class ApplicantController extends Controller
             $html = view('public.downloadableProfile.DownloadPDFApplicantProfile', compact('applicant'))->render();
             dump("HTML content generated");
 
+            // Save HTML for debugging
+            $debugHtmlPath = storage_path("app/debug_html_{$id}.html");
+            file_put_contents($debugHtmlPath, $html);
+            dump("Debug HTML saved to: $debugHtmlPath");
+
             $baseUrl = rtrim(config('app.url'), '/');
             dump("Base URL: $baseUrl");
 
@@ -65,20 +70,37 @@ class ApplicantController extends Controller
                 ->format('A4')
                 ->waitUntilNetworkIdle()
                 ->showBackground()
-                ->timeout(60000)
-                ->setBaseUrl($baseUrl);
+                ->timeout(120000)  // Increased timeout to 2 minutes
+                ->setBaseUrl($baseUrl)
+                ->debugCss()
+                ->debugJavascript();
+
+            // Add a delay to ensure all content is loaded
+            $browsershot->delay(2000);  // 2 seconds delay
 
             dump("Generating PDF");
-            $pdf = $browsershot->pdf();
-            dump("PDF generated successfully");
+
+            // Save PDF to a file instead of keeping it in memory
+            $tempPdfPath = storage_path("app/temp_pdf_{$id}.pdf");
+            $browsershot->save($tempPdfPath);
+
+            dump("PDF saved to temporary file: $tempPdfPath");
 
             // Clean up the temporary user data directory
             $this->recursiveRemoveDirectory($userDataDir);
             dump("Cleaned up temporary user data directory");
 
-            return response($pdf)
-                ->header('Content-Type', 'application/pdf')
-                ->header('Content-Disposition', 'inline; filename="' . $filename . '"');
+            // Check if the PDF file exists and is not empty
+            if (!file_exists($tempPdfPath) || filesize($tempPdfPath) == 0) {
+                throw new \Exception("PDF file is empty or not generated");
+            }
+
+            // Stream the file from storage
+            return response()->file($tempPdfPath, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'inline; filename="' . $filename . '"',
+            ])->deleteFileAfterSend(true);
+
         } catch (\Exception $e) {
             dump('PDF Generation Error: ' . $e->getMessage());
             dump('Stack trace: ' . $e->getTraceAsString());
@@ -88,6 +110,9 @@ class ApplicantController extends Controller
             dump('PHP version: ' . phpversion());
             dump('Server software: ' . $_SERVER['SERVER_SOFTWARE'] ?? 'Unknown');
             dump('Current user: ' . shell_exec('whoami'));
+            dump('Chrome path: ' . $chromePath);
+            dump('Node path: ' . $nodePath);
+            dump('NPM path: ' . $npmPath);
 
             return response()->json([
                 'error' => 'Failed to generate PDF',
@@ -111,6 +136,7 @@ class ApplicantController extends Controller
             rmdir($dir);
         }
     }
+
 
     public function viewApplicantProfile($id)
     {
