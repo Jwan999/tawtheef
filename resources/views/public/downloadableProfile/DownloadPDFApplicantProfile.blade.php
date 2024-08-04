@@ -53,7 +53,7 @@
                         $mimeType = mime_content_type($imagePath);
                         $src = "data:{$mimeType};base64,{$imageData}";
                     }
-//                @endphp
+               @endphp
 
                 @if($src)
                     <img src="{{ $src }}" alt="Profile Picture" class="h-44 w-52 rounded-md object-cover mx-auto mb-4">
