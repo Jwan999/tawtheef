@@ -52,8 +52,10 @@ class ApplicantController extends Controller
             dump("Node path: $nodePath");
             dump("NPM path: $npmPath");
 
+            $chromeVersion = shell_exec("$chromePath --version");
+            dump("Chrome version: " . $chromeVersion);
+
             dump("Initializing Browsershot");
-            dump("Chrome version: " . shell_exec("$chromePath --version"));
             $browsershot = new Browsershot();
             $browsershot->setChromePath($chromePath)
                 ->setNodeBinary($nodePath)
@@ -74,35 +76,28 @@ class ApplicantController extends Controller
                 ->timeout(120000)  // Increased timeout to 2 minutes
                 ->setBaseUrl($baseUrl)
                 ->debugCss()
-                ->debugJavascript()
-                ->setOption('output', 'pdf')
-                ->setOption('logOutputDir', storage_path('app'))
-                ->setOption('logOutputName', "chrome_debug_{$id}.log");
+                ->debugJavascript();
 
-// Add a delay to ensure all content is loaded
+            // Add a delay to ensure all content is loaded
             $browsershot->delay(2000);  // 2 seconds delay
 
             dump("Generating PDF");
-
-// Try to generate PDF and capture any output
-            $output = $browsershot->callBrowser();
-            dump("Chrome output: " . $output);
 
             $storageAppPath = storage_path('app');
             dump("Storage app path: $storageAppPath");
             dump("Storage app path writable: " . (is_writable($storageAppPath) ? 'Yes' : 'No'));
 
-// Save PDF to a file
-            $tempPdfPath = storage_path("app/temp_pdf_{$id}.pdf");
-            file_put_contents($tempPdfPath, $output);
-
-            dump("PDF saved to temporary file: $tempPdfPath");
-            dump("PDF file size: " . filesize($tempPdfPath) . " bytes");
-            // Save PDF to a file instead of keeping it in memory
+            // Save PDF to a file
             $tempPdfPath = storage_path("app/temp_pdf_{$id}.pdf");
             $browsershot->save($tempPdfPath);
 
             dump("PDF saved to temporary file: $tempPdfPath");
+
+            if (file_exists($tempPdfPath)) {
+                dump("PDF file size: " . filesize($tempPdfPath) . " bytes");
+            } else {
+                dump("PDF file was not created");
+            }
 
             // Clean up the temporary user data directory
             $this->recursiveRemoveDirectory($userDataDir);
@@ -119,6 +114,10 @@ class ApplicantController extends Controller
                 'Content-Disposition' => 'inline; filename="' . $filename . '"',
             ])->deleteFileAfterSend(true);
 
+        } catch (CouldNotTakeBrowsershot $e) {
+            dump('Browsershot Error: ' . $e->getMessage());
+            dump('Browsershot Output: ' . $e->getOutput());
+            // Additional error handling...
         } catch (\Exception $e) {
             dump('PDF Generation Error: ' . $e->getMessage());
             dump('Stack trace: ' . $e->getTraceAsString());
@@ -131,12 +130,12 @@ class ApplicantController extends Controller
             dump('Chrome path: ' . $chromePath);
             dump('Node path: ' . $nodePath);
             dump('NPM path: ' . $npmPath);
-
-            return response()->json([
-                'error' => 'Failed to generate PDF',
-                'message' => $e->getMessage(),
-            ], 500);
         }
+
+        return response()->json([
+            'error' => 'Failed to generate PDF',
+            'message' => isset($e) ? $e->getMessage() : 'Unknown error',
+        ], 500);
     }
 
 // Helper function to recursively remove a directory (unchanged)
