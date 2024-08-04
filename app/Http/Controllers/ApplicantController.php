@@ -38,15 +38,6 @@ class ApplicantController extends Controller
             }
             \Log::info("Created custom user data directory: $userDataDir");
 
-            // Use environment variables for paths, with fallbacks
-            $chromiumPath = env('CHROMIUM_PATH', '/usr/local/bin/chromium');
-            $nodePath = env('NODE_PATH', '/usr/local/bin/node');
-            $npmPath = env('NPM_PATH', '/usr/local/bin/npm');
-
-            \Log::info("Chromium path: $chromiumPath");
-            \Log::info("Node path: $nodePath");
-            \Log::info("NPM path: $npmPath");
-
             \Log::info("Initializing Browsershot");
             $browsershot = Browsershot::html($html)
                 ->setChromePath(env('CHROMIUM_PATH'))
