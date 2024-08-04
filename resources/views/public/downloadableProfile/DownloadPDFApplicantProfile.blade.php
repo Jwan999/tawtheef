@@ -63,7 +63,7 @@
                     </div>
                 @endif
 
-                <h1 class="text-2xl font-bold text-orange mb-2">{{ $applicant->details['fullName'] ?? 'Applicant Name' }}</h1>
+                <h1 class="text-2xl font-bold text-orange mb-2">{{ $applicant->contact['fullName'] ?? 'Applicant Name' }}</h1>
             </div>            <div class="mb-8">
                 <h2 class="section-header">Personal Information</h2>
                 <div class="space-y-2 text-sm">
