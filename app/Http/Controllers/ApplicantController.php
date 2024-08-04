@@ -49,27 +49,22 @@ class ApplicantController extends Controller
 
             \Log::info("Initializing Browsershot");
             $browsershot = Browsershot::html($html)
-                ->setChromePath($chromiumPath)
+                ->setChromePath(env('CHROMIUM_PATH'))
+                ->setNodeBinary(env('NODE_PATH'))
+                ->setNpmBinary(env('NPM_PATH'))
                 ->noSandbox()
-                ->ignoreHttpsErrors()
-                ->setNodeBinary($nodePath)
-                ->setNpmBinary($npmPath)
                 ->setOption('args', [
                     '--no-sandbox',
                     '--disable-setuid-sandbox',
                     '--disable-gpu',
                     '--disable-web-security',
-                    "--user-data-dir=$userDataDir",
                 ])
+                ->setUserDataDir('/tmp/chrome-user-data-' . uniqid())
                 ->format('A4')
                 ->waitUntilNetworkIdle()
                 ->showBackground()
-                ->timeout(120000)
-                ->setBaseUrl($baseUrl);
+                ->timeout(60000);
 
-            \Log::info("Browsershot configuration complete");
-
-            \Log::info("Generating PDF");
             $pdf = $browsershot->pdf();
             \Log::info("PDF generated successfully");
 
