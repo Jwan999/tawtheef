@@ -75,9 +75,6 @@ class ApplicantController extends Controller
             \Log::error('PHP version: ' . phpversion());
             \Log::error('Server software: ' . $_SERVER['SERVER_SOFTWARE'] ?? 'Unknown');
             \Log::error('Server user: ' . shell_exec('whoami'));
-            \Log::error('Chromium path: ' . $chromiumPath);
-            \Log::error('Node path: ' . $nodePath);
-            \Log::error('NPM path: ' . $npmPath);
 
             return response()->json([
                 'error' => 'Failed to generate PDF',
