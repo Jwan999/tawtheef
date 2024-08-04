@@ -38,24 +38,37 @@ class ApplicantController extends Controller
             }
             \Log::info("Created custom user data directory: $userDataDir");
 
+            // Get the paths from configuration
+            $chromePath = config('browsershot.chrome_path');
+            $nodePath = config('browsershot.node_path');
+            $npmPath = config('browsershot.npm_path');
+
+            \Log::info("Chrome path: $chromePath");
+            \Log::info("Node path: $nodePath");
+            \Log::info("NPM path: $npmPath");
+
             \Log::info("Initializing Browsershot");
-            $browsershot = Browsershot::html($html)
-                ->setChromePath(env('CHROMIUM_PATH'))
-                ->setNodeBinary(env('NODE_PATH'))
-                ->setNpmBinary(env('NPM_PATH'))
+            $browsershot = new Browsershot();
+            $browsershot->setChromePath($chromePath)
+                ->setNodeBinary($nodePath)
+                ->setNpmBinary($npmPath)
+                ->html($html)
                 ->noSandbox()
+                ->ignoreHttpsErrors()
                 ->setOption('args', [
                     '--no-sandbox',
                     '--disable-setuid-sandbox',
                     '--disable-gpu',
                     '--disable-web-security',
+                    "--user-data-dir=$userDataDir",
                 ])
-                ->setUserDataDir('/tmp/chrome-user-data-' . uniqid())
                 ->format('A4')
                 ->waitUntilNetworkIdle()
                 ->showBackground()
-                ->timeout(60000);
+                ->timeout(60000)
+                ->setBaseUrl($baseUrl);
 
+            \Log::info("Generating PDF");
             $pdf = $browsershot->pdf();
             \Log::info("PDF generated successfully");
 
@@ -74,7 +87,10 @@ class ApplicantController extends Controller
             \Log::error('Current working directory: ' . getcwd());
             \Log::error('PHP version: ' . phpversion());
             \Log::error('Server software: ' . $_SERVER['SERVER_SOFTWARE'] ?? 'Unknown');
-            \Log::error('Server user: ' . shell_exec('whoami'));
+            \Log::error('Current user: ' . shell_exec('whoami'));
+            \Log::error('Chrome path: ' . $chromePath);
+            \Log::error('Node path: ' . $nodePath);
+            \Log::error('NPM path: ' . $npmPath);
 
             return response()->json([
                 'error' => 'Failed to generate PDF',
