@@ -31,16 +31,17 @@ class ApplicantController extends Controller
             $baseUrl = rtrim(config('app.url'), '/');
             \Log::info("Base URL: $baseUrl");
 
-            // Create a custom user data directory in /tmp
-            $userDataDir = '/tmp/chrome-user-data-' . uniqid();
+            // Create a custom user data directory in the system's temp directory
+            $userDataDir = sys_get_temp_dir() . '/chrome-user-data-' . uniqid();
             if (!file_exists($userDataDir)) {
                 mkdir($userDataDir, 0755, true);
             }
             \Log::info("Created custom user data directory: $userDataDir");
 
-            $chromiumPath = '/usr/local/bin/chromium';
-            $nodePath = '/usr/local/bin/node';
-            $npmPath = '/usr/local/bin/npm';
+            // Use environment variables for paths, with fallbacks
+            $chromiumPath = env('CHROMIUM_PATH', '/usr/local/bin/chromium');
+            $nodePath = env('NODE_PATH', '/usr/local/bin/node');
+            $npmPath = env('NPM_PATH', '/usr/local/bin/npm');
 
             \Log::info("Chromium path: $chromiumPath");
             \Log::info("Node path: $nodePath");
@@ -86,8 +87,11 @@ class ApplicantController extends Controller
             // Log additional system information
             \Log::error('Current working directory: ' . getcwd());
             \Log::error('PHP version: ' . phpversion());
-            \Log::error('Server software: ' . $_SERVER['SERVER_SOFTWARE']);
+            \Log::error('Server software: ' . $_SERVER['SERVER_SOFTWARE'] ?? 'Unknown');
             \Log::error('Server user: ' . shell_exec('whoami'));
+            \Log::error('Chromium path: ' . $chromiumPath);
+            \Log::error('Node path: ' . $nodePath);
+            \Log::error('NPM path: ' . $npmPath);
 
             return response()->json([
                 'error' => 'Failed to generate PDF',
@@ -96,7 +100,7 @@ class ApplicantController extends Controller
         }
     }
 
-// Helper function to recursively remove a directory
+// Helper function to recursively remove a directory (unchanged)
     private function recursiveRemoveDirectory($dir) {
         if (is_dir($dir)) {
             $objects = scandir($dir);

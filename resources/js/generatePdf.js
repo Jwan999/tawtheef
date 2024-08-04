@@ -27,3 +27,5 @@ async function generatePDF() {
 }
 
 generatePDF().catch(console.error);
+
+module.exports = { generatePDF };

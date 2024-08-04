@@ -1,5 +1,5 @@
 <template>
-    <nav class="px-6 flex justify-between items-center">
+    <nav class="px-6 py-2 flex justify-between items-center">
         <div>
             <router-link to="/" class="self-center text-xl md:text-3xl font-semibold whitespace-nowrap text-zinc-800">
                 TAWTHEEF
@@ -113,6 +113,6 @@ onUnmounted(() => {
 
 <style scoped>
 .nav-link {
-    @apply font-semibold border-b-[1px] border-zinc-600 border-t-0 px-4 md:px-8 pt-1 py-2 cursor-pointer text-zinc-800 text-sm md:text-base border transition-colors ease-in delay-100 hover:text-orange hover:border-orange;
+    @apply font-semibold border-b-[1px] border-zinc-600 px-4 md:px-8 py-2 cursor-pointer text-zinc-800 text-sm md:text-sm border transition-colors ease-in delay-100 hover:text-orange hover:border-orange;
 }
 </style>
