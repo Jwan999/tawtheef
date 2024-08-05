@@ -43,8 +43,9 @@ class ApplicantController extends Controller
             }
             dump("Created custom user data directory: $userDataDir");
 
+            $chromePath = '/snap/bin/chromium';
             // Get the paths from configuration
-            $chromePath = config('browsershot.chrome_path');
+//            $chromePath = config('browsershot.chrome_path');
             $nodePath = config('browsershot.node_path');
             $npmPath = config('browsershot.npm_path');
 
