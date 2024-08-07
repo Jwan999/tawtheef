@@ -67,7 +67,7 @@
         }
         .profile-picture-container {
             width: 300px;
-            height: 300px;
+            //height: 300px;
             margin: 0 auto 1rem auto;
             overflow: hidden;
             border-radius: 1rem;
@@ -75,7 +75,7 @@
         .profile-picture {
             width: 100%;
             height: 100%;
-            object-fit: fill;
+            //object-fit: fill;
             border-radius: 1rem;
             object-position: center;
         }
