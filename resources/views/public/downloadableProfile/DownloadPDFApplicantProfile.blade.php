@@ -67,18 +67,19 @@
         }
         .profile-picture-container {
             width: 300px;
-            height: 270px;
+            height: 300px;
             margin: 0 auto 1rem auto;
             overflow: hidden;
-            border-radius: 0.375rem;
+            border-radius: 1rem;
         }
         .profile-picture {
             width: 100%;
             height: 100%;
-            object-fit: contain;
-            border-radius: 0.375rem;
+            object-fit: cover;
+            border-radius: 1rem;
             object-position: center;
         }
+
     </style>
 </head>
 <body>
@@ -92,7 +93,7 @@
 {{--                    {{$applicant->image}}--}}
                     @if($applicant->image)
                         <div class="profile-picture-container">
-                            <img src="{{$applicant->image}}" alt="Profile Picture" class="profile-picture">
+                            <img src="{{$applicant->image}}" id="profilePicture" alt="Profile Picture" class="profile-picture">
                         </div>
                     @else
                         <div class="profile-picture-container" style="background-color: #E2E8F0; display: flex; align-items: center; justify-content: center;">
@@ -264,11 +265,12 @@
     </table>
 </div>
 <script>
-    window.addEventListener('load', function() {
-        setTimeout(function() {
-            window.status = 'ready';
-        }, 1000);  // Wait an additional second after load event
-    });
+    // window.addEventListener('load', function() {
+    //     // Fallback in case the image doesn't load
+    //     setTimeout(function() {
+    //         window.status = 'ready';
+    //     }, 1000);
+    // });
 </script>
 </body>
 </html>

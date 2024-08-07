@@ -70,9 +70,7 @@ class ApplicantController extends Controller
                 ->setOption('margin-right', 0)
                 ->setOption('margin-bottom', 0)
                 ->setOption('margin-left', 0)
-                ->setOption('page-size', 'A4')
-                ->setOption('window-status', 'ready');  // Add this line
-
+                ->setOption('page-size', 'A4');
 
             // Filename generation
             $filename = '';
