@@ -55,7 +55,7 @@ class ApplicantController extends Controller
             // Create PDF
             $pdf = app('snappy.pdf.wrapper');
             $pdf->setOption('enable-local-file-access', true)
-                ->setOption('javascript-delay', 1000)
+                ->setOption('javascript-delay', 5000)
                 ->setOption('no-stop-slow-scripts', true)
                 ->setOption('enable-external-links', true)
                 ->setOption('enable-internal-links', true)
