@@ -5,157 +5,111 @@ namespace App\Http\Controllers;
 use App\Models\Applicant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
-use Spatie\Browsershot\Browsershot;
 use App\Models\FormControl;
+use Knp\Snappy\Pdf;
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+
+
 
 class ApplicantController extends Controller
 {
+
     public function generateApplicantProfile($id)
     {
         try {
-            dump("Starting PDF generation for applicant ID: $id");
-
             $applicant = Applicant::findOrFail($id);
-            dump("Applicant found");
 
+            // Process the image
             if ($applicant->image) {
-                $applicant->image = str_replace('/storage//', '/storage/', Storage::url($applicant->image));
-                dump("Applicant image URL processed");
+                $imagePath = storage_path('app/public/' . str_replace('storage/', '', $applicant->image));
+                if (file_exists($imagePath) && is_file($imagePath)) {
+                    try {
+                        // Get image info
+                        $imageInfo = getimagesize($imagePath);
+                        if ($imageInfo === false) {
+                            throw new \Exception("Invalid image file");
+                        }
+
+                        // Check file size
+                        $maxFileSize = 5 * 1024 * 1024; // 5 MB
+                        if (filesize($imagePath) > $maxFileSize) {
+                            throw new \Exception("Image file is too large");
+                        }
+
+                        // Use the file path directly
+                        $applicant->image = $imagePath;
+                    } catch (\Exception $e) {
+                        \Log::error('Image processing error: ' . $e->getMessage());
+                        $applicant->image = null;
+                    }
+                } else {
+                    $applicant->image = null;
+                }
             }
 
-            $filename = "applicant_profile_{$id}.pdf";
+            // Render the view
             $html = view('public.downloadableProfile.DownloadPDFApplicantProfile', compact('applicant'))->render();
-            dump("HTML content generated");
 
-            // Save HTML for debugging
-            $debugHtmlPath = storage_path("app/debug_html_{$id}.html");
-            file_put_contents($debugHtmlPath, $html);
-            dump("Debug HTML saved to: $debugHtmlPath");
+            // Create PDF
+            $pdf = app('snappy.pdf.wrapper');
+            $pdf->setOption('enable-local-file-access', true)
+                ->setOption('javascript-delay', 1000)
+                ->setOption('no-stop-slow-scripts', true)
+                ->setOption('enable-external-links', true)
+                ->setOption('enable-internal-links', true)
+                ->setOption('print-media-type', true)
+                ->setOption('no-background', false)
+                ->setOption('lowquality', false)
+                ->setOption('encoding', 'UTF-8')
+                ->setOption('zoom', 1)
+                ->setOption('disable-smart-shrinking', false)  // Changed to false
+                ->setOption('dpi', 300)
+                ->setOption('margin-top', 0)  // Added small margins
+                ->setOption('margin-right', 0)
+                ->setOption('margin-bottom', 0)
+                ->setOption('margin-left', 0)
+                ->setOption('page-size', 'A4')
+                ->setOption('window-status', 'ready');  // Add this line
 
-            $baseUrl = rtrim(config('app.url'), '/');
-            dump("Base URL: $baseUrl");
 
-            // Create a custom user data directory in the system's temp directory
-            $userDataDir = sys_get_temp_dir() . '/chrome-user-data-' . uniqid();
-            if (!file_exists($userDataDir)) {
-                mkdir($userDataDir, 0755, true);
-            }
-            dump("Created custom user data directory: $userDataDir");
-
-            $chromePath = '/snap/bin/chromium';
-            // Get the paths from configuration
-//            $chromePath = config('browsershot.chrome_path');
-            $nodePath = config('browsershot.node_path');
-            $npmPath = config('browsershot.npm_path');
-
-            dump("Chrome path: $chromePath");
-            dump("Node path: $nodePath");
-            dump("NPM path: $npmPath");
-
-            $chromeVersion = shell_exec("$chromePath --version");
-            dump("Chrome version: " . $chromeVersion);
-
-            dump("Initializing Browsershot");
-            $browsershot = new Browsershot();
-            $browsershot->setChromePath($chromePath)
-                ->setNodeBinary($nodePath)
-                ->setNpmBinary($npmPath)
-                ->html($html)
-                ->noSandbox()
-                ->ignoreHttpsErrors()
-                ->setOption('args', [
-                    '--no-sandbox',
-                    '--disable-setuid-sandbox',
-                    '--disable-gpu',
-                    '--disable-web-security',
-                    "--user-data-dir=$userDataDir",
-                ])
-                ->format('A4')
-                ->waitUntilNetworkIdle()
-                ->showBackground()
-                ->timeout(120000)  // Increased timeout to 2 minutes
-                ->setBaseUrl($baseUrl)
-                ->debugCss()
-                ->debugJavascript();
-
-            // Add a delay to ensure all content is loaded
-            $browsershot->delay(2000);  // 2 seconds delay
-
-            dump("Generating PDF");
-
-            $storageAppPath = storage_path('app');
-            dump("Storage app path: $storageAppPath");
-            dump("Storage app path writable: " . (is_writable($storageAppPath) ? 'Yes' : 'No'));
-
-            // Save PDF to a file
-            $tempPdfPath = storage_path("app/temp_pdf_{$id}.pdf");
-            $browsershot->save($tempPdfPath);
-
-            dump("PDF saved to temporary file: $tempPdfPath");
-
-            if (file_exists($tempPdfPath)) {
-                dump("PDF file size: " . filesize($tempPdfPath) . " bytes");
+            // Filename generation
+            $filename = '';
+            if (isset($applicant->contact['fullName']) && !empty($applicant->contact['fullName'])) {
+                $filename = $applicant->contact['fullName'];
+            } elseif (isset($applicant->details['fullName']) && !empty($applicant->details['fullName'])) {
+                $filename = $applicant->details['fullName'];
             } else {
-                dump("PDF file was not created");
+                $filename = 'Applicant-' . $applicant->id;
             }
 
-            // Clean up the temporary user data directory
-            $this->recursiveRemoveDirectory($userDataDir);
-            dump("Cleaned up temporary user data directory");
+            $filename .= "-Resume.pdf";
+            $filename = preg_replace('/[^a-zA-Z0-9_-]/', '', $filename); // Sanitize filename
 
-            // Check if the PDF file exists and is not empty
+            // Generate and save the PDF
+            $tempPdfPath = storage_path("app/temp_pdf_{$id}.pdf");
+            $pdf->generateFromHtml($html, $tempPdfPath);
+
             if (!file_exists($tempPdfPath) || filesize($tempPdfPath) == 0) {
                 throw new \Exception("PDF file is empty or not generated");
             }
 
-            // Stream the file from storage
             return response()->file($tempPdfPath, [
                 'Content-Type' => 'application/pdf',
-                'Content-Disposition' => 'inline; filename="' . $filename . '"',
+                'Content-Disposition' => 'attachment; filename="' . $filename . '"',
             ])->deleteFileAfterSend(true);
 
-        } catch (CouldNotTakeBrowsershot $e) {
-            dump('Browsershot Error: ' . $e->getMessage());
-            dump('Browsershot Output: ' . $e->getOutput());
-            // Additional error handling...
         } catch (\Exception $e) {
-            dump('PDF Generation Error: ' . $e->getMessage());
-            dump('Stack trace: ' . $e->getTraceAsString());
+            \Log::error('PDF Generation Error: ' . $e->getMessage());
+            \Log::error('Stack trace: ' . $e->getTraceAsString());
 
-            // Log additional system information
-            dump('Current working directory: ' . getcwd());
-            dump('PHP version: ' . phpversion());
-            dump('Server software: ' . $_SERVER['SERVER_SOFTWARE'] ?? 'Unknown');
-            dump('Current user: ' . shell_exec('whoami'));
-            dump('Chrome path: ' . $chromePath);
-            dump('Node path: ' . $nodePath);
-            dump('NPM path: ' . $npmPath);
-        }
-
-        return response()->json([
-            'error' => 'Failed to generate PDF',
-            'message' => isset($e) ? $e->getMessage() : 'Unknown error',
-        ], 500);
-    }
-
-// Helper function to recursively remove a directory (unchanged)
-    private function recursiveRemoveDirectory($dir)
-    {
-        if (is_dir($dir)) {
-            $objects = scandir($dir);
-            foreach ($objects as $object) {
-                if ($object != "." && $object != "..") {
-                    if (is_dir($dir . DIRECTORY_SEPARATOR . $object) && !is_link($dir . "/" . $object))
-                        $this->recursiveRemoveDirectory($dir . DIRECTORY_SEPARATOR . $object);
-                    else
-                        unlink($dir . DIRECTORY_SEPARATOR . $object);
-                }
-            }
-            rmdir($dir);
+            return response()->json([
+                'error' => 'Failed to generate PDF',
+                'message' => $e->getMessage(),
+            ], 500);
         }
     }
-
 
     public function viewApplicantProfile($id)
     {
@@ -337,56 +291,60 @@ class ApplicantController extends Controller
 
     public function store(Request $request)
     {
-
         $requestData = json_decode($request->input('data'), true);
-
-        $imagePath = null;
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('applicant_images', 'public');
-        }
-
 
         $user = Auth::user();
         $applicant = Applicant::where('user_id', $user->id)->first();
 
-        if ($applicant) {
-
-            $applicant->image = $imagePath ?: $applicant->image;
-            $applicant->speciality = $requestData['speciality'];
-            $applicant->education = $requestData['education'];
-            $applicant->languages = $requestData['languages'];
-            $applicant->skills = $requestData['skills'];
-            $applicant->tools = $requestData['tools'];
-            $applicant->summary = $requestData['summary'];
-            $applicant->courses = $requestData['courses'];
-            $applicant->contact = $requestData['contact'];
-            $applicant->employment = $requestData['employment'];
-            $applicant->activities = $requestData['activities'];
-            $applicant->published = $requestData['published'];
-
-            $applicant->save();
-
-            return response()->json(['message' => 'Applicant data updated successfully', 'data' => $applicant], 200);
-        } else {
+        if (!$applicant) {
             $applicant = new Applicant();
-            $applicant->image = $imagePath;
-            $applicant->speciality = $requestData['speciality'];
-            $applicant->education = $requestData['education'];
-            $applicant->languages = $requestData['languages'];
-            $applicant->skills = $requestData['skills'];
-            $applicant->tools = $requestData['tools'];
-            $applicant->summary = $requestData['summary'];
-            $applicant->courses = $requestData['courses'];
-            $applicant->contact = $requestData['contact'];
-            $applicant->employment = $requestData['employment'];
-            $applicant->activities = $requestData['activities'];
-            $applicant->published = $requestData['published'];
             $applicant->user_id = $user->id;
-
-            $applicant->save();
-
-            return response()->json(['message' => 'Applicant data saved successfully', 'data' => $applicant], 201);
         }
+
+        // Handle image upload
+        if ($request->hasFile('image')) {
+            $this->handleImageUpload($request, $applicant);
+        }
+
+        // Update or set other applicant fields
+        $fields = ['speciality', 'education', 'languages', 'skills', 'tools', 'summary', 'courses', 'contact', 'employment', 'activities', 'published'];
+        foreach ($fields as $field) {
+            $applicant->$field = $requestData[$field] ?? $applicant->$field;
+        }
+
+        $applicant->save();
+
+        return response()->json([
+            'message' => $applicant->wasRecentlyCreated ? 'Applicant data saved successfully' : 'Applicant data updated successfully',
+            'data' => $applicant
+        ], $applicant->wasRecentlyCreated ? 201 : 200);
+    }
+
+    private function handleImageUpload(Request $request, Applicant $applicant)
+    {
+        $file = $request->file('image');
+
+        // Validate file
+        $validatedData = $request->validate([
+            'image' => 'image|mimes:jpeg,png,jpg,gif|max:2048' // max 2MB
+        ]);
+
+        // Generate a unique filename
+        $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
+
+        // Store the file
+        $path = $file->storeAs('applicant_images', $filename, 'public');
+
+        if (!$path) {
+            throw new \Exception('Failed to save the image.');
+        }
+
+        // Delete old image if exists
+        if ($applicant->image) {
+            Storage::disk('public')->delete($applicant->image);
+        }
+
+        $applicant->image = $path;
     }
 
 

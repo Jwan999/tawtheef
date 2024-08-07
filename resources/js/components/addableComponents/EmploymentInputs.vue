@@ -105,7 +105,7 @@
 </template>
 
 <script setup>
-import {ref, watch, watchEffect} from 'vue';
+import {onMounted, ref, watch, watchEffect} from 'vue';
 
 const props = defineProps(["modelValue"]);
 const emit = defineEmits(["update:modelValue"]);
@@ -125,6 +125,14 @@ const addResponsibility = () => {
         isValidResponsibility.value = false;
     }
 };
+
+const currentYear = ref(new Date().getFullYear());
+const years = ref([]);
+onMounted(()=>{
+    for (let year = 1950; year <= currentYear.value; year++) {
+        years.value.push(year);
+    }
+})
 
 const removeResponsibility = (index) => {
     const updatedResponsibilities = props.modelValue.responsibilities.filter((_, i) => i !== index);
