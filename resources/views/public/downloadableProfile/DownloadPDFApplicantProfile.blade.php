@@ -69,7 +69,7 @@
             width: 300px;
             //height: 300px;
             margin: 0 auto 1rem auto;
-            overflow: hidden;
+            //overflow: hidden;
             border-radius: 1rem;
         }
         .profile-picture {
@@ -77,7 +77,7 @@
             height: 100%;
             //object-fit: fill;
             border-radius: 1rem;
-            object-position: center;
+            //object-position: center;
         }
 
     </style>
