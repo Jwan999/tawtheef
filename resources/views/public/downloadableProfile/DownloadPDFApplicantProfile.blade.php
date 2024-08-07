@@ -86,9 +86,10 @@
             <!-- Left Column -->
             <td class="left-column">
                 <div style="text-align: center; margin-bottom: 2rem;">
+{{--                    {{$applicant->image}}--}}
                     @if($applicant->image)
                         <div class="profile-picture-container">
-                            <img src="{{ asset('/storage/' . $applicant->image) }}" alt="Profile Picture" class="profile-picture">
+                            <img src="{{$applicant->image}}" alt="Profile Picture" class="profile-picture">
                         </div>
                     @else
                         <div class="profile-picture-container" style="background-color: #E2E8F0; display: flex; align-items: center; justify-content: center;">
