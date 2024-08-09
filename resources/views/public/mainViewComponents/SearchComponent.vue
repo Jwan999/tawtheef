@@ -13,7 +13,7 @@
                             <div class="search-container">
                                 <div class="search-description text-base md:text-xl mb-3 text-zinc-100">
                                     Search for applicants using <span class="text-orange tracking-wider font-semibold">keywords</span>.
-                                    You can search through:
+                                    Example keywords:
                                     <ul class="mt-1 italic text-zinc-200 pl-4 md:pl-8 text-sm md:text-lg mt-2">
                                         <li>Skills or tools (e.g., "Python", "Photoshop")</li>
                                         <li>Job titles or roles (e.g., "Frontend Developer", "UX Designer")</li>

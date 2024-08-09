@@ -137,10 +137,10 @@ class ApplicantController extends Controller
         $applicants = Applicant::where('published', true)->get();
         return response()->json($applicants);
     }
-
     public function searchApplicants(Request $request)
     {
         $searchTerm = $request->input('search');
+        $perPage = $request->input('per_page', 12); // Default to 12 items per page
 
         $query = Applicant::query()->where('published', true);
 
@@ -157,11 +157,15 @@ class ApplicantController extends Controller
             });
         }
 
-        return response()->json($query->get());
+        $applicants = $query->paginate($perPage);
+
+        return response()->json($applicants);
     }
 
     public function getFilteredApplicants(Request $request)
     {
+
+        $perPage = $request->input('per_page', 12); // Default to 12 items per page
 
         $query = Applicant::query()->where('published', true);
 
@@ -277,9 +281,9 @@ class ApplicantController extends Controller
             \Log::info("Applicants after sub specialities filter: " . $countAfterSub);
         }
 
-        $applicants = $query->get();
-//        dd($applicants);
-        return response()->json($applicants, 200);
+        $applicants = $query->paginate($perPage);
+
+        return response()->json($applicants);
     }
 
     public function create()

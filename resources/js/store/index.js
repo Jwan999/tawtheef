@@ -13,14 +13,16 @@ function getUserFromLocalStorage() {
     }
     return {}; // Return an empty object as a fallback
 }
+
 export default createStore({
     state: {
         editMode: false,
         searchMode: true,
         invalidFields: [],
         user: getUserFromLocalStorage(),
-        filteredApplicants: [],
-        searchedApplicants:[],
+        filteredApplicants: {},
+        searchedApplicants: {},
+        currentPage: 1,
         filters: {
             experience: [2, 6],
             age: [19, 26],
@@ -33,6 +35,7 @@ export default createStore({
             city: '',
             zone: '',
         },
+        searchQuery: '',
     },
     actions: {
         setEditMode({commit}) {
@@ -54,31 +57,47 @@ export default createStore({
         async checkAuthStatus({commit}) {
             try {
                 const response = await axios.get('/api/auth');
-
                 commit('setAuthStatus', !!response.data);
             } catch (error) {
                 console.error('Error fetching data:', error);
                 commit('setAuthStatus', false);
             }
         },
-        async fetchFilteredApplicants({ commit }, filters) {
+        async fetchFilteredApplicants({ commit, state }, { page = 1, perPage = 12 } = {}) {
             try {
-                const response = await axios.get('/api/applicants/search', { params: filters });
+                const response = await axios.get('/api/applicants/search', {
+                    params: {
+                        ...state.filters,
+                        page,
+                        per_page: perPage
+                    }
+                });
                 commit('setFilteredApplicants', response.data);
+                commit('setCurrentPage', page);
             } catch (error) {
                 console.error('Error fetching filtered applicants:', error);
             }
         },
-        async searchApplicants({ commit }, searchTerm) {
+        async searchApplicants({ commit, state }, { page = 1, perPage = 12 } = {}) {
             try {
-                const response = await axios.get('/api/search-applicants', { params: { search: searchTerm } });
+                const response = await axios.get('/api/search-applicants', {
+                    params: {
+                        search: state.searchQuery,
+                        page,
+                        per_page: perPage
+                    }
+                });
                 commit('setSearchedApplicants', response.data);
+                commit('setCurrentPage', page);
             } catch (error) {
                 console.error('Error searching applicants:', error);
             }
         },
         resetFilters({ commit }) {
             commit('resetFilters');
+        },
+        setSearchQuery({ commit }, query) {
+            commit('setSearchQuery', query);
         },
     },
     mutations: {
@@ -130,6 +149,12 @@ export default createStore({
                 zone: null,
             };
         },
+        setCurrentPage(state, page) {
+            state.currentPage = page;
+        },
+        setSearchQuery(state, query) {
+            state.searchQuery = query;
+        },
     },
     getters: {
         user: (state) => state.user,
@@ -140,9 +165,7 @@ export default createStore({
         filteredApplicants: state => state.filteredApplicants,
         searchedApplicants: state => state.searchedApplicants,
         filters: state => state.filters,
-
-
-
+        currentPage: state => state.currentPage,
+        searchQuery: state => state.searchQuery,
     }
 });
-
