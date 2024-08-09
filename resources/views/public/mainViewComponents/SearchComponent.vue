@@ -1,14 +1,14 @@
 <template>
-    <div class="flex justify-start -mt-32">
+    <div class="flex justify-start -mt-16 md:-mt-32">
         <div :class="showAdvanceSearch ? 'pt-14 pb-10 md:pt-28 md:pb-10' : 'py-14 md:py-28'"
-             class="w-full md:w-10/12 mr-6 md:mr-0 md:px-0 px-4 bg-zinc-800 text-white rounded-r-[4rem] md:rounded-r-full">
+             class="w-full md:w-10/12 mr-6 md:mr-0 md:px-0 px-6 bg-zinc-800 text-white rounded-r-[4rem] md:rounded-r-full">
             <div class="flex justify-center items-center w-full">
                 <div class="w-full md:w-10/12">
                     <div class="w-full md:w-8/12 flex flex-wrap">
                         <h1 class="text-3xl md:text-5xl font-bold">Discover Exceptional Talent or Inspiring Resumes <span
                             class="text-orange">Right Here</span></h1>
                     </div>
-                    <div class="w-full md:w-7/12 flex items-center space-x-4 mt-10 md:mt-14">
+                    <div class="w-full md:w-7/12 flex items-center space-x-4 mt-10 md:mt-10">
                         <div class="relative group w-full">
                             <div class="search-container">
                                 <div class="search-description text-base md:text-xl mb-3 text-zinc-100">
@@ -22,7 +22,7 @@
                                         <li>Specializations or areas of expertise</li>
                                     </ul>
                                 </div>
-                                <div class="flex justify-start space-x-3 items-center mt-6">
+                                <div class="flex justify-start space-x-3 items-center mt-24">
                                     <div class="relative group w-full">
                                         <input
                                             v-model="searchTerm"
@@ -84,7 +84,7 @@
                         </div>
                     </div>
                     <h1 v-if="showAdvanceSearch"
-                        class="mt-10 font-semibold text-4xl capitalize tracking-wider text-white">Advance search</h1>
+                        class="mt-14 font-semibold md:text-4xl text-3xl capitalize tracking-wider text-white">Advance search</h1>
                 </div>
             </div>
         </div>

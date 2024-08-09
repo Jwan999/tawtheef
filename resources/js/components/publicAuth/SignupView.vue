@@ -55,7 +55,8 @@
         </div>
     </div>
 
-    <Alert :message="alertMessage" :type="alertType" />
+    <Alert ٠message="alertMessage" :type="alertType" />
+
 </template>
 
 <script setup>
