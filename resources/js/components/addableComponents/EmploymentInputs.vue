@@ -1,15 +1,11 @@
 <template>
-
     <div class="space-y-6 w-full pr-0">
         <div class="flex md:flex-nowrap flex-wrap md:space-x-3 space-x-0 md:space-y-0 space-y-6 items-center">
-
             <div class="relative w-full">
                 <span class="text-orange absolute top-0 right-0 ml-24 -mt-3">*</span>
                 <input v-model="modelValue.title" placeholder="Job title"
                        class="w-full capitalize focus:border-orange focus:ring-0 bg-zinc-50 w-4/12 rounded-md md:text-sm text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none"
                        type="text">
-                <!--                <h1 class="text-red-500 text-sm mt-1 font-semibold">This field is required.</h1>-->
-
             </div>
 
             <div class="relative w-full">
@@ -17,43 +13,34 @@
                 <input v-model="modelValue.employer" placeholder="Employer"
                        class="w-full capitalize focus:border-orange focus:ring-0 bg-zinc-50 w-4/12 rounded-md md:text-sm text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none"
                        type="text">
-                <!--                <h1 class="text-red-500 text-sm mt-1 font-semibold">This field is required.</h1>-->
-
             </div>
-
 
             <div class="relative w-full">
                 <span class="text-orange absolute top-0 right-0 ml-24 -mt-3">*</span>
-
                 <div class="flex">
-                    <select :value="modelValue.duration[0]" v-model="modelValue.duration[0]" name="startYear"
-                            class="focus:border-orange focus:ring-0 bg-zinc-50 w-full rounded-l-md md:text-sm text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none">
-
-                        <option selected>{{ modelValue.duration[0] }}
-                        </option>
-                        <template v-for="year in years">
-                            <option :value="year">{{ year }}</option>
-                        </template>
-                    </select>
-                    <select :value="modelValue.duration[1]" v-model="modelValue.duration[1]" name="endYear"
-                            class="focus:border-orange focus:ring-0 bg-zinc-50 w-full rounded-r-md md:text-sm text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none">
-
-                        <option selected>{{ modelValue.duration[1] }}
-                        </option>
-                        <template v-for="year in years">
-                            <option :value="year">{{ year }}</option>
-                        </template>
-                        <option>To the present</option>
-
-                    </select>
+                    <div class="w-full">
+                        <select v-model="modelValue.duration[0]" @change="updateDuration" name="startYear"
+                                class="w-full focus:border-orange focus:ring-0 bg-zinc-50 rounded-l-md md:text-sm text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none appearance-none">
+                            <option selected>{{ modelValue.duration[0] }}</option>
+                            <template v-for="year in years">
+                                <option :value="year">{{ year }}</option>
+                            </template>
+                        </select>
+                    </div>
+                    <div class="w-full">
+                        <select v-model="modelValue.duration[1]" @change="updateDuration" name="endYear"
+                                class="w-full focus:border-orange focus:ring-0 bg-zinc-50 rounded-r-md md:text-sm text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none appearance-none">
+                            <option selected>{{ modelValue.duration[1] }}</option>
+                            <option value="Present">Present</option>
+                            <template v-for="year in years">
+                                <option :value="year">{{ year }}</option>
+                            </template>
+                        </select>
+                    </div>
                 </div>
-
-                <!--                <h1 class="text-red-500 text-sm mt-1 font-semibold">This field is required.</h1>-->
-
             </div>
-
         </div>
-        <!--responsibilities-->
+
         <div class="w-full">
             <label for="message" class="block mb-3 text-zinc-500 mt-2">* List all of your responsibilities
                 within this period of employment.</label>
@@ -100,12 +87,11 @@
             </transition-group>
         </div>
     </div>
-
-
 </template>
 
+
 <script setup>
-import {onMounted, ref, watch, watchEffect} from 'vue';
+import {ref, watch, computed, onMounted} from 'vue';
 
 const props = defineProps(["modelValue"]);
 const emit = defineEmits(["update:modelValue"]);
@@ -126,23 +112,44 @@ const addResponsibility = () => {
     }
 };
 
-const currentYear = ref(new Date().getFullYear());
-const years = ref([]);
-onMounted(()=>{
-    for (let year = 1950; year <= currentYear.value; year++) {
-        years.value.push(year);
+const currentYear = new Date().getFullYear();
+const years = computed(() => {
+    const yearArray = [];
+    for (let year = currentYear; year >= 1950; year--) {
+        yearArray.push(year);
     }
-})
+    return yearArray;
+});
 
 const removeResponsibility = (index) => {
     const updatedResponsibilities = props.modelValue.responsibilities.filter((_, i) => i !== index);
     emit("update:modelValue", {...props.modelValue, responsibilities: updatedResponsibilities});
 };
 
-watchEffect(() => {
-    emit("update:modelValue", props.modelValue);
+const updateDuration = () => {
+    emit("update:modelValue", {
+        ...props.modelValue,
+        duration: [
+            props.modelValue.duration[0] || null,
+            props.modelValue.duration[1] || null
+        ]
+    });
+};
+
+onMounted(() => {
+    updateDuration();
 });
+
+watch(() => props.modelValue.duration, (newDuration) => {
+    if (!newDuration[0] && !newDuration[1]) {
+        emit("update:modelValue", {
+            ...props.modelValue,
+            duration: [null, null]
+        });
+    }
+}, {immediate: true, deep: true});
 </script>
+
 
 <style scoped>
 .list-enter-active,

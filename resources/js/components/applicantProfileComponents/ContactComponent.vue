@@ -1,10 +1,11 @@
 <template>
-    <!--title-->
+    <!-- title -->
     <div class="flex items-center space-x-3 mb-4">
         <h1 class="flex-none text-xl font-semibold text-dark">Personal Information</h1>
         <hr class="h-px w-full bg-orange border-0 mt-1">
     </div>
-    <!--preview-->
+
+    <!-- preview -->
     <div v-if="!editMode" class="bg-white p-4 rounded-md">
         <div v-if="city == 'Choose your city...'" class="">
             <h1 class="flex-none font-semibold mb-3 text-zinc-500">Contacts & other info</h1>
@@ -14,7 +15,7 @@
         </div>
 
         <div v-else class="md:space-y-6 space-y-10">
-<!--            name and work availablity -->
+            <!-- name and work availability -->
             <div class="w-full">
                 <div class="flex justify-end w-full">
                     <span
@@ -22,11 +23,9 @@
                         class="text-base px-2.5 py-0.5 rounded-full dark:bg-orange-900 dark:text-orange-300">
                         {{ workAvailability ? 'Available for Work' : 'Not currently looking' }}
                     </span>
-
                 </div>
                 <div class="w-full">
                     <h1 class="text-2xl  text-orange font-semibold tracking-wider capitalize">{{ fullName }}</h1>
-
                 </div>
             </div>
 
@@ -85,7 +84,6 @@
                     </h2>
                     <p class="ml-7 text-zinc-700">{{ gender }}</p>
                 </div>
-
             </div>
 
             <!-- Links and Websites -->
@@ -96,7 +94,7 @@
         </div>
     </div>
 
-    <!--form-->
+    <!-- form -->
     <div v-else class="rounded-md pt-2 pb-4 bg-white">
         <div class="px-4 text-sm md:text-sm space-y-6">
             <!-- Work Availability -->
@@ -113,10 +111,13 @@
                 <div class="relative mt-1">
                     <input v-model="fullName"
                            placeholder="Full name"
+                           :class="{'border-red-500': v$.fullName.$error}"
                            class="text-sm block w-full p-2.5 bg-zinc-50 rounded-md border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none focus:border-orange focus:ring-0"
-                           type="text">
+                           type="text"
+                           @blur="v$.fullName.$touch">
                     <span class="text-orange absolute top-0 right-0 ml-24 -mt-4">*</span>
                 </div>
+                <span v-if="v$.fullName.$error" class="text-red-500 text-xs">Full name is required</span>
             </div>
 
             <!-- Contact Information -->
@@ -128,9 +129,12 @@
                 />
                 <div class="relative w-full">
                     <span class="text-orange absolute top-0 right-0 ml-24 -mt-3">*</span>
-                    <input type="email" v-model="email"
+                    <input type="email" v-model="emailValue"
+                           :class="{'border-red-500': v$.emailValue.$error}"
                            class="text-sm block w-full p-2.5 bg-zinc-50 rounded-md border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none focus:border-orange focus:ring-0"
-                           placeholder="name@example.com">
+                           placeholder="name@example.com"
+                           @blur="v$.emailValue.$touch">
+                    <span v-if="v$.emailValue.$error" class="text-red-500 text-xs">Valid email is required</span>
                 </div>
             </div>
 
@@ -139,37 +143,49 @@
                 <span class="text-orange absolute top-0 right-0 ml-24 -mt-3">*</span>
                 <div class="flex">
                     <select v-model="city"
-                            :class="city == 'Baghdad' ?'rounded-l-md' :'rounded'"
-                            class="h-10 text-sm focus:border-orange focus:ring-0 bg-zinc-50 w-full border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none">
+                            :class="[city == 'Baghdad' ? 'rounded-l-md' : 'rounded', {'border-red-500': v$.city.$error}]"
+                            class="h-10 text-sm focus:border-orange focus:ring-0 bg-zinc-50 w-full border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none"
+                            @blur="v$.city.$touch">
                         <option value="Choose your city..." class="hidden" selected>Choose your city...</option>
                         <option v-for="cityOption in cities" :key="cityOption">{{ cityOption }}</option>
                     </select>
 
                     <select v-if="city == 'Baghdad'" v-model="zone"
-                            class="h-10 text-sm focus:border-orange focus:ring-0 bg-zinc-50 w-full rounded-r-md border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none">
+                            :class="{'border-red-500': v$.zone.$error}"
+                            class="h-10 text-sm focus:border-orange focus:ring-0 bg-zinc-50 w-full rounded-r-md border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none"
+                            @blur="v$.zone.$touch">
                         <option value="Choose your zone..." class="hidden">Choose your zone...</option>
                         <option>Karkh</option>
                         <option>Risafa</option>
                     </select>
                 </div>
+                <span v-if="v$.city.$error" class="text-red-500 text-xs">City is required</span>
+                <span v-if="city == 'Baghdad' && v$.zone.$error" class="text-red-500 text-xs">Zone is required for Baghdad</span>
             </div>
 
             <!-- Date of Birth and Gender -->
             <div class="flex md:flex-nowrap flex-wrap md:space-x-3 space-x-0 md:space-y-0 space-y-8 items-center">
                 <div class="relative w-full">
+                    <span class="text-orange absolute top-0 right-0 ml-24 -mt-3">*</span>
                     <input v-model="birthdate" type="date"
+                           :class="{'border-red-500': v$.birthdate.$error}"
                            class="date-picker block w-full p-2.5 bg-zinc-50 rounded-md md:text-sm text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none focus:border-orange focus:ring-0"
-                           placeholder="Birthdate">
+                           placeholder="Birthdate"
+                           @blur="v$.birthdate.$touch">
+                    <span v-if="v$.birthdate.$error" class="text-red-500 text-xs">Date of birth is required</span>
                 </div>
 
                 <div class="relative w-full">
                     <span class="text-orange absolute top-0 right-0 ml-24 -mt-3">*</span>
                     <select v-model="gender"
-                            class="h-10 focus:border-orange focus:ring-0 bg-zinc-50 w-full rounded-md md:text-sm text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none">
+                            :class="{'border-red-500': v$.gender.$error}"
+                            class="h-10 focus:border-orange focus:ring-0 bg-zinc-50 w-full rounded-md md:text-sm text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none"
+                            @blur="v$.gender.$touch">
                         <option value="Gender" class="hidden" selected>Gender</option>
                         <option>Female</option>
                         <option>Male</option>
                     </select>
+                    <span v-if="v$.gender.$error" class="text-red-500 text-xs">Gender is required</span>
                 </div>
             </div>
 
@@ -183,8 +199,10 @@
 </template>
 
 <script setup>
-import {computed, onMounted, onUpdated, ref, watch} from 'vue';
-import {getSelectables} from "../../utils/storeHelpers.js";
+import { computed, onMounted, ref, watch } from 'vue';
+import { useVuelidate } from '@vuelidate/core';
+import { required, email as emailValidator } from '@vuelidate/validators';
+import { getSelectables } from "../../utils/storeHelpers.js";
 import store from "../../store/index.js";
 import LinksAndWebsites from "../addableComponents/LinksAndWebsites.vue";
 import PhoneInput from "./PhoneInput.vue";
@@ -196,13 +214,25 @@ const cities = ref([]);
 const city = ref('');
 const gender = ref(props.modelValue.gender);
 const zone = ref('');
-const email = ref('');
+const emailValue = ref('');
 const phone = ref('');
 const isChecked = ref(false);
 const workAvailability = ref(false);
 const fullName = ref('');
 const birthdate = ref('');
 const links = ref([]);
+
+// Validation rules
+const rules = computed(() => ({
+    fullName: { required },
+    emailValue: { required, email: emailValidator },
+    city: { required },
+    zone: { required: city.value === 'Baghdad' },
+    gender: { required },
+    birthdate: { required }
+}));
+
+const v$ = useVuelidate(rules, { fullName, emailValue, city, zone, gender, birthdate });
 
 onMounted(async () => {
     try {
@@ -213,7 +243,7 @@ onMounted(async () => {
 
     fullName.value = props?.modelValue?.fullName;
     workAvailability.value = props?.modelValue?.workAvailability;
-    email.value = props?.modelValue?.email;
+    emailValue.value = props?.modelValue?.email;
     phone.value = props?.modelValue?.phone || '';
     isChecked.value = props?.modelValue?.showPhone || false;
     city.value = props?.modelValue?.city;
@@ -232,21 +262,25 @@ const updateLinks = (newLinks) => {
 
 const emit = defineEmits(["update:modelValue"]);
 
-watch([phone, isChecked, email, city, zone, gender, links, birthdate, fullName, workAvailability], () => {
+watch([phone, isChecked, emailValue, city, zone, gender, links, birthdate, fullName, workAvailability], () => {
     emit('update:modelValue', {
         fullName: fullName.value,
         workAvailability: workAvailability.value,
         phone: phone.value,
         showPhone: isChecked.value,
         gender: gender.value,
-        email: email.value,
+        email: emailValue.value,
         links: links.value,
         birthdate: birthdate.value,
         city: city.value,
         zone: zone.value,
-
     });
-}, {deep: true});
+}, { deep: true });
+
+watch([fullName, emailValue, city, zone, gender, birthdate], () => {
+    const isValid = !v$.value.$invalid;
+    store.dispatch('setFormValidity', isValid);
+}, { deep: true });
 </script>
 
 <style scoped>

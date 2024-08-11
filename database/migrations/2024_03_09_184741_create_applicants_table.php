@@ -19,7 +19,7 @@ return new class extends Migration {
             $table->json('languages');
             $table->json('skills');
             $table->json('tools');
-            $table->json('details');
+            $table->json('details')->nullable();
             $table->text('summary');
             $table->json('courses');
             $table->json('contact');

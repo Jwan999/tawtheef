@@ -5,8 +5,9 @@
             <div class="flex justify-center items-center w-full">
                 <div class="w-full md:w-10/12">
                     <div class="w-full md:w-8/12 flex flex-wrap">
-                        <h1 class="text-3xl md:text-5xl font-bold">Discover Exceptional Talent or Inspiring Resumes <span
-                            class="text-orange">Right Here</span></h1>
+                        <h1 class="text-3xl md:text-5xl font-bold">Discover Exceptional Talent or Inspiring Resumes
+                            <span
+                                class="text-orange">Right Here</span></h1>
                     </div>
                     <div class="w-full md:w-7/12 flex items-center space-x-4 mt-10 md:mt-10">
                         <div class="relative group w-full">
@@ -76,7 +77,8 @@
                                                     </g>
                                                 </g>
                                             </svg>
-                                            <span class="hidden md:inline bg-white text-zinc-600 hover:text-orange hover:border-orange border border-zinc-200 rounded-full px-4 py-2 font-semibold transition-colors duration-300 whitespace-nowrap">Advance Search</span>
+                                            <span
+                                                class="hidden md:inline bg-white text-zinc-600 hover:text-orange hover:border-orange border border-zinc-200 rounded-full px-4 py-2 font-semibold transition-colors duration-300 whitespace-nowrap">Advance Search</span>
                                         </button>
                                     </div>
                                 </div>
@@ -84,7 +86,8 @@
                         </div>
                     </div>
                     <h1 v-if="showAdvanceSearch"
-                        class="mt-14 font-semibold md:text-4xl text-3xl capitalize tracking-wider text-white">Advance search</h1>
+                        class="mt-14 font-semibold md:text-4xl text-3xl capitalize tracking-wider text-white">Advance
+                        search</h1>
                 </div>
             </div>
         </div>
@@ -93,27 +96,31 @@
     <div class="space-y-16">
         <transition name="slide-down" appear>
             <div v-if="showAdvanceSearch" id="advanceSearch" class="relative w-9/12 md:w-7/12">
-                <div class="advance-search flex justify-center bg-zinc-800 rounded-br-[4rem] md:rounded-br-[7rem] pb-10 border-[2px] md:border-[4px] md:border-t-0 border-t-0 border-orange rounded-rt-[5rem] z-40">
+                <div
+                    class="advance-search flex justify-center bg-zinc-800 rounded-br-[4rem] md:rounded-br-[7rem] pb-10 border-[2px] md:border-[4px] md:border-t-0 border-t-0 border-orange rounded-rt-[5rem] z-40">
                     <div class="grid grid-cols-1 gap-12 w-10/12">
-                        <!--gender-->
+                        <!-- Gender -->
                         <div class="group cursor-pointer">
-                            <h1 class="text-xl text-white group-  mb-2 tracking-wider font-bold capitalize">
-                                Gender</h1>
-                            <span @click="filters.gender = 'Female'"
-                                  :class="filters.gender == 'Female' ?'bg-orange text-white':'bg-zinc-200 text-zinc-600'"
-                                  class="font-semibold hover:bg-dark hover:text-white text-base font-medium me-2 px-2.5 py-0.5 rounded-full">
-                         Female
-                    </span>
-                            <span @click="filters.gender = 'Male'"
-                                  :class="filters.gender == 'Male' ?'bg-orange text-white':'bg-zinc-200 text-zinc-600'"
-                                  class="font-semibold hover:bg-dark hover:text-white text-base font-medium me-2 px-2.5 py-0.5 rounded-full">
-                      Male
-                    </span>
+                            <h1 class="text-xl text-white mb-2 tracking-wider font-bold capitalize">Gender</h1>
+                            <p class="text-zinc-300 mb-4">Select the preferred gender for your search.</p>
+                            <div class="flex space-x-2">
+                                <button @click="filters.gender = 'Female'"
+                                        :class="filters.gender === 'Female' ? 'bg-orange text-white' : 'bg-white text-zinc-800'"
+                                        class="rounded-b-md rounded-tl-md w-full text-sm font-semibold tracking-wider hover:bg-orange hover:text-white py-2">
+                                    Female
+                                </button>
+                                <button @click="filters.gender = 'Male'"
+                                        :class="filters.gender === 'Male' ? 'bg-orange text-white' : 'bg-white text-zinc-800'"
+                                        class="rounded-t-md rounded-br-md w-full text-sm font-semibold tracking-wider hover:bg-orange hover:text-white py-2">
+                                    Male
+                                </button>
+                            </div>
                         </div>
-                        <!--location-->
+
+                        <!-- Location -->
                         <div class="group cursor-pointer">
-                            <h1 class="text-xl text-white group-  mb-2 tracking-wider font-bold capitalize">
-                                Location</h1>
+                            <h1 class="text-xl text-white mb-2 tracking-wider font-bold capitalize">Location</h1>
+                            <p class="text-zinc-300 mb-4">Specify the desired location for candidates.</p>
                             <div class="flex space">
                                 <select v-model="filters.city"
                                         :class="filters.city == 'Baghdad' ?'rounded-l-md' :'rounded-md'"
@@ -129,14 +136,15 @@
                                 </select>
                             </div>
                         </div>
-                        <!--age-->
+
+                        <!-- Age -->
                         <div class="group cursor-pointer">
-                            <h1 class="text-xl text-white group-  mb-2 tracking-wider font-bold capitalize">
-                                Based on age</h1>
+                            <h1 class="text-xl text-white mb-2 tracking-wider font-bold capitalize">Age Range</h1>
+                            <p class="text-zinc-300 mb-4">Select the desired age range for candidates.</p>
                             <div class="mt-12">
                                 <VueSimpleRangeSlider
-                                    active-bar-color="#f97316"
-                                    class="w-full text-orange font-bold"
+                                    active-bar-color="#525255"
+                                    class="w-full text-zinc-600 font-bold"
                                     v-model="filters.age"
                                     :min="18"
                                     :max="40"
@@ -145,10 +153,11 @@
                                 </VueSimpleRangeSlider>
                             </div>
                         </div>
-                        <!--degree-->
+
+                        <!-- Educational Degree -->
                         <div class="group cursor-pointer">
-                            <h1 class="text-xl text-white group-  mb-2 tracking-wider font-bold">
-                                Educational degree</h1>
+                            <h1 class="text-xl text-white mb-2 tracking-wider font-bold">Educational Degree</h1>
+                            <p class="text-zinc-300 mb-4">Choose the minimum educational qualification required.</p>
                             <select v-model="filters.degree"
                                     class="h-10 focus:border-orange focus:ring-0 bg-zinc-50 w-full rounded-md md:text-sm text-sm border-0 border-[1px] border-zinc-300 hover:border-orange focus:outline-none">
                                 <option value="" disabled selected>Choose a degree...</option>
@@ -157,41 +166,51 @@
                                 </template>
                             </select>
                         </div>
-                        <!--fresh graduates-->
-                        <div class="group cursor-pointer flex items-center space-x-2">
-                            <input
-                                id="fresh-graduate-checkbox"
-                                type="checkbox"
-                                v-model="filters.freshGraduate"
-                                class="text-sm w-4 h-4 mr-2 mb-1 text-orange bg-zinc-100 border-zinc-300 rounded focus:ring-orange dark:focus:ring-orange dark:ring-offset-zinc-800 focus:ring-1 dark:bg-zinc-700 dark:border-zinc-600"
-                            />
-                            <label for="fresh-graduate-checkbox"
-                                   class="text-xl text-white group-  mb-2 tracking-wider font-bold capitalize">
-                                Fresh Graduates
-                            </label>
-                        </div>
-                        <!--work availability -->
+
+                        <!-- Fresh Graduates -->
                         <div class="group cursor-pointer">
-                            <h1 class="text-xl text-white  mb-2 tracking-wider font-bold capitalize">
-                                Work availability</h1>
-                            <span @click="filters.workAvailability = true"
-                                  :class="filters.workAvailability ? 'bg-orange text-white' : 'bg-zinc-200 text-zinc-600'"
-                                  class="font-semibold hover:bg-dark hover:text-white text-base font-medium me-2 px-2.5 py-0.5 rounded-full">
-                          Available for Work
-                    </span>
-                            <span @click="filters.workAvailability = false" :class="!filters.workAvailability ? 'bg-orange text-white' : 'bg-zinc-200 text-zinc-600'"
-                                  class="font-semibold hover:bg-dark hover:text-white  text-base font-medium me-2 px-2.5 py-0.5 rounded-full">
-                     Not Available for work
-                    </span>
+                            <h1 class="text-xl text-white mb-2 tracking-wider font-bold capitalize">Fresh Graduates</h1>
+                            <p class="text-zinc-300 mb-4">Include candidates who have graduated in the past two years.</p>
+                            <div class="flex items-center space-x-2">
+                                <input
+                                    id="fresh-graduate-checkbox"
+                                    type="checkbox"
+                                    v-model="filters.freshGraduate"
+                                    class="text-sm w-4 h-4 mr-2 mb-1 text-orange bg-zinc-100 border-zinc-300 rounded focus:ring-orange dark:focus:ring-orange dark:ring-offset-zinc-800 focus:ring-1 dark:bg-zinc-700 dark:border-zinc-600"
+                                />
+                                <label for="fresh-graduate-checkbox" class="text-white">
+                                    Include Fresh Graduates
+                                </label>
+                            </div>
                         </div>
-                        <!--work experience-->
+
+                        <!-- Work Availability -->
                         <div class="group cursor-pointer">
-                            <h1 class="text-xl text-white group-  mb-2 tracking-wider font-bold capitalize">Work
-                                experience</h1>
+                            <h1 class="text-xl text-white mb-2 tracking-wider font-bold capitalize">Work
+                                Availability</h1>
+                            <p class="text-zinc-300 mb-4">Specify the desired work availability status.</p>
+                            <div class="flex space-x-2">
+                                <button @click="filters.workAvailability = true"
+                                        :class="filters.workAvailability ? 'bg-orange text-white' : 'bg-white text-zinc-800'"
+                                        class="rounded-b-md rounded-tl-md w-full text-sm font-semibold tracking-wider hover:bg-orange hover:text-white py-2">
+                                    Available for Work
+                                </button>
+                                <button @click="filters.workAvailability = false"
+                                        :class="!filters.workAvailability ? 'bg-orange text-white' : 'bg-white text-zinc-800'"
+                                        class="rounded-t-md rounded-br-md w-full text-sm font-semibold tracking-wider hover:bg-orange hover:text-white py-2">
+                                    Not Available for Work
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Work Experience -->
+                        <div class="group cursor-pointer">
+                            <h1 class="text-xl text-white mb-2 tracking-wider font-bold capitalize">Work Experience</h1>
+                            <p class="text-zinc-300 mb-4">Select the desired range of work experience in years.</p>
                             <div class="mt-12">
                                 <VueSimpleRangeSlider
-                                    active-bar-color="#f97316"
-                                    class="w-full text-orange font-bold"
+                                    active-bar-color="#525255"
+                                    class="w-full text-zinc-600 font-bold"
                                     v-model="filters.experience"
                                     :min="1"
                                     :max="15"
@@ -200,7 +219,10 @@
                                 </VueSimpleRangeSlider>
                             </div>
                         </div>
-                        <SpecializationSelectsAdvanceSearch />
+
+                        <SpecializationSelectsAdvanceSearch/>
+
+                        <!-- Apply Search Button -->
                         <div class="flex justify-center w-full">
                             <div class="md:w-full w-11/12">
                                 <button @click="handleAdvancedSearch"
@@ -214,15 +236,14 @@
             </div>
         </transition>
         <div class="flex justify-center" v-if="searchApplied">
-            <ActiveFilters class="md:w-8/12 w-11/12" />
+            <ActiveFilters class="md:w-8/12 w-11/12"/>
         </div>
     </div>
 </template>
 
-
 <script setup>
-import { ref, computed, onMounted, watch } from "vue";
-import { getSelectables } from "../../../js/utils/storeHelpers.js";
+import {ref, computed, onMounted, watch} from "vue";
+import {getSelectables} from "../../../js/utils/storeHelpers.js";
 import store from "../../../js/store/index.js";
 import VueSimpleRangeSlider from "vue-simple-range-slider";
 import "vue-simple-range-slider/css";
@@ -304,7 +325,6 @@ onMounted(async () => {
 });
 
 </script>
-
 
 <style>
 .simple-range-slider .simple-range-slider-bg-bar[data-v-f6e84873] {

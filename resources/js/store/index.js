@@ -16,6 +16,7 @@ function getUserFromLocalStorage() {
 
 export default createStore({
     state: {
+        isFormValid: false, // Add this new state
         editMode: false,
         searchMode: true,
         invalidFields: [],
@@ -38,6 +39,9 @@ export default createStore({
         searchQuery: '',
     },
     actions: {
+        setFormValidity({ commit }, isValid) {
+            commit('setFormValidity', isValid);
+        },
         setEditMode({commit}) {
             commit('setEditMode');
         },
@@ -101,6 +105,9 @@ export default createStore({
         },
     },
     mutations: {
+        setFormValidity(state, isValid) {
+            state.isFormValid = isValid;
+        },
         setUser(state, user) {
             state.user = user;
             const userAsString = JSON.stringify(user);
@@ -157,6 +164,7 @@ export default createStore({
         },
     },
     getters: {
+        isFormValid: state => state.isFormValid,
         user: (state) => state.user,
         isAuthenticated: (state) => state.user != null,
         invalidFields: (state) => state.invalidFields,

@@ -58,11 +58,8 @@ class User extends Authenticatable
         parent::boot();
         self::created(function (User $user) {
             $applicant = new Applicant();
-            $applicant->details = [
-                "fullName" => $user->name,
-            ];
-
             $applicant->contact = [
+                "fullName" => $user->name,
                 "email" => $user->email,
                 "city" => "Choose your city...",
                 "zone" => "Choose your zone...",

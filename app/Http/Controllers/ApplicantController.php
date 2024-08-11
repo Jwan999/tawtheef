@@ -76,8 +76,8 @@ class ApplicantController extends Controller
             $filename = '';
             if (isset($applicant->contact['fullName']) && !empty($applicant->contact['fullName'])) {
                 $filename = $applicant->contact['fullName'];
-            } elseif (isset($applicant->details['fullName']) && !empty($applicant->details['fullName'])) {
-                $filename = $applicant->details['fullName'];
+            } elseif (isset($applicant->contact['fullName']) && !empty($applicant->contact['fullName'])) {
+                $filename = $applicant->contact['fullName'];
             } else {
                 $filename = 'Applicant-' . $applicant->id;
             }

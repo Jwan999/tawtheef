@@ -18,6 +18,8 @@
     "dependencies": {
         "-": "^0.0.1",
         "@vitejs/plugin-vue": "^5.0.4",
+        "@vuelidate/core": "^2.0.3",
+        "@vuelidate/validators": "^2.0.4",
         "browsershot": "^1.0.0",
         "chart.js": "^4.4.2",
         "flowbite-datepicker": "^1.2.6",

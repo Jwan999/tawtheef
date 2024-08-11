@@ -3,8 +3,7 @@
         <LottieLoader/>
     </div>
     <div v-else :class="!isDashboard ? 'px-4 md:px-10 mt-6 mb-10' : ''" class="grid grid-cols-12 grid-flow-row gap-6 md:mb-0 mb-10">
-
-        <!--first row-->
+        <!-- Existing content -->
         <ResumeActionButtonsComponent @saveResume="saveResume" @publishResume="publishResume" :published="published"
                                       class="col-span-12"></ResumeActionButtonsComponent>
 
@@ -24,25 +23,25 @@
         </div>
 
         <div class="col-span-12 md:col-span-9 space-y-8 md:order-2 order-1">
-
             <div class="w-full">
                 <ContactComponent v-model="contact"></ContactComponent>
             </div>
-
             <SummaryComponent v-model="summary"></SummaryComponent>
-
             <EmploymentComponent v-model="employment"></EmploymentComponent>
             <CoursesComponent v-model="courses"></CoursesComponent>
             <ActivitiesComponent v-model="activities"></ActivitiesComponent>
         </div>
     </div>
 
+    <Alert :key="alertKey" :message="alertMessage" :type="alertType" :duration="5000" />
+
 </template>
 
 
 <script setup>
+import Alert from "../../js/components/AlertComponent.vue"; // Import the Alert component
 import {useRoute} from "vue-router";
-import {computed, onMounted, ref} from "vue";
+import {computed, nextTick, onMounted, ref} from "vue";
 import ActivitiesComponent from "../../js/components/applicantProfileComponents/ActivitiesComponent.vue";
 import CoursesComponent from "../../js/components/applicantProfileComponents/CoursesComponent.vue";
 import EmploymentComponent from "../../js/components/applicantProfileComponents/EmploymentComponent.vue";
@@ -63,6 +62,9 @@ import router from "../../js/router/index.js";
 import LottieLoader from "../../js/components/LottieLoader.vue";
 import PublishState from "../../js/components/applicantProfileComponents/PublishState.vue";
 
+const alertMessage = ref('');
+const alertType = ref('info');
+const alertKey = ref(0); // Add this line
 const image = ref(null);
 const speciality = ref([]);
 const education = ref([]);
@@ -79,11 +81,19 @@ const published = ref(false);
 const user = computed(() => {
     return store.getters.user;
 })
-const publishResume = (event) => {
-    published.value = event.value
-}
+const showAlert = (message, type) => {
+    alertMessage.value = '';
+    alertType.value = 'info';
+    alertKey.value += 1;
+
+    // Use nextTick to ensure the component is updated before setting new values
+    nextTick(() => {
+        alertMessage.value = message;
+        alertType.value = type;
+    });
+};
 const saveResume = () => {
-    console.log('Tryna save')
+    console.log('Trying to save')
     const requestData = {
         image: image.value,
         speciality: speciality.value,
@@ -91,7 +101,6 @@ const saveResume = () => {
         languages: languages.value,
         skills: skills.value,
         tools: tools.value,
-        // details: details.value,
         summary: summary.value,
         courses: courses.value,
         contact: contact.value,
@@ -103,16 +112,12 @@ const saveResume = () => {
     const formData = new FormData();
 
     formData.append('data', JSON.stringify(requestData));
-    // formData.append('image', image.value);
 
     if (image.value instanceof File) {
         formData.append('image', image.value);
     } else if (typeof image.value === 'string') {
-        // If it's a path to an existing image, you might not need to send it again
-        // But if you do need to send it:
         formData.append('image', image.value);
     }
-
 
     axios.post('/api/applicant', formData, {
         headers: {
@@ -120,14 +125,42 @@ const saveResume = () => {
         }
     })
         .then(response => {
+            showAlert('Data saved successfully.', 'success');
             console.log('Data sent successfully:', response.data);
         })
         .catch(error => {
             console.error('Error sending data:', error);
+            showAlert('Unable to save. Please try again.', 'error');
         });
-
-    toggleEditMode()
 };
+
+const publishResume = (event) => {
+    if (validateRequiredFields()) {
+        published.value = event.value;
+        saveResume(); // Save the resume with the new published state
+    } else {
+        showAlert('Unable to publish. Please fill all required fields.', 'error');
+    }
+}
+
+const validateRequiredFields = () => {
+    // Add your validation logic here
+    // Return true if all required fields are filled, false otherwise
+    // You may want to highlight the empty required fields in each component
+    return (
+        contact.value &&
+        contact.value.fullName &&
+        contact.value.email &&
+        contact.value.city &&
+        summary.value &&
+        speciality.value.length > 0 &&
+        education.value.length > 0
+        // Add more conditions as needed
+    );
+}
+
+
+
 const toggleEditMode = () => {
     store.dispatch('setEditMode', !editMode.value);
 };

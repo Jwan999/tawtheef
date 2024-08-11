@@ -14,7 +14,7 @@
             </div>
             <div v-else v-for="(job,index) in value">
                 <!--period of employment-->
-                <div v-if="job.duration[0] !== 'Start Year' && job?.duration[1] !== 'End Year'"
+                <div v-if="job?.duration[0] !== 'Start Year' && job?.duration[1] !== 'End Year'"
                      class="flex text-dark space-x-1 text-sm font-semibold">
                     <h1 class="text-orange">{{ job.duration[0] }}</h1>
                     <h1>-</h1>

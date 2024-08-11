@@ -57,7 +57,7 @@ class GenerateFieldSelects extends Command
             ],
             [
                 'key' => 'degrees',
-                'value' => json_encode(["Bachelor's Degree", "Master's Degree", "Doctorate (Ph.D.)", "High School", "Diploma", "Undergraduate"]),
+                'value' => json_encode(["Bachelor's Degree", "Master's Degree", "Doctorate (Ph.D.)", "High School", "Diploma", "Undergraduate","Minor Degree"]),
             ],
             [
                 'key' => 'languages',
