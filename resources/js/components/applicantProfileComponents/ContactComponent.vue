@@ -201,7 +201,7 @@
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue';
 import { useVuelidate } from '@vuelidate/core';
-import { required, email as emailValidator } from '@vuelidate/validators';
+import {required, email as emailValidator, helpers} from '@vuelidate/validators';
 import { getSelectables } from "../../utils/storeHelpers.js";
 import store from "../../store/index.js";
 import LinksAndWebsites from "../addableComponents/LinksAndWebsites.vue";
@@ -226,10 +226,25 @@ const links = ref([]);
 const rules = computed(() => ({
     fullName: { required },
     emailValue: { required, email: emailValidator },
-    city: { required },
-    zone: { required: city.value === 'Baghdad' },
-    gender: { required },
-    birthdate: { required }
+    city: {
+        required,
+        notDefault: (value) => value !== 'Choose your city...'
+    },
+    zone: {
+        required: computed(() => city.value === 'Baghdad'),
+        notDefault: (value) => value !== 'Choose your zone...'
+    },
+    gender: {
+        required,
+        notDefault: (value) => value !== 'Gender'
+    },
+    birthdate: {
+        required,
+        validDate: helpers.withMessage('Please enter a valid date', (value) => {
+            const date = new Date(value);
+            return !isNaN(date.getTime());
+        })
+    }
 }));
 
 const v$ = useVuelidate(rules, { fullName, emailValue, city, zone, gender, birthdate });
@@ -252,6 +267,10 @@ onMounted(async () => {
     birthdate.value = props?.modelValue?.birthdate;
     links.value = props?.modelValue?.links || [];
 });
+const checkFormValidity = () => {
+    v$.value.$touch();
+    return !v$.value.$invalid;
+};
 
 const updateIsChecked = (value) => {
     isChecked.value = value;
@@ -278,6 +297,7 @@ watch([phone, isChecked, emailValue, city, zone, gender, links, birthdate, fullN
 }, { deep: true });
 
 watch([fullName, emailValue, city, zone, gender, birthdate], () => {
+    v$.value.$touch();
     const isValid = !v$.value.$invalid;
     store.dispatch('setFormValidity', isValid);
 }, { deep: true });

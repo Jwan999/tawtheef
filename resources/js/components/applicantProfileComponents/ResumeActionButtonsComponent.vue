@@ -10,7 +10,7 @@
                     Save
                 </button>
 
-                <button v-if="editMode" @click="publishResume"
+                <button v-if="editMode"  @click="handlePublishResume"
                         class="appearance-none text-sm px-3 py-2 font-semibold text-zinc-500 bg-zinc-200 hover:bg-dark hover:text-white">
                     <span v-if="!published">Publish</span>
                     <span v-else>Unpublish</span>
@@ -40,7 +40,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, onUpdated, ref, watch } from "vue";
+import {computed, nextTick, onMounted, onUpdated, ref, watch} from "vue";
 import store from '../../store/index.js';
 import { useRoute, useRouter } from "vue-router";
 import { getSelectables } from "../../utils/storeHelpers.js";
@@ -121,6 +121,17 @@ const saveResume = () => {
     emit('saveResume');
 };
 
+// const alertMessage = ref('');
+// const alertType = ref('info');
+
+
+const handlePublishResume = () => {
+    if (store.getters.isFormValid) {
+        publishResume();
+    } else {
+        console.log('error')
+    }
+};
 const publishResume = () => {
     emit('publishResume', { value: !published.value });
 };

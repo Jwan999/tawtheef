@@ -139,6 +139,9 @@ const publishResume = (event) => {
         published.value = event.value;
         saveResume(); // Save the resume with the new published state
     } else {
+        alertMessage.value = "Please fill in all required fields before publishing.";
+        alertType.value = 'error';
+        conosle.log('test')
         showAlert('Unable to publish. Please fill all required fields.', 'error');
     }
 }
