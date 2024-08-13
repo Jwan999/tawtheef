@@ -1,21 +1,9 @@
-// vite.config.js
+import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
 import vue from '@vitejs/plugin-vue';
-import {defineConfig} from 'vite';
+import path from 'path';
 
 export default defineConfig({
-    build: {
-        sourcemap: true,
-    },
-    // optimizeDeps: {
-    //     exclude: ['vendor/phpunit/phpunit/src/Event/**'],
-    // },
-    optimizeDeps: {
-        // include: ['@vueuse/core'], // Example external path
-        exclude: ['vendor/phpunit/phpunit/src/Event/*'], // Check this line
-        include: ['vue-simple-range-slider']
-
-    },
     plugins: [
         laravel({
             input: ['resources/css/app.css', 'resources/js/app.js'],
@@ -23,35 +11,28 @@ export default defineConfig({
         }),
         vue(),
     ],
-
-    transpileDependencies: true,
-    alias: {
-        '@': '/resources/js',
+    resolve: {
+        alias: {
+            '@': '/resources/js',
+            '@vuelidate': path.resolve(__dirname, 'node_modules/@vuelidate'),
+        },
     },
-    // server: {
-    //     allowedHosts: ['127.0.0.1:8000'],
-    //     sourcemap: true, // Ensure source maps are served
-    //
-    // },
-    server: {
-        open: true,
+    build: {
         sourcemap: true,
-        port: 5173, // Ensure your server is running on the correct port
+    },
+    optimizeDeps: {
+        include: ['vue-simple-range-slider', '@vuelidate/core', '@vuelidate/validators'],
+        exclude: ['vendor/phpunit/phpunit/src/Event/*'],
+    },
+    server: {
+        port: 5173,
+        open: true,
         proxy: {
             '/api': {
-                target: 'http://127.0.0.1:8000', // Laravel API endpoint
+                target: 'http://127.0.0.1:8000',
                 changeOrigin: true,
                 rewrite: (path) => path.replace(/^\/api/, ''),
             },
         },
     },
-
-    // server: {
-    //     cors: true,
-    //     proxy: {
-    //         '/resources': 'http://127.0.0.1:8000', // Adjust this to match your Laravel development server URL
-    //
-    //     },
-    // },
-
 });

@@ -200,8 +200,8 @@
 
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue';
-import { useVuelidate } from '/../vuelidate/lib/index.js'
-import { required, email as emailValidator, helpers } from '/../vuelidate/lib/validators/index.js'
+import { useVuelidate } from '@vuelidate/core'
+import { required, email as emailValidator, helpers } from '@vuelidate/validators'
 import { getSelectables } from "../../utils/storeHelpers.js";
 import store from "../../store/index.js";
 import LinksAndWebsites from "../addableComponents/LinksAndWebsites.vue";
