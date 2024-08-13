@@ -10,7 +10,7 @@
                     Save
                 </button>
 
-                <button v-if="editMode"  @click="handlePublishResume"
+                <button v-if="editMode" @click="handlePublishResume"
                         class="appearance-none text-sm px-3 py-2 font-semibold text-zinc-500 bg-zinc-200 hover:bg-dark hover:text-white">
                     <span v-if="!published">Publish</span>
                     <span v-else>Unpublish</span>
@@ -23,10 +23,8 @@
                 >
                     {{ editMode ? 'Preview' : 'Edit' }}
                 </button>
-
-
             </div>
-            <div v-if="!editMode"> <!-- Only show in preview mode -->
+            <div v-if="!editMode">
                 <button @click="generatePdf" :disabled="isGenerating"
                         class="appearance-none text-sm px-3 py-2 font-semibold hover:bg-dark hover:text-white text-zinc-500 bg-zinc-200">
                     {{ isGenerating ? 'Generating PDF...' : 'Generate Resume PDF' }}
@@ -40,57 +38,62 @@
 </template>
 
 <script setup>
-import {computed, nextTick, onMounted, onUpdated, ref, watch} from "vue";
+import { computed, ref, onMounted, onUpdated } from "vue";
 import store from '../../store/index.js';
 import { useRoute, useRouter } from "vue-router";
-import { getSelectables } from "../../utils/storeHelpers.js";
 import PublishState from "./PublishState.vue";
 
+const props = defineProps(["published"]);
+const emit = defineEmits(["publishResume", "saveResume", "validateAndPublish"]);
+
+const editMode = computed(() => store.getters.editMode);
 const isEditable = computed(() => {
     return route.params.id == store.getters.user?.applicant.id;
 });
 
-const editMode = computed(() => store.getters.editMode);
-
-const emit = defineEmits(["publishResume", "saveResume"]);
-const props = defineProps(["published"]);
 const published = ref(false);
-const userId = computed(() => {
-    return store.getters.user?.id;
-});
-const router = useRouter();
+const isGenerating = ref(false);
+const errorMessage = ref('');
 const thisApplicantId = ref(null);
-const getPageApplicantId = () => {
-    const url = new URL(window.location.href);
-    const pathSegments = url.pathname.split('/');
 
-    if (pathSegments.length >= 3 && (pathSegments[1] === 'resume' || pathSegments[1] === 'profile')) {
-        thisApplicantId.value = pathSegments[2];
+const route = useRoute();
+const router = useRouter();
+
+const saveResume = () => {
+    emit('saveResume');
+};
+
+const handlePublishResume = () => {
+    emit('validateAndPublish');
+};
+
+const togglePreviewMode = () => {
+    if (editMode.value) {
+        store.dispatch('setEditMode', false);
+    } else {
+        editResume();
     }
 };
 
-const isGenerating = ref(false);
-const pdfGenerated = ref(false);
-const errorMessage = ref('');
+const editResume = () => {
+    router.push({name: 'profile-edit'});
+    store.dispatch('setEditMode', true);
+};
+
 const generatePdf = async () => {
     isGenerating.value = true;
     errorMessage.value = '';
-    pdfGenerated.value = false;
 
     try {
-        console.log('Generating PDF for applicant ID:', thisApplicantId.value);
         const response = await axios.get(`/applicants/${thisApplicantId.value}/generate-profile`, {
             responseType: 'blob'
         });
-
-        console.log('Response received:', response);
 
         const contentType = response.headers['content-type'];
         if (contentType && contentType.indexOf('application/json') !== -1) {
             const reader = new FileReader();
             reader.onload = function () {
                 const result = JSON.parse(reader.result);
-                console.error('Error from server:', result);
                 errorMessage.value = result.error || 'An error occurred while generating the PDF.';
             };
             reader.readAsText(response.data);
@@ -107,8 +110,6 @@ const generatePdf = async () => {
         document.body.removeChild(link);
         URL.revokeObjectURL(fileURL);
 
-        pdfGenerated.value = true;
-        console.log('PDF generated and download triggered');
     } catch (error) {
         console.error('Error generating PDF:', error);
         errorMessage.value = 'An error occurred while generating the PDF. Please try again later.';
@@ -117,51 +118,16 @@ const generatePdf = async () => {
     }
 };
 
-const saveResume = () => {
-    emit('saveResume');
-};
+const getPageApplicantId = () => {
+    const url = new URL(window.location.href);
+    const pathSegments = url.pathname.split('/');
 
-// const alertMessage = ref('');
-// const alertType = ref('info');
-
-
-const handlePublishResume = () => {
-    if (store.getters.isFormValid) {
-        publishResume();
-    } else {
-        console.log('error')
-    }
-};
-const publishResume = () => {
-    emit('publishResume', { value: !published.value });
-};
-
-const editResume = () => {
-    router.push({name: 'profile-edit'});
-    toggleEditMode();
-};
-
-const toggleEditMode = () => {
-    store.dispatch('setEditMode', !editMode.value);
-};
-
-const togglePreviewMode = () => {
-    if (editMode.value) {
-        // If in edit mode, switch to preview
-        store.dispatch('setEditMode', false);
-    } else {
-        // If in preview mode, switch to edit
-        editResume();
+    if (pathSegments.length >= 3 && (pathSegments[1] === 'resume' || pathSegments[1] === 'profile')) {
+        thisApplicantId.value = pathSegments[2];
     }
 };
 
-const routeName = computed(() => {
-    return route.name;
-});
-
-const route = useRoute();
-
-onMounted(async () => {
+onMounted(() => {
     published.value = props?.published;
     getPageApplicantId();
 });
@@ -170,7 +136,3 @@ onUpdated(() => {
     published.value = props?.published;
 });
 </script>
-
-<style scoped>
-/* Add any scoped styles here if needed */
-</style>
