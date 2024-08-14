@@ -9,13 +9,12 @@
                             <h1 class="text-3xl md:text-5xl font-bold">In Minutes.</h1>
                         </div>
                         <div class="flex justify-end mt-14 md:-mt-2">
-                            <div class="w-full md:w-4/12">
-                                <router-link :to="`/profile/${user?.applicant?.id}`"
-                                    class="flex justify-center font-semibold w-full text-zinc-800 hover:text-orange border-b-[2px] border-r-[2px] hover:border-orange border-zinc-800 bg-orange hover:bg-dark md:py-3 py-2 text-center font-semibold tracking-wider text-xl md:text-2xl rounded-full outline-none focus:outline-none">
-                                  YOUR <span class="text-white ml-2">RESUME</span>
+                            <div class="w-full md:w-4/12 group">
+                                <router-link :to="user ? `/profile/${user?.applicant?.id}` : '/login'"
+                                             class="flex justify-center font-semibold w-full text-white hover:text-orange border-b-[4px] border-r-[4px] hover:border-orange border-dark bg-orange hover:bg-dark md:py-3 py-2 text-center font-semibold tracking-wider text-xl md:text-2xl rounded-full outline-none focus:outline-none">
+                                    {{ buttonText }} <span class="text-dark ml-2 group-hover:text-white">RESUME</span>
                                 </router-link>
                             </div>
-
                         </div>
                     </div>
 
@@ -29,28 +28,26 @@
 </template>
 
 <script setup>
-import {computed, onMounted, ref} from "vue";
-import {useStore} from "vuex";
-import {getSelectables} from "../../../js/utils/storeHelpers.js";
-const store = useStore();
-const userName = computed(() => {
-    return store.getters.user?.name;
-})
-const user = computed(() => {
-    return store.getters.user;
-})
+import { computed, onMounted, ref } from "vue";
+import { useStore } from "vuex";
+import { getSelectables } from "../../../js/utils/storeHelpers.js";
 
-const specialities = ref([])
+const store = useStore();
+const userName = computed(() => store.getters.user?.name);
+const user = computed(() => store.getters.user);
+
+const specialities = ref([]);
+
+const buttonText = computed(() => {
+    return user.value ? "VISIT YOUR" : "CREATE YOUR";
+});
 
 onMounted(async () => {
-    axios.get('').then(async res => {
+    try {
         specialities.value = await getSelectables('specialities');
-
-    }).catch(error => {
+    } catch (error) {
         console.error('Failed to fetch select options:', error);
-
-    });
-
+    }
 });
 </script>
 
