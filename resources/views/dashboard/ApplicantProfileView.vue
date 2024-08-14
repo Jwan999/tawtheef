@@ -204,7 +204,6 @@ const checkRouteAndFetchData = async () => {
 const fetchApplicantData = async (url) => {
     try {
         const response = await axios.get(url);
-
         image.value = response.data.image;
         speciality.value = response.data.speciality;
         education.value = response.data.education;
@@ -218,7 +217,6 @@ const fetchApplicantData = async (url) => {
         employment.value = response.data.employment;
         activities.value = response.data.activities;
         published.value = response.data.published;
-        console.log(published.value);
         dataFetched.value = true;
     } catch (error) {
         if (error.response && error.response.status === 401) {
