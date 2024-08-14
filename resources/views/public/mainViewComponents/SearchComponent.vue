@@ -5,11 +5,11 @@
             <div class="flex justify-center items-center w-full">
                 <div class="w-full md:w-10/12">
                     <div class="w-full md:w-8/12 flex flex-wrap">
-                        <h1 class="text-3xl md:text-5xl font-bold">Discover Exceptional Talent or Inspiring Resumes
+                        <h1 class="text-3xl md:text-5xl font-bold">Discover Exceptional Talent and Inspiring Resumes
                             <span
                                 class="text-orange">Right Here</span></h1>
                     </div>
-                    <div class="w-full md:w-7/12 flex items-center space-x-4 mt-10 md:mt-10">
+                    <div class="w-full md:w-7/12 flex items-center space-x-4 mt-24">
                         <div class="relative group w-full">
                             <div class="search-container">
                                 <div class="search-description text-base md:text-xl mb-3 text-zinc-100">
@@ -23,7 +23,7 @@
                                         <li>Specializations or areas of expertise</li>
                                     </ul>
                                 </div>
-                                <div class="flex justify-start space-x-3 items-center mt-24">
+                                <div class="flex justify-start space-x-3 items-center mt-10">
                                     <div class="relative group w-full">
                                         <input
                                             v-model="searchTerm"
