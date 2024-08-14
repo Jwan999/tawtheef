@@ -75,8 +75,10 @@ onMounted(async () => {
         years.value.push(year);
     }
 
-    // Generate future years (current year + 10 years)
-    for (let year = currentYear.value; year <= currentYear.value + 10; year++) {
+    const startYear = currentYear.value - 10;
+    const endYear = currentYear.value + 10;
+
+    for (let year = startYear; year <= endYear; year++) {
         futureYears.value.push(year);
     }
 });
