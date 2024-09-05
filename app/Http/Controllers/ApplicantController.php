@@ -167,13 +167,27 @@ class ApplicantController extends Controller
 
         $perPage = $request->input('per_page', 12); // Default to 12 items per page
 
-        $query = Applicant::query()->where('published', true);
+//        $query = Applicant::query()->where('published', true);
 
-        if ($request->filled('gender')) {
-            $gender = $request->input('gender');
-            $query->whereRaw("contact->>'gender' = ?", [$gender]);
-        }
+        $query = Applicant::query()
+            ->where('published', true)
+            ->inRandomOrder(); // This will randomize the order of the results
 
+
+//        if ($request->filled('gender')) {
+//            $gender = $request->input('gender');
+//            $query->whereRaw("contact->>'gender' = ?", [$gender]);
+//        }
+
+//        if ($request->filled('city')) {
+//            $city = $request->input('city');
+//            $query->whereRaw("contact->>'city' = ?", [$city]);
+//        }
+//
+//        if ($request->filled('zone') && $request->input('city') === 'Baghdad') {
+//            $zone = $request->input('zone');
+//            $query->whereRaw("contact->>'zone' = ?", [$zone]);
+//        }
 //        if ($request->filled('experience')) {
 //            $experience_range = $request->input('experience');
 //
@@ -242,13 +256,36 @@ class ApplicantController extends Controller
 //            \Log::info("Fresh Graduate Bindings: " . json_encode($query->getBindings()));
 //        }
 
-
-        if ($request->filled('degree')) {
-            $degree = $request->input('degree');
-            $query->whereRaw("EXISTS (
-            SELECT 1 FROM jsonb_array_elements(education::jsonb) AS edu
-            WHERE edu->>'degree' = ?)", [$degree]);
-        }
+//        if ($request->filled('freshGraduate') && $request->input('freshGraduate') == true) {
+//            $currentYear = (int)date('Y');
+//            $twoYearsAgo = $currentYear - 2;
+//
+//            $query->whereRaw("
+//    EXISTS (
+//        SELECT 1
+//        FROM jsonb_array_elements(education::jsonb) AS edu
+//        WHERE
+//            (edu->>'graduationYear')::int BETWEEN ? AND ?
+//            OR
+//            (
+//                (edu->'duration'->1)::text ~ '^[0-9]+$'
+//                AND (edu->'duration'->1)::int BETWEEN ? AND ?
+//            )
+//            OR
+//            (
+//                (edu->'duration'->1)::text IN ('present', ?)
+//                AND (edu->'duration'->0)::int >= ?
+//            )
+//    )
+//    ", [$twoYearsAgo, $currentYear, $twoYearsAgo, $currentYear, (string)$currentYear, $twoYearsAgo]);
+//        }
+//
+//        if ($request->filled('degree')) {
+//            $degree = $request->input('degree');
+//            $query->whereRaw("EXISTS (
+//            SELECT 1 FROM jsonb_array_elements(education::jsonb) AS edu
+//            WHERE edu->>'degree' = ?)", [$degree]);
+//        }
 
 
 
@@ -263,8 +300,9 @@ class ApplicantController extends Controller
 //        }
 //        dd($query->get());
 
-        $totalCount = $query->count();
-        \Log::info("Total applicants before filtering: " . $totalCount);
+
+//        $totalCount = $query->count();
+//        \Log::info("Total applicants before filtering: " . $totalCount);
 
 //        if ($request->filled('mainSpecializations')) {
 //            $mainSpecializations = $request->input('mainSpecializations');
