@@ -87,6 +87,8 @@
             object-fit: cover;
             border-radius: 1rem;
             object-position: center;
+            height: 8rem;
+            width: 100%;
         }
 
         .h-32 {
