@@ -87,7 +87,7 @@
             object-fit: cover;
             border-radius: 1rem;
             object-position: center;
-            height: 8rem;
+            height: 12rem;
             width: 100%;
         }
 
@@ -148,27 +148,6 @@
                     </div>
                 </div>
 
-                <!-- Specializations -->
-                <div style="margin-bottom: 2rem;">
-                    <h2 class="section-header">Specializations</h2>
-                    <div class="text-sm">
-                        <ul class="list-disc">
-                            @foreach($applicant->speciality['specializations'] ?? [] as $specialization)
-                                <li style="font-weight: 600; margin-bottom: 1rem;">
-                                    {{ $specialization }}
-                                </li>
-                            @endforeach
-                            @if(!empty($applicant->speciality['children']))
-                                <p style="font-weight: normal; color: #3f3f46; margin-top: 0.5rem;">Experienced with the following:</p>
-                                <ul class="list-circle">
-                                    @foreach($applicant->speciality['children'] as $subSpecialization)
-                                        <li style="font-weight: normal;">{{ $subSpecialization }}</li>
-                                    @endforeach
-                                </ul>
-                            @endif
-                        </ul>
-                    </div>
-                </div>
 
                 <!-- Tools & Technologies Section -->
                 <div style="margin-bottom: 2rem;">
@@ -256,7 +235,27 @@
                     <h2 class="section-header">Summary</h2>
                     <p style="text-align: justify; font-size: 0.875rem;">{{ $applicant->summary }}</p>
                 </div>
-
+                <!-- Specializations -->
+                <div style="margin-bottom: 2rem;">
+                    <h2 class="section-header">Specializations</h2>
+                    <div class="text-sm">
+                        <ul class="list-disc">
+                            @foreach($applicant->speciality['specializations'] ?? [] as $specialization)
+                                <li style="font-weight: 600; margin-bottom: 1rem;">
+                                    {{ $specialization }}
+                                </li>
+                            @endforeach
+                            @if(!empty($applicant->speciality['children']))
+                                <p style="font-weight: normal; color: #3f3f46; margin-top: 0.5rem;">Experienced with the following:</p>
+                                <ul class="list-circle">
+                                    @foreach($applicant->speciality['children'] as $subSpecialization)
+                                        <li style="font-weight: normal;">{{ $subSpecialization }}</li>
+                                    @endforeach
+                                </ul>
+                            @endif
+                        </ul>
+                    </div>
+                </div>
                 <!-- Employment History -->
                 <div style="margin-bottom: 2rem;">
                     <h2 class="section-header">Employment History</h2>
