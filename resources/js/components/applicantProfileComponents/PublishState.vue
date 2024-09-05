@@ -1,23 +1,31 @@
 <template>
-    <div class="flex justify-start md:mt-0 mt-2">
-        <div class="">
-            <div class="flex items-center">
-        <span class="font-semibold md:text-base"
-            :class="[
-            'inline-flex items-center rounded-full px-2.5 py-0.5 text-md font-medium',
-            isPublished
-              ? 'bg-orange-50 text-orange'
-              : 'bg-zinc-200 text-zinc-800'
+    <div class="flex flex-col items-start md:mt-0 mt-2">
+        <div class="flex items-center">
+            <div
+                class="p-1 rounded-full mr-2"
+                :class="[
+          isPublished ? 'bg-orange-100' : 'bg-zinc-200'
+        ]"
+            >
+                <div
+                    class="w-3 h-3 rounded-full"
+                    :class="[
+            isPublished ? 'bg-orange' : 'bg-zinc-700'
           ]"
-        >
-          {{ isPublished ? 'Published' : 'Not Published' }}
-        </span>
-
+                ></div>
             </div>
-            <p v-if="isPublished" class="mt-1 text-xs text-zinc-500">
-                Note: Everyone can see your published resume.
-            </p>
+            <span
+                class="font-semibold text-sm"
+                :class="[
+          isPublished ? 'text-orange' : 'text-zinc-700'
+        ]"
+            >
+        {{ isPublished ? 'Resume is Published' : 'Resume is not Published' }}
+      </span>
         </div>
+        <p v-if="isPublished" class="mt-1 text-xs text-zinc-500">
+            Note: Everyone can see your published resume.
+        </p>
     </div>
 </template>
 

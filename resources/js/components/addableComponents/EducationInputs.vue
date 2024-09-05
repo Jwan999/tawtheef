@@ -1,5 +1,5 @@
 <template>
-    <div class="space-y-5 text-sm p-2 my-2">
+    <div class="space-y-5 text-sm py-6 my-2">
         <div class="relative">
             <span class="text-orange absolute top-0 right-0 ml-24 -mt-3">*</span>
             <select v-model="modelValue.degree"

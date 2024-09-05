@@ -23,7 +23,7 @@
                     <span class="text-orange absolute top-0 right-0 ml-24 -mt-3">*</span>
                     <textarea @input="countWords(summary)" v-model="summary" id="message" rows="4"
                               class="w-full capitalize focus:border-orange focus:ring-0 block p-2.5 w-full text-sm bg-zinc-50 rounded-md md:text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none"
-                              placeholder="Write your thoughts here..."></textarea>
+                              placeholder="Write your professional summary..."></textarea>
                     <p class="text-sm text-zinc-500 mt-2 text-end capitalize">Word count: {{ countWords(summary) }}/300</p>
 
                     <!--                    <h1 class="text-red-500 text-sm mt-1 font-semibold">This field is required.</h1>-->

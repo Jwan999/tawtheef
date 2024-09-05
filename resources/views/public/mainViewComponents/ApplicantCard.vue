@@ -95,6 +95,6 @@ const truncatedSummary = computed(() => {
 });
 
 const goToResume = (id) => {
-    router.push({ name: 'resume-view', params: { id } });
+    router.push({ name: 'preview-view', params: { id } });
 };
 </script>

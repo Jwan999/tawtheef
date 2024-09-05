@@ -6,12 +6,13 @@
         </div>
 
         <div v-if="!editMode" class="bg-white rounded-md shadow-sm">
-            <div class="bg-orange text-lg text-white py-3 px-4 font-semibold rounded-t-md">
+            <div :class="specializations.length ? 'rounded-t-md' : 'rounded-b-md rounded-t-md'"
+                class="bg-orange text-lg text-white py-3 px-4 font-semibold rounded-t-md">
                 <h2 v-if="specializations.length">Selected Specializations:</h2>
                 <p v-else class="text-sm">No specializations selected yet.</p>
             </div>
-            <div class="p-4">
-                <ul v-if="specializations.length" class="list-disc list-inside space-y-4">
+            <div class="">
+                <ul v-if="specializations.length" class="list-disc list-inside space-y-4 p-4">
                     <li v-for="spec in specializations" :key="spec" class="text-dark">
                         {{ spec }}
                         <template v-if="getSubSpecializations(spec).length">
@@ -45,7 +46,7 @@
                                 class="w-5 h-5 text-orange border-zinc-300 rounded focus:ring-orange"
                                 :disabled="specializations.length >= 2 && !specializations.includes(item.title)"
                             >
-                            <label :for="`specialization-${index}`" class="text-lg font-semibold text-dark cursor-pointer">
+                            <label :for="`specialization-${index}`" class="text-base font-semibold text-dark cursor-pointer">
                                 {{ item.title }}
                             </label>
                         </div>

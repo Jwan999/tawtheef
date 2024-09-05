@@ -7,7 +7,7 @@
         <div class="space-y-1">
             <div v-if="!editMode && selectedSkills.length == 0">
                 <p class="text-sm text-zinc-700">
-                    Not all data filled yet.
+                    Data not filled yet.
                 </p>
             </div>
 
@@ -23,10 +23,10 @@
         </div>
     </div>
     <div v-else>
-        <div class="rounded-md p-4 bg-white text-sm md:text-sm">
+        <div class="rounded-md p-4 bg-white text-sm md:text-base">
             <div class="space-y-1">
                 <div class="py-2">
-                    <h1 class="block mb-3 text-zinc-500 mt-2">* You can pick five personal-skills only.</h1>
+                    <h1 class="block mb-3 text-zinc-600 mt-2">* You can pick five personal-skills only.</h1>
                 </div>
                 <div class="space-y-3">
 
@@ -38,9 +38,9 @@
                                 :value="item"
                                 :checked="selectedSkills?.includes(item)"
                                 @click="selectSkill"
-                                class="text-sm w-4 h-4 mr-2 mb-1 text-orange bg-zinc-100 border-zinc-300 rounded focus:ring-orange dark:focus:ring-orange dark:ring-offset-zinc-800 focus:ring-1 dark:bg-zinc-700 dark:border-zinc-600"
+                                class="w-4 h-4 mr-2 mb-1 text-orange bg-zinc-100 border-zinc-300 rounded focus:ring-orange dark:focus:ring-orange dark:ring-offset-zinc-800 focus:ring-1 dark:bg-zinc-700 dark:border-zinc-600"
                             />
-                            <label :for="'checkbox-' + index" class="mb-2 text-sm font-medium text-zinc-800">
+                            <label :for="'checkbox-' + index" class="mb-2 text-base font-medium text-zinc-800">
                                 {{ item }}
                             </label>
                         </div>

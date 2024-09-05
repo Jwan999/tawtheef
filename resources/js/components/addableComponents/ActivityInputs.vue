@@ -1,10 +1,10 @@
 <template>
 
-    <div class="w-full pr-0">
+    <div class="w-full py-6 pr-0">
         <label for="message" class="block mb-3 text-zinc-500 mt-2">* These fields are optional, and their
             purpose is to show if the individual has other related activities.</label>
 
-        <div class="flex space-x-3 items-center w-full mt-4">
+        <div class="md:flex flex-none md:space-x-3 space-x-0 space-y-5 md:space-y-0 items-center w-full mt-4">
 
             <div class="relative w-full">
                 <input v-model="modelValue.title"
@@ -23,8 +23,6 @@
 
                 </select>
             </div>
-
-
             <div class="relative w-full">
                 <select v-model="modelValue.year"
                         class="w-full focus:border-orange focus:ring-0 bg-zinc-50 w-6/12 rounded-md text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none">

@@ -17,6 +17,7 @@ module.exports = {
             colors: {
                 'orange': '#E26600',
                 'orange-50': '#fefbf8',
+                'orange-100': '#f6d1b3',
                 'orange-400': '#fb923c',
                 'orange-500': '#f97316',
                 // 'dark': '#202020',

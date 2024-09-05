@@ -1,5 +1,5 @@
 <template>
-    <div class="space-y-6 w-full pr-0">
+    <div class="py-8 w-full">
         <div class="flex md:flex-nowrap flex-wrap md:space-x-3 space-x-0 md:space-y-0 space-y-6 items-center">
             <div class="relative w-full">
                 <span class="text-orange absolute top-0 right-0 ml-24 -mt-3">*</span>
@@ -41,7 +41,7 @@
             </div>
         </div>
 
-        <div class="w-full">
+        <div class="w-full mt-6">
             <label for="message" class="block mb-3 text-zinc-500 mt-2">* List all of your responsibilities
                 within this period of employment.</label>
 

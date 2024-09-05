@@ -11,23 +11,24 @@
             <div v-if="city == 'Choose your city...'" class="">
                 <h1 class="flex-none font-semibold mb-3 text-zinc-500">Contacts & other info</h1>
                 <p class="text-sm text-zinc-700">
-                    Not all data filled yet.
+                    Data not filled yet.
                 </p>
             </div>
 
             <div v-else class="md:space-y-6 space-y-10">
                 <!-- name and work availability -->
-                <div class="w-full">
-                    <div class="flex justify-end w-full">
+                <div class="w-full flex justify-between">
+                    <div class="">
+                        <h1 class="text-2xl  text-orange font-semibold tracking-wider capitalize">{{ fullName }}</h1>
+                    </div>
+                    <div class="flex justify-end">
                     <span
                         :class="workAvailability ? 'bg-orange text-white':'bg-zinc-200 text-zinc-400'"
-                        class="text-base px-2.5 py-0.5 rounded-full dark:bg-orange-900 dark:text-orange-300">
+                        class="text-base px-3 py-1 rounded-full dark:bg-orange-900 dark:text-orange-300">
                         {{ workAvailability ? 'Available for Work' : 'Not currently looking' }}
                     </span>
                     </div>
-                    <div class="w-full">
-                        <h1 class="text-2xl  text-orange font-semibold tracking-wider capitalize">{{ fullName }}</h1>
-                    </div>
+
                 </div>
 
                 <div class="flex md:flex-nowrap flex-wrap md:space-y-0 space-y-10">
@@ -42,7 +43,7 @@
                             Contact Information
                         </h2>
                         <div class="ml-7 space-y-2">
-                            <p class="text-zinc-700">{{ email }}</p>
+                            <p class="text-zinc-700">{{ emailValue }}</p>
                             <p v-if="isChecked" class="text-zinc-700">{{ phone }}</p>
                         </div>
                     </div>
@@ -99,7 +100,7 @@
         <div v-else class="rounded-md pt-2 pb-4 bg-white">
             <div class="px-4 text-sm md:text-sm space-y-6">
                 <!-- Work Availability -->
-                <label class="inline-flex items-center cursor-pointer">
+                <label class="inline-flex items-center cursor-pointer mt-3">
                     <input type="checkbox" v-model="workAvailability" class="sr-only peer">
                     <div
                         class="relative w-11 h-6 bg-zinc-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 dark:peer-focus:ring-orange-800 rounded-full peer dark:bg-zinc-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-zinc-600 peer-checked:bg-orange"></div>
@@ -171,7 +172,7 @@
                         <span class="text-orange absolute top-0 right-0 ml-24 -mt-3">*</span>
                         <input v-model="birthdate" type="date"
                                :class="{'border-red-500': v$.birthdate.$error}"
-                               class="date-picker block w-full p-2.5 bg-zinc-50 rounded-md md:text-sm text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none focus:border-orange focus:ring-0"
+                               class="date-picker block w-full h-10 p-2.5 bg-zinc-50 rounded-md md:text-sm text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none focus:border-orange focus:ring-0"
                                placeholder="Birthdate"
                                @blur="v$.birthdate.$touch">
                         <span v-if="showErrors && v$.birthdate.$error" class="text-red-500 text-xs">Date of birth is required</span>
@@ -227,7 +228,7 @@ const birthdate = ref('');
 const links = ref([]);
 const showErrors = ref(false);
 
-// Validation rules
+// Updated validation rules
 const rules = computed(() => ({
     fullName: { required },
     emailValue: { required, email: emailValidator },
@@ -237,7 +238,7 @@ const rules = computed(() => ({
     },
     zone: {
         required: computed(() => city.value === 'Baghdad'),
-        notDefault: (value) => value !== 'Choose your zone...'
+        notDefault: (value) => city.value === 'Baghdad' ? value !== 'Choose your zone...' : true
     },
     gender: {
         required,
@@ -298,9 +299,16 @@ watch([phone, isChecked, emailValue, city, zone, gender, links, birthdate, fullN
     });
 }, { deep: true });
 
+// Updated watch function
 watch([fullName, emailValue, city, zone, gender, birthdate], () => {
     v$.value.$touch();
-    const isValid = !v$.value.$invalid;
+    let isValid = !v$.value.$invalid;
+
+    // Allow default zone value for Baghdad
+    if (city.value === 'Baghdad' && zone.value === 'Choose your zone...') {
+        isValid = true;
+    }
+
     store.dispatch('setFormValidity', isValid);
 }, { deep: true });
 
@@ -308,9 +316,17 @@ watch([fullName, emailValue, city, zone, gender, birthdate], () => {
 const validateFields = () => {
     v$.value.$touch();
     showErrors.value = true;
+
+    // Check if the city is Baghdad and zone is not selected
+    if (city.value === 'Baghdad' && zone.value === 'Choose your zone...') {
+        // Set a default zone value
+        zone.value = 'Default Zone';
+    }
+
     setTimeout(() => {
         showErrors.value = false;
     }, 30000); // Hide errors after 30 seconds
+
     return !v$.value.$invalid;
 };
 

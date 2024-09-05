@@ -1,8 +1,8 @@
 <template>
-    <div class="w-full space-y-4 pr-0">
+    <div class="w-full space-y-4 py-6 pt-4">
         <label for="message" class="block mb-3 text-zinc-500 mt-2">* List the courses you've completed, that can show the skills you have.</label>
 
-        <div class="flex space-x-3 items-center">
+        <div class="md:flex flex-none md:space-x-3 space-x-0 md:space-y-0 space-y-5 items-center">
 
             <div class="relative w-full">
 

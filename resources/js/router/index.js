@@ -6,16 +6,20 @@ import Home from '../../views/public/MainView.vue';
 import LoginView from "../components/publicAuth/LoginView.vue";
 import SignupView from "../components/publicAuth/SignupView.vue";
 import store from "../store/index";
-// import ComingSoonComponent from "../components/publicMainComponents /ComingSoonComponent.vue";
+import ResumePreviewMode from "../../views/public/Resume/ResumePreviewMode.vue"
+import ResumeProfileMode from "../../views/public/Resume/ResumeProfileMode.vue"
 
 const routes = [
-    // public routes
-    // {path: '/', component: ComingSoonComponent},
     {path: '/', component: Home},
 
-    {path: '/profile/:id', component: ApplicantProfileView, name: 'profile-view', meta: {requiresAuth: true}},
-    {path: '/profile/:id/edit', component: ApplicantProfileView, name: 'profile-edit', meta: {requiresAuth: true}},
-    {path: '/resume/:id', component: ApplicantProfileView, name: 'resume-view'},
+    // {path: '/profile/:id', component: ApplicantProfileView, name: 'profile-view', meta: {requiresAuth: true}},
+    // {path: '/profile/:id/edit', component: ApplicantProfileView, name: 'profile-edit', meta: {requiresAuth: true}},
+    // {path: '/resume/:id', component: ApplicantProfileView, name: 'resume-view'},
+
+    // {path: '/profile/:id/edit', component: ApplicantProfileView, name: 'profile-edit', meta: {requiresAuth: true}},
+
+    {path: '/preview/:id', component: ResumePreviewMode, name: 'preview-view', meta: {requiresAuth: true}}, // preview view is resume page to preview
+    {path: '/profile/:id', component: ResumeProfileMode, name: 'profile-view'}, // profile view is edit mode
 
     {path: '/login', component: LoginView},
     {path: '/signup', component: SignupView},
@@ -35,7 +39,6 @@ router.beforeEach(async (to, from, next) => {
 
         const user = store.getters.user;
         if (user && user.id) {
-            // console.log(`userId: ${user?.id}`)
             next();
         } else {
             next({path: '/login', query: {redirect: to.fullPath}});

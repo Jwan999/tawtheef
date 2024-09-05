@@ -169,118 +169,126 @@ class ApplicantController extends Controller
 
         $query = Applicant::query()->where('published', true);
 
-        if ($request->filled('experience')) {
-            $experience_range = $request->input('experience');
-
-            if (is_array($experience_range) && count($experience_range) == 2
-                && ($experience_range !== [2, 6])) { // Check if it's not the default value
-                $experience_min = min($experience_range);
-                $experience_max = max($experience_range);
-
-                $query->whereRaw("
-                COALESCE((
-                    SELECT SUM(
-                        CASE
-                            WHEN (job->>'duration')::json->>1 = 'present' THEN
-                                EXTRACT(YEAR FROM CURRENT_DATE) - ((job->>'duration')::json->>0)::int
-                            ELSE
-                                ((job->>'duration')::json->>1)::int - ((job->>'duration')::json->>0)::int
-                        END
-                    )
-                    FROM json_array_elements(employment::json) AS job
-                ), 0) BETWEEN ? AND ?
-            ", [$experience_min, $experience_max]);
-            }
-        }
-
-        if ($request->filled('age')) {
-            $age_range = $request->input('age');
-
-            if (is_array($age_range) && count($age_range) == 2
-                && ($age_range !== [19, 26])) { // Check if it's not the default value
-                $age_min = min($age_range);
-                $age_max = max($age_range);
-
-                $query->whereRaw("
-                CASE
-                    WHEN contact->>'birthdate' ~ '^\d{4}-\d{2}-\d{2}$' THEN
-                        DATE_PART('year', AGE(CURRENT_DATE, (contact->>'birthdate')::DATE))
-                    ELSE
-                        NULL
-                END BETWEEN ? AND ?
-            ", [$age_min, $age_max]);
-            }
-        }
-
-
         if ($request->filled('gender')) {
             $gender = $request->input('gender');
             $query->whereRaw("contact->>'gender' = ?", [$gender]);
         }
 
-        if ($request->filled('workAvailability')) {
-            $workAvailability = $request->input('workAvailability');
-            $query->whereRaw("details->>'workAvailability' = ?", [$workAvailability]);
-        }
-
-        // Fresh Graduate filter
-        if ($request->filled('freshGraduate') && $request->input('freshGraduate') == true) {
-            $currentYear = date('Y');
-            $twoYearsAgo = $currentYear - 2;
-
-            $query->whereRaw("
-            EXISTS (
-            SELECT 1 FROM jsonb_array_elements(education::jsonb) AS edu
-            WHERE (edu->'duration'->>1) ~ '^[0-9]+$' AND (edu->'duration'->>1)::int BETWEEN ? AND ?
-            )
-            ", [$twoYearsAgo, $currentYear]);
-        }
-
-//        if ($request->filled('degree')) {
-//            $degree = $request->input('degree');
-//            $query->whereRaw("EXISTS (
-//            SELECT 1 FROM jsonb_array_elements(education::jsonb) AS edu
-//            WHERE edu->>'degree' = ?)", [$degree]);
+//        if ($request->filled('experience')) {
+//            $experience_range = $request->input('experience');
+//
+//            if (is_array($experience_range) && count($experience_range) == 2
+//                && ($experience_range !== [2, 6])) { // Check if it's not the default value
+//                $experience_min = min($experience_range);
+//                $experience_max = max($experience_range);
+//
+//                $query->whereRaw("
+//                COALESCE((
+//                    SELECT SUM(
+//                        CASE
+//                            WHEN (job->>'duration')::json->>1 = 'present' THEN
+//                                EXTRACT(YEAR FROM CURRENT_DATE) - ((job->>'duration')::json->>0)::int
+//                            ELSE
+//                                ((job->>'duration')::json->>1)::int - ((job->>'duration')::json->>0)::int
+//                        END
+//                    )
+//                    FROM json_array_elements(employment::json) AS job
+//                ), 0) BETWEEN ? AND ?
+//            ", [$experience_min, $experience_max]);
+//            }
 //        }
 
-        if ($request->filled('city')) {
-            $city = $request->input('city');
-            $query->whereRaw("contact->>'city' = ?", [$city]);
+//        if ($request->filled('age')) {
+//            $age_range = $request->input('age');
+//
+//            if (is_array($age_range) && count($age_range) == 2
+//                && ($age_range !== [19, 26])) { // Check if it's not the default value
+//                $age_min = min($age_range);
+//                $age_max = max($age_range);
+//
+//                $query->whereRaw("
+//                CASE
+//                    WHEN contact->>'birthdate' ~ '^\d{4}-\d{2}-\d{2}$' THEN
+//                        DATE_PART('year', AGE(CURRENT_DATE, (contact->>'birthdate')::DATE))
+//                    ELSE
+//                        NULL
+//                END BETWEEN ? AND ?
+//            ", [$age_min, $age_max]);
+//            }
+//
+//        }
+
+//        if ($request->filled('workAvailability')) {
+//            $workAvailability = $request->input('workAvailability');
+//            $query->whereRaw("details->>'workAvailability' = ?", [$workAvailability]);
+//        }
+
+//        if ($request->filled('freshGraduate') && $request->input('freshGraduate') == true) {
+//            $currentYear = (int)date('Y');
+//            $twoYearsAgo = $currentYear - 2;
+//
+//            $query->whereRaw("
+//    EXISTS (
+//        SELECT 1
+//        FROM jsonb_array_elements(education::jsonb) AS edu
+//        WHERE
+//            (edu->>'graduationYear')::int BETWEEN ? AND ?
+//            OR
+//            (edu->'duration'->1)::text IN (?, ?, ?, 'present')
+//    )
+//    ", [$twoYearsAgo, $currentYear, (string)$twoYearsAgo, (string)($twoYearsAgo + 1), (string)$currentYear]);
+//
+//            \Log::info("Fresh Graduate SQL: " . $query->toSql());
+//            \Log::info("Fresh Graduate Bindings: " . json_encode($query->getBindings()));
+//        }
+
+
+        if ($request->filled('degree')) {
+            $degree = $request->input('degree');
+            $query->whereRaw("EXISTS (
+            SELECT 1 FROM jsonb_array_elements(education::jsonb) AS edu
+            WHERE edu->>'degree' = ?)", [$degree]);
         }
 
 
-        if ($request->filled('zone') && $request->input('city') === 'Baghdad') {
-            $zone = $request->input('zone');
-            $query->whereRaw("contact->>'zone' = ?", [$zone]);
-        }
+
+//        if ($request->filled('city')) {
+//            $city = $request->input('city');
+//            $query->whereRaw("contact->>'city' = ?", [$city]);
+//        }
+//
+//        if ($request->filled('zone') && $request->input('city') === 'Baghdad') {
+//            $zone = $request->input('zone');
+//            $query->whereRaw("contact->>'zone' = ?", [$zone]);
+//        }
+//        dd($query->get());
 
         $totalCount = $query->count();
         \Log::info("Total applicants before filtering: " . $totalCount);
 
-        if ($request->filled('mainSpecializations')) {
-            $mainSpecializations = $request->input('mainSpecializations');
-            \Log::info("Filtering by main specialization: " . json_encode($mainSpecializations));
-            $query->whereJsonContains('speciality->title', $mainSpecializations[0]);
+//        if ($request->filled('mainSpecializations')) {
+//            $mainSpecializations = $request->input('mainSpecializations');
+//            \Log::info("Filtering by main specialization: " . json_encode($mainSpecializations));
+//            $query->whereJsonContains('speciality->title', $mainSpecializations[0]);
+//
+//            // Debugging: Get the count after applying main specialization filter
+//            $countAfterMain = $query->count();
+//            \Log::info("Applicants after main specialization filter: " . $countAfterMain);
+//        }
 
-            // Debugging: Get the count after applying main specialization filter
-            $countAfterMain = $query->count();
-            \Log::info("Applicants after main specialization filter: " . $countAfterMain);
-        }
-
-        if ($request->filled('subSpecialities')) {
-            $subSpecialities = $request->input('subSpecialities');
-            \Log::info("Filtering by sub specialities: " . json_encode($subSpecialities));
-            $query->where(function ($q) use ($subSpecialities) {
-                foreach ($subSpecialities as $subSpeciality) {
-                    $q->orWhereJsonContains('speciality->children', $subSpeciality);
-                }
-            });
-
-            // Debugging: Get the count after applying sub specialities filter
-            $countAfterSub = $query->count();
-            \Log::info("Applicants after sub specialities filter: " . $countAfterSub);
-        }
-
+//        if ($request->filled('subSpecialities')) {
+//            $subSpecialities = $request->input('subSpecialities');
+//            \Log::info("Filtering by sub specialities: " . json_encode($subSpecialities));
+//            $query->where(function ($q) use ($subSpecialities) {
+//                foreach ($subSpecialities as $subSpeciality) {
+//                    $q->orWhereJsonContains('speciality->children', $subSpeciality);
+//                }
+//            });
+//
+//            // Debugging: Get the count after applying sub specialities filter
+//            $countAfterSub = $query->count();
+//            \Log::info("Applicants after sub specialities filter: " . $countAfterSub);
+//        }
         $applicants = $query->paginate($perPage);
 
         return response()->json($applicants);
@@ -382,9 +390,27 @@ class ApplicantController extends Controller
     public function showResume($id)
     {
         $applicant = Applicant::find($id);
-        return response()->json($applicant, 200);
-    }
 
+        // If the applicant is not found, return a 404 response
+        if (!$applicant) {
+            return response()->json(['message' => 'Applicant not found'], 404);
+        }
+
+        // Convert the applicant to an array
+        $applicantData = $applicant->toArray();
+
+        // Check if the contact object and showPhone property exist
+        if (isset($applicantData['contact']) && isset($applicantData['contact']['showPhone'])) {
+            // If showPhone is false, remove the phone number
+            if (!$applicantData['contact']['showPhone']) {
+                unset($applicantData['contact']['phone']);
+            }
+            // Remove the showPhone property itself as it's not needed in the response
+            unset($applicantData['contact']['showPhone']);
+        }
+
+        return response()->json($applicantData, 200);
+    }
     public function getAuthUser()
     {
 

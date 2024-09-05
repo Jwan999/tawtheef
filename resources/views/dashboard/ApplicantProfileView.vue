@@ -193,10 +193,12 @@ const routeName = computed(() => route.name);
 const routeParams = computed(() => route.params);
 
 const checkRouteAndFetchData = async () => {
-    if (routeName.value === 'resume-view') {
+    // resume-view
+    if (routeName.value === 'preview-view') {
         await fetchApplicantData(`/api/applicants/${routeParams.value.id}`);
     }
-    if (routeName.value === 'profile-edit' || routeName.value === 'profile-view') {
+    // profile-edit
+    if (routeName.value === 'profile-view') {
         await fetchApplicantData(`/api/profile`);
     }
 };
@@ -204,6 +206,7 @@ const checkRouteAndFetchData = async () => {
 const fetchApplicantData = async (url) => {
     try {
         const response = await axios.get(url);
+
         image.value = response.data.image;
         speciality.value = response.data.speciality;
         education.value = response.data.education;

@@ -1,6 +1,6 @@
-import {createStore} from 'vuex';
+import { createStore } from 'vuex';
 import axios from "axios";
-import {getAuthUser} from "../utils/storeHelpers.js";
+import { getAuthUser } from "../utils/storeHelpers.js";
 
 function getUserFromLocalStorage() {
     try {
@@ -16,8 +16,10 @@ function getUserFromLocalStorage() {
 
 export default createStore({
     state: {
-        isFormValid: false, // Add this new state
+        isFormValid: false,
         editMode: false,
+        previewMode: false,
+        canEdit: false,
         searchMode: true,
         invalidFields: [],
         user: getUserFromLocalStorage(),
@@ -39,16 +41,28 @@ export default createStore({
         searchQuery: '',
     },
     actions: {
-        setFormValidity({ commit }, isValid) {
-            commit('setFormValidity', isValid);
+        setFormValidity({ commit, state }, isValid) {
+            // Special handling for Baghdad
+            if (state.user.city === 'Baghdad' && (!state.user.zone || state.user.zone === 'Choose your zone...')) {
+                commit('setFormValidity', true);
+                commit('setDefaultZone');
+            } else {
+                commit('setFormValidity', isValid);
+            }
         },
-        setEditMode({commit}) {
-            commit('setEditMode');
+        setEditMode({commit}, isEdit) {
+            commit('setEditMode', isEdit);
         },
         checkEditMode({commit}, url) {
-            if (url.includes('edit')) {
-                commit('setEditMode');
+            if (url.includes('profile')) {
+                commit('setEditMode', true);
             }
+        },
+        setPreviewMode({ commit }, isPreview) {
+            commit('setPreviewMode', isPreview);
+        },
+        setCanEdit({ commit }, canEdit) {
+            commit('setCanEdit', canEdit);
         },
         setSearchMode({commit}) {
             commit('setSearchMode');
@@ -113,11 +127,20 @@ export default createStore({
             const userAsString = JSON.stringify(user);
             localStorage.setItem('user', userAsString);
         },
-        setEditMode(state) {
-            state.editMode = !state.editMode;
+        setEditMode(state, isEdit) {
+            state.editMode = isEdit;
+        },
+        setPreviewMode(state, isPreview) {
+            state.previewMode = isPreview;
+            if (isPreview) {
+                state.editMode = false;
+            }
+        },
+        setCanEdit(state, canEdit) {
+            state.canEdit = canEdit;
         },
         setSearchMode(state, newVal) {
-            console.log(newVal)
+            console.log(newVal);
             state.searchMode = newVal;
         },
         clearValidationErrors(state) {
@@ -162,13 +185,21 @@ export default createStore({
         setSearchQuery(state, query) {
             state.searchQuery = query;
         },
+        setDefaultZone(state) {
+            if (state.user.city === 'Baghdad' && (!state.user.zone || state.user.zone === 'Choose your zone...')) {
+                state.user.zone = 'Default Zone';
+            }
+        },
     },
     getters: {
+        getCurrentApplicantId: (state) => state.user?.applicant?.id || null,
         isFormValid: state => state.isFormValid,
         user: (state) => state.user,
         isAuthenticated: (state) => state.user != null,
         invalidFields: (state) => state.invalidFields,
         editMode: state => state.editMode,
+        isPreviewMode: state => state.previewMode,
+        canEdit: state => state.canEdit,
         searchMode: state => state.searchMode,
         filteredApplicants: state => state.filteredApplicants,
         searchedApplicants: state => state.searchedApplicants,
