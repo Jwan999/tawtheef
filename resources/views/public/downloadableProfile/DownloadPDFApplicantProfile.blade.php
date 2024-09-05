@@ -155,6 +155,7 @@
                     <div class="text-sm">
                         @foreach($applicant->tools ?? [] as $tool)
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                <span>{{ $tool['item'] }}</span>
                                 <span class="competency-level">
                                     @switch($tool['rating'])
                                         @case(1)
