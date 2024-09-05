@@ -18,8 +18,8 @@ const routes = [
 
     // {path: '/profile/:id/edit', component: ApplicantProfileView, name: 'profile-edit', meta: {requiresAuth: true}},
 
-    {path: '/preview/:id', component: ResumePreviewMode, name: 'preview-view', meta: {requiresAuth: true}}, // preview view is resume page to preview
-    {path: '/profile/:id', component: ResumeProfileMode, name: 'profile-view'}, // profile view is edit mode
+    {path: '/preview/:id', component: ResumePreviewMode, name: 'preview-view'}, // preview view is resume page to preview
+    {path: '/profile/:id', component: ResumeProfileMode, name: 'profile-view', meta: {requiresAuth: true}}, // profile view is edit mode
 
     {path: '/login', component: LoginView},
     {path: '/signup', component: SignupView},
