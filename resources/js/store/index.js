@@ -3,15 +3,17 @@ import axios from "axios";
 import { getAuthUser } from "../utils/storeHelpers.js";
 
 function getUserFromLocalStorage() {
+    if (!localStorage.getItem('user')) {
+        return null; // No user data, return null
+    }
     try {
         const userString = localStorage.getItem('user');
-        if (userString) {
-            return JSON.parse(userString);
-        }
+        return JSON.parse(userString);
     } catch (error) {
         console.error('Error parsing user data from localStorage:', error);
+        localStorage.removeItem('user'); // Remove invalid data
+        return null;
     }
-    return {}; // Return an empty object as a fallback
 }
 
 export default createStore({
@@ -22,7 +24,7 @@ export default createStore({
         canEdit: false,
         searchMode: false,
         invalidFields: [],
-        user: getUserFromLocalStorage(),
+        user: getUserFromLocalStorage() || null,
         filteredApplicants: {
             data: [],
             current_page: 1,
@@ -109,6 +111,10 @@ export default createStore({
                 commit('setCurrentPage', page);
             } catch (error) {
                 console.error('Error fetching filtered applicants:', error);
+                if (error.response) {
+                    console.error('Server responded with:', error.response.data);
+                }
+                commit('setFilterError', 'Failed to fetch filtered applicants');
             }
         },
         async searchApplicants({ commit, state }, { page = 1, perPage = 12 } = {}) {
@@ -212,7 +218,7 @@ export default createStore({
         getCurrentApplicantId: (state) => state.user?.applicant?.id || null,
         isFormValid: state => state.isFormValid,
         user: (state) => state.user,
-        isAuthenticated: (state) => state.user != null,
+        isAuthenticated: (state) => state.user !== null,
         invalidFields: (state) => state.invalidFields,
         editMode: state => state.editMode,
         isPreviewMode: state => state.previewMode,

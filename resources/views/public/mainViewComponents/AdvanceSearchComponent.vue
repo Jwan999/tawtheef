@@ -208,7 +208,6 @@ const handleAdvancedSearch = () => {
     store.dispatch('getFilteredApplicants');
     store.dispatch('setSearchMode', true);
     emit('advancedSearch', activeFilters.value);
-    // emit('close');
 };
 onMounted(async () => {
     try {
