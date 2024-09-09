@@ -209,11 +209,12 @@ class ApplicantController extends Controller
         }
     }
 
-    private function filterGender($query, $request)
+    protected function filterGender($query, $request)
     {
         return function () use ($query, $request) {
-            if ($request->filled('gender')) {
-                $query->whereRaw("LOWER(contact->>'gender') = ?", [strtolower($request->input('gender'))]);
+            if ($request->has('gender')) {
+                $gender = strtolower($request->input('gender'));
+                $query->whereRaw("LOWER(JSON_UNQUOTE(JSON_EXTRACT(contact, '$.gender'))) = ?", [$gender]);
             }
         };
     }
