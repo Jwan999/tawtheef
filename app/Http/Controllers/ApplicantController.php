@@ -168,12 +168,7 @@ class ApplicantController extends Controller
 //            dump('Starting getFilteredApplicants with parameters: ' . json_encode($request->all()));
 
             $perPage = $request->input('per_page', 12);
-            $query = Applicant::query()->where(function($q) {
-                $q->where('published', true)
-                    ->orWhere('published', 1)
-                    ->orWhere('published', '1');
-            });
-//            $query = Applicant::query()->where('published', true);
+            $query = Applicant::query()->where('published', true);
 
             $filterMethods = [
                 'gender' => $this->filterGender($query, $request),
@@ -214,7 +209,7 @@ class ApplicantController extends Controller
         return function () use ($query, $request) {
             if ($request->has('gender')) {
                 $gender = strtolower($request->input('gender'));
-                $query->whereRaw("LOWER(JSON_UNQUOTE(JSON_EXTRACT(contact, '$.gender'))) = ?", [$gender]);
+                $query->whereRaw("LOWER(contact->>'gender') = ?", [$gender]);
             }
         };
     }
