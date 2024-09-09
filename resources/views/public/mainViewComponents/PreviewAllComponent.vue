@@ -1,5 +1,5 @@
 <template>
-    <div class="md:w-3/12 w-full mt-24">
+    <div class="md:w-3/12 w-full mt-16">
         <div class="w-full">
             <div class="mb-10 w-full">
                 <div class="mt-3 md:mt-6 w-full">
@@ -35,11 +35,10 @@
                 :total-items="combinedApplicants.total"
                 @changePage="changePage"
     />
-
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
 import { useStore } from 'vuex';
 import ApplicantCard from './ApplicantCard.vue';
 import Pagination from './Pagination.vue';
@@ -47,11 +46,12 @@ import Pagination from './Pagination.vue';
 const store = useStore();
 const currentPage = ref(1);
 
-const filteredApplicants = computed(() => store.getters.filteredApplicants);
-const searchedApplicants = computed(() => store.getters.searchedApplicants);
+const filteredApplicants = computed(() => store.state.filteredApplicants);
+const searchedApplicants = computed(() => store.state.searchedApplicants);
+const isSearchMode = computed(() => store.state.searchMode);
 
 const combinedApplicants = computed(() => {
-    if (searchedApplicants.value && searchedApplicants.value.data && searchedApplicants.value.data.length > 0) {
+    if (isSearchMode.value && searchedApplicants.value.data && searchedApplicants.value.data.length > 0) {
         return searchedApplicants.value;
     } else {
         return filteredApplicants.value;
@@ -60,7 +60,7 @@ const combinedApplicants = computed(() => {
 
 const changePage = (page) => {
     currentPage.value = page;
-    if (searchedApplicants.value && searchedApplicants.value.data && searchedApplicants.value.data.length > 0) {
+    if (isSearchMode.value) {
         store.dispatch('searchApplicants', { page: page });
     } else {
         store.dispatch('getFilteredApplicants', { page: page });
@@ -69,9 +69,35 @@ const changePage = (page) => {
 
 watch(() => store.state.searchQuery, () => {
     currentPage.value = 1;
+    if (store.state.searchQuery) {
+        store.dispatch('setSearchMode', true);
+    } else {
+        store.dispatch('setSearchMode', false);
+    }
+});
+
+
+
+const hasActiveFilters = computed(() => {
+    return Object.values(store.state.filters).some(value =>
+        value !== null && value !== '' && value !== undefined &&
+        !(Array.isArray(value) && value.length === 0)
+    );
+});
+
+onMounted(() => {
+    if (!hasActiveFilters.value) {
+        store.dispatch('getFilteredApplicants', { page: 1 });
+    }
 });
 
 watch(() => store.state.filters, () => {
     currentPage.value = 1;
+    store.dispatch('getFilteredApplicants', { page: 1 });
+    store.dispatch('setSearchMode', false);
 }, { deep: true });
+
+onMounted(() => {
+    store.dispatch('getFilteredApplicants', { page: 1 });
+});
 </script>

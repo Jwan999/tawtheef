@@ -20,15 +20,27 @@ export default createStore({
         editMode: false,
         previewMode: false,
         canEdit: false,
-        searchMode: true,
+        searchMode: false,
         invalidFields: [],
         user: getUserFromLocalStorage(),
-        filteredApplicants: {},
-        searchedApplicants: {},
+        filteredApplicants: {
+            data: [],
+            current_page: 1,
+            last_page: 1,
+            per_page: 12,
+            total: 0
+        },
+        searchedApplicants: {
+            data: [],
+            current_page: 1,
+            last_page: 1,
+            per_page: 12,
+            total: 0
+        },
         currentPage: 1,
         filters: {
-            experience: [2, 6],
-            age: [19, 26],
+            experience: null,
+            age: null,
             gender: null,
             workAvailability: null,
             freshGraduate: null,
@@ -50,10 +62,10 @@ export default createStore({
                 commit('setFormValidity', isValid);
             }
         },
-        setEditMode({commit}, isEdit) {
+        setEditMode({ commit }, isEdit) {
             commit('setEditMode', isEdit);
         },
-        checkEditMode({commit}, url) {
+        checkEditMode({ commit }, url) {
             if (url.includes('profile')) {
                 commit('setEditMode', true);
             }
@@ -64,15 +76,18 @@ export default createStore({
         setCanEdit({ commit }, canEdit) {
             commit('setCanEdit', canEdit);
         },
-        setSearchMode({commit}) {
-            commit('setSearchMode');
+        setSearchMode({ commit }, isSearchMode) {
+            commit('setSearchMode', isSearchMode);
+            if (!isSearchMode) {
+                commit('setSearchQuery', '');
+            }
         },
-        async getUser({commit}) {
+        async getUser({ commit }) {
             const user = await getAuthUser();
             commit('setUser', user);
             return user;
         },
-        async checkAuthStatus({commit}) {
+        async checkAuthStatus({ commit }) {
             try {
                 const response = await axios.get('/api/auth');
                 commit('setAuthStatus', !!response.data);
@@ -81,7 +96,7 @@ export default createStore({
                 commit('setAuthStatus', false);
             }
         },
-        async fetchFilteredApplicants({ commit, state }, { page = 1, perPage = 12 } = {}) {
+        async getFilteredApplicants({ commit, state }, { page = 1, perPage = 12 } = {}) {
             try {
                 const response = await axios.get('/api/applicants/search', {
                     params: {
@@ -139,9 +154,8 @@ export default createStore({
         setCanEdit(state, canEdit) {
             state.canEdit = canEdit;
         },
-        setSearchMode(state, newVal) {
-            console.log(newVal);
-            state.searchMode = newVal;
+        setSearchMode(state, isSearchMode) {
+            state.searchMode = isSearchMode;
         },
         clearValidationErrors(state) {
             state.invalidFields = [];
@@ -158,6 +172,9 @@ export default createStore({
         setSearchedApplicants(state, applicants) {
             state.searchedApplicants = applicants;
         },
+        setFilters(state, filters) {
+            state.filters = { ...state.filters, ...filters };
+        },
         updateFilter(state, { key, value }) {
             if (key === 'mainSpecializations' || key === 'subSpecialities') {
                 state.filters[key] = Array.isArray(value) ? value : [value].filter(Boolean);
@@ -167,8 +184,8 @@ export default createStore({
         },
         resetFilters(state) {
             state.filters = {
-                experience: [2, 6],
-                age: [19, 26],
+                experience: null,
+                age: null,
                 gender: null,
                 workAvailability: null,
                 freshGraduate: null,

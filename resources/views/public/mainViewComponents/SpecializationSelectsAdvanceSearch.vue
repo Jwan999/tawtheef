@@ -13,13 +13,12 @@
                 <div v-if="isMainDropdownOpen"
                      class="absolute z-10 mt-1 w-full bg-zinc-100 border border-zinc-600 rounded-md shadow-lg max-h-60 overflow-auto">
                     <div v-for="speci in specializations" :key="speci.title"
-                         class="flex items-center px-4 py-2 hover:bg-zinc-700 hover:text-zinc-100 cursor-pointer"
-                         @click.stop="toggleMainSpecialization(speci.title)">
+                         class="flex items-center px-4 py-2 text-zinc-800 hover:bg-zinc-700 hover:text-zinc-100 cursor-pointer">
                         <input type="checkbox"
                                :id="speci.title"
+                               @click.stop="toggleMainSpecialization(speci.title)"
                                :checked="selectedMainSpecializations.includes(speci.title)"
-                               class="form-checkbox h-5 w-5 text-orange-500 rounded focus:ring-orange-500 focus:ring-offset-0 transition duration-150 ease-in-out cursor-pointer"
-                               @click.stop>
+                               class="form-checkbox h-5 w-5 text-orange-500 rounded focus:ring-orange-500 focus:ring-offset-0 transition duration-150 ease-in-out cursor-pointer">
                         <label :for="speci.title" class="ml-2 cursor-pointer">{{ speci.title }}</label>
                     </div>
                 </div>

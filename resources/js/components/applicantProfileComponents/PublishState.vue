@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-col items-start md:mt-0 mt-2">
+    <div class="flex flex-col items-start md:mt-0 mt-1">
         <div class="flex items-center">
             <div
                 class="p-1 rounded-full mr-2"
@@ -8,7 +8,7 @@
         ]"
             >
                 <div
-                    class="w-3 h-3 rounded-full"
+                    class="w-2 h-2 rounded-full"
                     :class="[
             isPublished ? 'bg-orange' : 'bg-zinc-700'
           ]"
@@ -24,7 +24,7 @@
       </span>
         </div>
         <p v-if="isPublished" class="mt-1 text-xs text-zinc-500">
-            Note: Everyone can see your published resume.
+            Everyone can see your published resume.
         </p>
     </div>
 </template>

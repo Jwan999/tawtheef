@@ -21,12 +21,11 @@ Route::get('/applicants/{id}/view-profile', [ApplicantController::class, 'viewAp
 Route::get('/applicants/{id}/generate-profile', [ApplicantController::class, 'generateApplicantProfile'])->name('applicant.generate_profile');
 
 Route::get('/api/search-applicants', [ApplicantController::class, 'searchApplicants']);
-
+Route::get('/api/applicants/search', [ApplicantController::class, 'getFilteredApplicants']);
 
 Route::post('/api/applicant', [ApplicantController::class, 'store']);
 Route::get('/api/applicants', [ApplicantController::class, 'index']);
 Route::get('/api/selectables/{key}', [ApplicantController::class, 'getSelectables']);
-Route::get('/api/applicants/search', [ApplicantController::class, 'getFilteredApplicants']);
 
 Route::get('/api/profile', [ApplicantController::class, 'showPersonalProfile']);
 Route::get('/api/applicants/{id}', [ApplicantController::class, 'showResume']);
