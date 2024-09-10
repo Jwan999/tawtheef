@@ -4,14 +4,14 @@ import { getAuthUser } from "../utils/storeHelpers.js";
 
 function getUserFromLocalStorage() {
     if (!localStorage.getItem('user')) {
-        return null; // No user data, return null
+        return null;
     }
     try {
         const userString = localStorage.getItem('user');
         return JSON.parse(userString);
     } catch (error) {
         console.error('Error parsing user data from localStorage:', error);
-        localStorage.removeItem('user'); // Remove invalid data
+        localStorage.removeItem('user');
         return null;
     }
 }
@@ -53,10 +53,10 @@ export default createStore({
             zone: '',
         },
         searchQuery: '',
+        error: null,
     },
     actions: {
         setFormValidity({ commit, state }, isValid) {
-            // Special handling for Baghdad
             if (state.user.city === 'Baghdad' && (!state.user.zone || state.user.zone === 'Choose your zone...')) {
                 commit('setFormValidity', true);
                 commit('setDefaultZone');
@@ -94,13 +94,18 @@ export default createStore({
                 const response = await axios.get('/api/auth');
                 commit('setAuthStatus', !!response.data);
             } catch (error) {
-                console.error('Error fetching data:', error);
+                console.error('Error fetching auth status:', error);
                 commit('setAuthStatus', false);
             }
         },
+        setFilters({ commit }, filters) {
+            commit('setFilters', filters);
+        },
+
         async getFilteredApplicants({ commit, state }, { page = 1, perPage = 12 } = {}) {
             try {
-                const response = await axios.get('/api/applicants/search', {
+                commit('clearError');
+                const response = await axios.get('/applicants/filter', {
                     params: {
                         ...state.filters,
                         page,
@@ -114,12 +119,15 @@ export default createStore({
                 if (error.response) {
                     console.error('Server responded with:', error.response.data);
                 }
-                commit('setFilterError', 'Failed to fetch filtered applicants');
+                commit('setError', 'Failed to fetch filtered applicants');
             }
         },
         async searchApplicants({ commit, state }, { page = 1, perPage = 12 } = {}) {
             try {
-                const response = await axios.get('/api/search-applicants', {
+                commit('clearError');
+                commit('clearSearchedApplicants');
+                commit('clearFilteredApplicants');
+                const response = await axios.get('/applicants/search', {
                     params: {
                         search: state.searchQuery,
                         page,
@@ -130,8 +138,14 @@ export default createStore({
                 commit('setCurrentPage', page);
             } catch (error) {
                 console.error('Error searching applicants:', error);
+                if (error.response) {
+                    console.error('Server responded with:', error.response.data);
+                }
+                commit('setError', 'Failed to search applicants');
+                commit('setSearchedApplicants', { data: [], current_page: 1, last_page: 1, per_page: 12, total: 0 });
             }
         },
+
         resetFilters({ commit }) {
             commit('resetFilters');
         },
@@ -178,6 +192,15 @@ export default createStore({
         setSearchedApplicants(state, applicants) {
             state.searchedApplicants = applicants;
         },
+        clearSearchedApplicants(state) {
+            state.searchedApplicants = {
+                data: [],
+                current_page: 1,
+                last_page: 1,
+                per_page: 12,
+                total: 0
+            };
+        },
         setFilters(state, filters) {
             state.filters = { ...state.filters, ...filters };
         },
@@ -213,6 +236,21 @@ export default createStore({
                 state.user.zone = 'Default Zone';
             }
         },
+        clearFilteredApplicants(state) {
+            state.filteredApplicants = {
+                data: [],
+                current_page: 1,
+                last_page: 1,
+                per_page: 12,
+                total: 0
+            };
+        },
+        setError(state, error) {
+            state.error = error;
+        },
+        clearError(state) {
+            state.error = null;
+        },
     },
     getters: {
         getCurrentApplicantId: (state) => state.user?.applicant?.id || null,
@@ -229,5 +267,6 @@ export default createStore({
         filters: state => state.filters,
         currentPage: state => state.currentPage,
         searchQuery: state => state.searchQuery,
+        error: state => state.error,
     }
 });

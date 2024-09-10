@@ -67,16 +67,19 @@ const changePage = (page) => {
     }
 };
 
-watch(() => store.state.searchQuery, () => {
-    currentPage.value = 1;
-    if (store.state.searchQuery) {
-        store.dispatch('setSearchMode', true);
-    } else {
-        store.dispatch('setSearchMode', false);
+watch(() => store.state.searchQuery, (newQuery, oldQuery) => {
+    if (newQuery !== oldQuery) {
+        currentPage.value = 1;
+        store.commit('clearSearchedApplicants');
+        if (newQuery) {
+            store.dispatch('setSearchMode', true);
+            store.dispatch('searchApplicants', { page: 1 });
+        } else {
+            store.dispatch('setSearchMode', false);
+            store.dispatch('getFilteredApplicants', { page: 1 });
+        }
     }
 });
-
-
 
 const hasActiveFilters = computed(() => {
     return Object.values(store.state.filters).some(value =>
@@ -93,6 +96,7 @@ onMounted(() => {
 
 watch(() => store.state.filters, () => {
     currentPage.value = 1;
+    store.commit('clearSearchedApplicants');
     store.dispatch('getFilteredApplicants', { page: 1 });
     store.dispatch('setSearchMode', false);
 }, { deep: true });

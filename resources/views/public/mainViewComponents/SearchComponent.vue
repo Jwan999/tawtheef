@@ -112,18 +112,19 @@ const searchApplied = ref(false);
 const searchTerm = ref('');
 const isButtonFixed = ref(false);
 const buttonContainer = ref(null);
+
 const handleSearch = async () => {
     if (searchTerm.value.trim() !== '') {
-        await store.dispatch('searchApplicants', { page: 1 });
         await store.dispatch('setSearchMode', true);
+        await store.dispatch('clearSearchedApplicants'); // Clear previous results
         await store.dispatch('setSearchQuery', searchTerm.value);
+        await store.dispatch('searchApplicants', { page: 1 });
     } else {
         await store.dispatch('setSearchMode', false);
         await store.dispatch('resetFilters');
-        await store.dispatch('getFilteredApplicants', {page: 1});
+        await store.dispatch('getFilteredApplicants', { page: 1 });
     }
 };
-
 const clearSearch = () => {
     searchTerm.value = '';
     store.dispatch('setSearchMode', false);
@@ -133,15 +134,19 @@ const clearSearch = () => {
 
 const handleAdvancedSearch = async (advancedFilters) => {
     try {
-        await store.dispatch('getFilteredApplicants', { ...advancedFilters, searchTerm: searchTerm.value });
+        await store.dispatch('setFilters', advancedFilters);
+        await store.dispatch('getFilteredApplicants', { page: 1 });
         searchApplied.value = true;
         store.dispatch('setSearchMode', true);
+        if (store.getters.error) {
+            console.error(store.getters.error);
+            // Handle error (e.g., show an error message to the user)
+        }
     } catch (error) {
         console.error("Error in advanced search:", error);
         // Handle error (e.g., show an error message to the user)
     }
 };
-
 const toggleAdvanceSearch = () => {
     showAdvanceSearch.value = !showAdvanceSearch.value;
 };

@@ -153,31 +153,32 @@ const filters = ref({
     gender: '',
     city: '',
     zone: '',
-    age: null,  // Keep this as null
+    age: null,
     degree: '',
     freshGraduate: null,
     workAvailability: '',
-    experience: null,  // Keep this as null
+    experience: null,
     mainSpecializations: [],
     subSpecialities: [],
 });
 
-// In the clearAllFilters function, update these lines:
+
 const clearAllFilters = () => {
     filters.value = {
         gender: '',
         city: '',
         zone: '',
-        age: null,  // Keep this as null
+        age: null,
         degree: '',
         freshGraduate: null,
         workAvailability: '',
-        experience: null,  // Keep this as null
+        experience: null,
         mainSpecializations: [],
         subSpecialities: [],
     };
     store.dispatch('resetFilters');
-    store.dispatch('setSearchMode', false);};
+    store.dispatch('setSearchMode', false);
+};
 
 const activeFilters = computed(() => {
     return Object.entries(filters.value).reduce((acc, [key, value]) => {
@@ -203,12 +204,22 @@ const updateExperienceFilter = (value) => {
     filters.value.experience = value;
 };
 
-const handleAdvancedSearch = () => {
-    store.commit('setFilters', activeFilters.value);
-    store.dispatch('getFilteredApplicants');
-    store.dispatch('setSearchMode', true);
-    emit('advancedSearch', activeFilters.value);
+const handleAdvancedSearch = async () => {
+    try {
+        await store.dispatch('setFilters', activeFilters.value);
+        await store.dispatch('getFilteredApplicants', { page: 1 });
+        store.dispatch('setSearchMode', true);
+        emit('advancedSearch', activeFilters.value);
+        if (store.getters.error) {
+            console.error(store.getters.error);
+            // Handle error (e.g., show an error message to the user)
+        }
+    } catch (error) {
+        console.error("Error in advanced search:", error);
+        // Handle error (e.g., show an error message to the user)
+    }
 };
+
 onMounted(async () => {
     try {
         cities.value = await getSelectables('cities');
@@ -219,6 +230,7 @@ onMounted(async () => {
     }
 });
 </script>
+
 
 <style scoped>
 .advance-search-component {

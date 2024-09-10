@@ -20,8 +20,11 @@ use Illuminate\Support\Facades\Route;
 Route::get('/applicants/{id}/view-profile', [ApplicantController::class, 'viewApplicantProfile'])->name('applicant.view_profile');
 Route::get('/applicants/{id}/generate-profile', [ApplicantController::class, 'generateApplicantProfile'])->name('applicant.generate_profile');
 
-Route::get('/api/search-applicants', [ApplicantController::class, 'searchApplicants']);
-Route::get('/api/applicants/search', [ApplicantController::class, 'getFilteredApplicants']);
+Route::get('/applicants/filter', [ApplicantController::class, 'getFilteredApplicants']);
+Route::get('/applicants/search', [ApplicantController::class, 'searchApplicants']);
+
+//Route::get('/api/search-applicants', [ApplicantController::class, 'searchApplicants']);
+//Route::get('/api/applicants/search', [ApplicantController::class, 'getFilteredApplicants']);
 
 Route::post('/api/applicant', [ApplicantController::class, 'store']);
 Route::get('/api/applicants', [ApplicantController::class, 'index']);
