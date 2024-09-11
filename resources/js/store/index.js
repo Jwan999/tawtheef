@@ -1,6 +1,6 @@
-import { createStore } from 'vuex';
+import {createStore} from 'vuex';
 import axios from "axios";
-import { getAuthUser } from "../utils/storeHelpers.js";
+import {getAuthUser} from "../utils/storeHelpers.js";
 
 function getUserFromLocalStorage() {
     if (!localStorage.getItem('user')) {
@@ -56,7 +56,7 @@ export default createStore({
         error: null,
     },
     actions: {
-        setFormValidity({ commit, state }, isValid) {
+        setFormValidity({commit, state}, isValid) {
             if (state.user.city === 'Baghdad' && (!state.user.zone || state.user.zone === 'Choose your zone...')) {
                 commit('setFormValidity', true);
                 commit('setDefaultZone');
@@ -64,32 +64,32 @@ export default createStore({
                 commit('setFormValidity', isValid);
             }
         },
-        setEditMode({ commit }, isEdit) {
+        setEditMode({commit}, isEdit) {
             commit('setEditMode', isEdit);
         },
-        checkEditMode({ commit }, url) {
+        checkEditMode({commit}, url) {
             if (url.includes('profile')) {
                 commit('setEditMode', true);
             }
         },
-        setPreviewMode({ commit }, isPreview) {
+        setPreviewMode({commit}, isPreview) {
             commit('setPreviewMode', isPreview);
         },
-        setCanEdit({ commit }, canEdit) {
+        setCanEdit({commit}, canEdit) {
             commit('setCanEdit', canEdit);
         },
-        setSearchMode({ commit }, isSearchMode) {
+        setSearchMode({commit}, isSearchMode) {
             commit('setSearchMode', isSearchMode);
             if (!isSearchMode) {
                 commit('setSearchQuery', '');
             }
         },
-        async getUser({ commit }) {
+        async getUser({commit}) {
             const user = await getAuthUser();
             commit('setUser', user);
             return user;
         },
-        async checkAuthStatus({ commit }) {
+        async checkAuthStatus({commit}) {
             try {
                 const response = await axios.get('/api/auth');
                 commit('setAuthStatus', !!response.data);
@@ -98,11 +98,11 @@ export default createStore({
                 commit('setAuthStatus', false);
             }
         },
-        setFilters({ commit }, filters) {
+        setFilters({commit}, filters) {
             commit('setFilters', filters);
         },
 
-        async getFilteredApplicants({ commit, state }, { page = 1, perPage = 12 } = {}) {
+        async getFilteredApplicants({commit, state}, {page = 1, perPage = 12} = {}) {
             try {
                 commit('clearError');
                 const response = await axios.get('/applicants/filter', {
@@ -122,12 +122,11 @@ export default createStore({
                 commit('setError', 'Failed to fetch filtered applicants');
             }
         },
-        async searchApplicants({ commit, state }, { page = 1, perPage = 12 } = {}) {
+        async searchApplicants({commit, state}, {page = 1, perPage = 12} = {}) {
             try {
                 commit('clearError');
                 commit('clearSearchedApplicants');
-                commit('clearFilteredApplicants');
-                const response = await axios.get('/applicants/search', {
+                const response = await axios.get('/api/applicants/search', {
                     params: {
                         search: state.searchQuery,
                         page,
@@ -138,18 +137,19 @@ export default createStore({
                 commit('setCurrentPage', page);
             } catch (error) {
                 console.error('Error searching applicants:', error);
-                if (error.response) {
+                if (error.response && error.response.data) {
                     console.error('Server responded with:', error.response.data);
+                    commit('setError', `Failed to search applicants: ${error.response.data.error || error.response.data.message || 'Unknown error'}`);
+                } else {
+                    commit('setError', 'Failed to search applicants: Network error');
                 }
-                commit('setError', 'Failed to search applicants');
-                commit('setSearchedApplicants', { data: [], current_page: 1, last_page: 1, per_page: 12, total: 0 });
+                commit('setSearchedApplicants', {data: [], current_page: 1, last_page: 1, per_page: 12, total: 0});
             }
         },
-
-        resetFilters({ commit }) {
+        resetFilters({commit}) {
             commit('resetFilters');
         },
-        setSearchQuery({ commit }, query) {
+        setSearchQuery({commit}, query) {
             commit('setSearchQuery', query);
         },
     },
@@ -202,9 +202,9 @@ export default createStore({
             };
         },
         setFilters(state, filters) {
-            state.filters = { ...state.filters, ...filters };
+            state.filters = {...state.filters, ...filters};
         },
-        updateFilter(state, { key, value }) {
+        updateFilter(state, {key, value}) {
             if (key === 'mainSpecializations' || key === 'subSpecialities') {
                 state.filters[key] = Array.isArray(value) ? value : [value].filter(Boolean);
             } else {

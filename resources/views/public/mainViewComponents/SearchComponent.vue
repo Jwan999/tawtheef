@@ -94,9 +94,6 @@
                 @advancedSearch="handleAdvancedSearch"
                 @close="closeAdvanceSearch"
             />
-<!--            <div class="flex justify-center" v-if="searchApplied">-->
-<!--                <ActiveFilters class="md:w-8/12 w-11/12"/>-->
-<!--            </div>-->
         </div>
     </div>
 </template>
@@ -116,7 +113,6 @@ const buttonContainer = ref(null);
 const handleSearch = async () => {
     if (searchTerm.value.trim() !== '') {
         await store.dispatch('setSearchMode', true);
-        await store.dispatch('clearSearchedApplicants'); // Clear previous results
         await store.dispatch('setSearchQuery', searchTerm.value);
         await store.dispatch('searchApplicants', { page: 1 });
     } else {
@@ -124,8 +120,7 @@ const handleSearch = async () => {
         await store.dispatch('resetFilters');
         await store.dispatch('getFilteredApplicants', { page: 1 });
     }
-};
-const clearSearch = () => {
+};const clearSearch = () => {
     searchTerm.value = '';
     store.dispatch('setSearchMode', false);
     store.dispatch('resetFilters');
