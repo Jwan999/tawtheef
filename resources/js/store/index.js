@@ -3,21 +3,18 @@ import axios from "axios";
 import {getAuthUser} from "../utils/storeHelpers.js";
 
 function getUserFromLocalStorage() {
-    if (!localStorage.getItem('user')) {
-        return null;
-    }
     try {
         const userString = localStorage.getItem('user');
-        return JSON.parse(userString);
+        return userString ? JSON.parse(userString) : null;
     } catch (error) {
         console.error('Error parsing user data from localStorage:', error);
-        localStorage.removeItem('user');
+        localStorage.removeItem('user'); // Clear the invalid data
         return null;
     }
 }
-
 export default createStore({
     state: {
+        lastScrollPosition: 0,
         isFormValid: false,
         editMode: false,
         previewMode: false,
@@ -56,13 +53,16 @@ export default createStore({
         error: null,
     },
     actions: {
-        setFormValidity({commit, state}, isValid) {
-            if (state.user.city === 'Baghdad' && (!state.user.zone || state.user.zone === 'Choose your zone...')) {
-                commit('setFormValidity', true);
-                commit('setDefaultZone');
-            } else {
-                commit('setFormValidity', isValid);
-            }
+        // setFormValidity({commit, state}, isValid) {
+        //     if (state.user?.city === 'Baghdad' && (!state.user.zone || state.user.zone === 'Choose your zone...')) {
+        //         commit('setFormValidity', true);
+        //         commit('setDefaultZone');
+        //     } else {
+        //         commit('setFormValidity', isValid);
+        //     }
+        // },
+        setLastState({ commit }, lastState) {
+            commit('setLastState', lastState);
         },
         setEditMode({commit}, isEdit) {
             commit('setEditMode', isEdit);
@@ -154,9 +154,20 @@ export default createStore({
         },
     },
     mutations: {
-        setFormValidity(state, isValid) {
-            state.isFormValid = isValid;
+        setLastScrollPosition(state, position) {
+            state.lastScrollPosition = position;
         },
+        setLastState(state, lastState) {
+            state.lastState = lastState;
+        },
+        restoreLastState(state) {
+            state.searchMode = state.lastState.searchMode;
+            state.filters = { ...state.lastState.filters };
+            state.lastScrollPosition = state.lastState.scrollPosition;
+        },
+        // setFormValidity(state, isValid) {
+        //     state.isFormValid = isValid;
+        // },
         setUser(state, user) {
             state.user = user;
             const userAsString = JSON.stringify(user);
@@ -253,6 +264,7 @@ export default createStore({
         },
     },
     getters: {
+        lastState: state => state.lastState,
         getCurrentApplicantId: (state) => state.user?.applicant?.id || null,
         isFormValid: state => state.isFormValid,
         user: (state) => state.user,

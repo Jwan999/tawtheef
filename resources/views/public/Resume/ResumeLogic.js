@@ -225,11 +225,34 @@ export function useResumeLogic() {
 
     onMounted(() => {
         store.dispatch('setPreviewMode', routeName.value === 'preview-view');
-        checkRouteAndFetchData();
+        checkRouteAndFetchData().then(r => {});
     });
-    const goBack = () => {
-        router.go(-1);
+    const handleBackButton = () => {
+        // Restore the previous state
+        store.commit('restoreLastState');
+
+        // Scroll to the previous position or to the search area
+        nextTick(() => {
+            if (store.state.searchMode) {
+                const searchArea = document.getElementById('search-area');
+                if (searchArea) {
+                    searchArea.scrollIntoView({ behavior: 'smooth' });
+                }
+            } else {
+                window.scrollTo(0, store.state.lastScrollPosition);
+            }
+        });
     };
+    onMounted(() => {
+        store.commit('setPreviewMode', route.name === 'preview-view');
+        checkRouteAndFetchData().then(r => {});
+
+        // Save scroll position before leaving the page
+        window.addEventListener('beforeunload', () => {
+            store.commit('setLastScrollPosition', window.pageYOffset);
+        });
+    });
+
     return {
         alertMessage,
         alertType,
@@ -271,6 +294,7 @@ export function useResumeLogic() {
         isAnyOtherTabActive,
         isEditable,
         isPreviewMode,
-        goBack,
+        handleBackButton,
+
     };
 }

@@ -30,11 +30,11 @@
                     :key="value"
                     @click="setRatingValue(value)"
                     :class="[
-            'px-3 py-1 rounded-full text-sm font-medium transition-colors duration-200 ease-in-out',
-            rating === value
-              ? 'bg-orange text-white'
-              : 'bg-zinc-100 text-zinc-700 hover:bg-zinc-200'
-          ]"
+                        'px-3 py-1 rounded-full text-sm font-medium transition-colors duration-200 ease-in-out',
+                        isSelectedRating(value)
+                            ? 'bg-orange text-white'
+                            : 'bg-zinc-100 text-zinc-700 hover:bg-zinc-200'
+                    ]"
                 >
                     {{ level }}
                 </button>
@@ -45,7 +45,6 @@
 
 <script setup>
 import { ref, watchEffect, onMounted } from 'vue';
-import axios from 'axios';
 import { getSelectables } from "../../utils/storeHelpers.js";
 
 const props = defineProps({
@@ -70,7 +69,7 @@ const competencyLevels = {
     2: 'Intermediate',
     3: 'Good',
     4: 'Very Good',
-    5: 'Excellent'
+    5: 'Excellent',
 };
 
 watchEffect(() => {
@@ -89,7 +88,11 @@ onMounted(async () => {
 });
 
 const setRatingValue = (value) => {
-    rating.value = value;
+    rating.value = String(value);
+};
+
+const isSelectedRating = (value) => {
+    return rating.value === value || rating.value === String(value);
 };
 </script>
 

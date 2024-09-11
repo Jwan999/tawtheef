@@ -305,11 +305,11 @@ watch([fullName, emailValue, city, zone, gender, birthdate], () => {
     let isValid = !v$.value.$invalid;
 
     // Allow default zone value for Baghdad
-    if (city.value === 'Baghdad' && zone.value === 'Choose your zone...') {
-        isValid = true;
-    }
+    // if (city.value === 'Baghdad' && zone.value === 'Choose your zone...') {
+    //     isValid = true;
+    // }
 
-    store.dispatch('setFormValidity', isValid);
+    // store.dispatch('setFormValidity', isValid);
 }, { deep: true });
 
 // Updated validateFields method

@@ -50,15 +50,8 @@
 
 <script setup>
 import RatingComponent from './RatingComponent.vue';
-import { onMounted, onUpdated, ref, watch, computed } from 'vue';
+import { onMounted, onUpdated, ref, watch } from 'vue';
 import { editMode } from "../../utils/storeHelpers.js";
-
-const hoveredElement = ref(null);
-const borderColor = ref('border-zinc-100');
-const changeBorderColor = (index, color) => {
-    hoveredElement.value = index;
-    borderColor.value = color;
-};
 
 const props = defineProps(["modelValue"]);
 const value = ref([]);
@@ -88,12 +81,13 @@ watch(value, (newValue) => {
 const emit = defineEmits(["update:modelValue"]);
 
 const getCompetencyLevel = (rating) => {
-    switch(rating) {
-        case '1': return 'Basic';
-        case '2': return 'Intermediate';
-        case '3': return 'Good';
-        case '4': return 'Very Good';
-        case '5': return 'Excellent';
+    const numericRating = Number(rating);
+    switch(numericRating) {
+        case 1: return 'Basic';
+        case 2: return 'Intermediate';
+        case 3: return 'Good';
+        case 4: return 'Very Good';
+        case 5: return 'Excellent';
         default: return 'N/A';
     }
 };
