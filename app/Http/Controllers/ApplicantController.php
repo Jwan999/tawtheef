@@ -115,8 +115,8 @@ class ApplicantController extends Controller
 
     private function handleException(\Exception $e, $errorType)
     {
-        \Log::error($errorType . ': ' . $e->getMessage());
-        \Log::error('Stack trace: ' . $e->getTraceAsString());
+//        \Log::error($errorType . ': ' . $e->getMessage());
+//        \Log::error('Stack trace: ' . $e->getTraceAsString());
 
         return response()->json([
             'error' => $errorType,
@@ -174,8 +174,8 @@ class ApplicantController extends Controller
             $results = $query->paginate($perPage);
             return response()->json($results);
         } catch (\Exception $e) {
-            Log::error('Error in getFilteredApplicants: ' . $e->getMessage());
-            Log::error($e->getTraceAsString());
+//            Log::error('Error in getFilteredApplicants: ' . $e->getMessage());
+//            Log::error($e->getTraceAsString());
             return response()->json(['error' => 'An error occurred while filtering applicants'], 500);
         }
     }
