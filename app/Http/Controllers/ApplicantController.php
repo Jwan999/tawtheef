@@ -189,13 +189,17 @@ class ApplicantController extends Controller
             $query = Applicant::query()->where('published', true);
 
             if ($searchTerm) {
-
                 $searchTermLower = strtolower($searchTerm);
-                $query->where(function ($q) use ($searchTermLower) {
-                    $q->whereRaw('LOWER(summary) LIKE ?', ['%' . $searchTermLower . '%'])
-                        ->orWhereRaw('LOWER(tools::text) LIKE ?', ['%' . $searchTermLower . '%'])
-                        ->orWhereRaw('LOWER(employment::text) LIKE ?', ['%' . $searchTermLower . '%']);
-                    $q->orWhereRaw('LOWER(speciality::text) LIKE ?', ['%' . $searchTermLower . '%']);
+                $isPostgres = DB::connection()->getPdo()->getAttribute(\PDO::ATTR_DRIVER_NAME) === 'pgsql';
+
+                $query->where(function ($q) use ($searchTermLower, $isPostgres) {
+                    $likeOperator = $isPostgres ? 'ILIKE' : 'LIKE';
+                    $textCast = $isPostgres ? '::text' : '';
+
+                    $q->whereRaw("LOWER(summary) {$likeOperator} ?", ['%' . $searchTermLower . '%'])
+                        ->orWhereRaw("LOWER(tools{$textCast}) {$likeOperator} ?", ['%' . $searchTermLower . '%'])
+                        ->orWhereRaw("LOWER(employment{$textCast}) {$likeOperator} ?", ['%' . $searchTermLower . '%'])
+                        ->orWhereRaw("LOWER(speciality{$textCast}) {$likeOperator} ?", ['%' . $searchTermLower . '%']);
                 });
             }
 
@@ -212,8 +216,8 @@ class ApplicantController extends Controller
 
             return response()->json($results);
         } catch (\Exception $e) {
-            dump('Error in searchApplicants: ' . $e->getMessage());
-            dump($e->getTraceAsString());
+            Log::error('Error in searchApplicants: ' . $e->getMessage());
+            Log::error($e->getTraceAsString());
             return response()->json(['error' => 'An error occurred while searching applicants: ' . $e->getMessage()], 500);
         }
     }
