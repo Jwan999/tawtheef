@@ -313,19 +313,23 @@ class ApplicantController extends Controller
             }
         }
 
+        // Work Availability
         if ($request->filled('workAvailability')) {
             $isAvailable = filter_var($request->input('workAvailability'), FILTER_VALIDATE_BOOLEAN);
             if ($isPostgres) {
                 $query->whereRaw("(contact->>'workAvailability')::boolean = ?", [$isAvailable]);
             } else {
                 $query->where(function ($q) use ($isAvailable) {
-                    $q->whereRaw("LOWER(JSON_UNQUOTE(JSON_EXTRACT(contact, '$.workAvailability'))) IN (?, ?)", [
-                        $isAvailable ? 'true' : 'false',
-                        $isAvailable ? '1' : '0'
-                    ])
-                        ->orWhereRaw("CAST(JSON_UNQUOTE(JSON_EXTRACT(contact, '$.workAvailability')) AS SIGNED) = ?", [
-                            $isAvailable ? 1 : 0
-                        ]);
+                    $trueValues = ['true', '1', 1, true];
+                    $falseValues = ['false', '0', 0, false, null];
+                    $compareValues = $isAvailable ? $trueValues : $falseValues;
+
+                    foreach ($compareValues as $value) {
+                        $q->orWhereRaw(
+                            "JSON_UNQUOTE(JSON_EXTRACT(contact, '$.workAvailability')) <=> ?",
+                            [$value]
+                        );
+                    }
                 });
             }
         }
