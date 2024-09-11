@@ -6,6 +6,7 @@ use App\Models\Applicant;
 use App\Models\FormControl;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Http\JsonResponse;
@@ -216,8 +217,8 @@ class ApplicantController extends Controller
 
             return response()->json($results);
         } catch (\Exception $e) {
-            Log::error('Error in searchApplicants: ' . $e->getMessage());
-            Log::error($e->getTraceAsString());
+//            Log::error('Error in searchApplicants: ' . $e->getMessage());
+//            Log::error($e->getTraceAsString());
             return response()->json(['error' => 'An error occurred while searching applicants: ' . $e->getMessage()], 500);
         }
     }
