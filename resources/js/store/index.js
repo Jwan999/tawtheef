@@ -14,7 +14,6 @@ function getUserFromLocalStorage() {
 }
 export default createStore({
     state: {
-        lastScrollPosition: 0,
         isFormValid: false,
         editMode: false,
         previewMode: false,
@@ -53,17 +52,7 @@ export default createStore({
         error: null,
     },
     actions: {
-        // setFormValidity({commit, state}, isValid) {
-        //     if (state.user?.city === 'Baghdad' && (!state.user.zone || state.user.zone === 'Choose your zone...')) {
-        //         commit('setFormValidity', true);
-        //         commit('setDefaultZone');
-        //     } else {
-        //         commit('setFormValidity', isValid);
-        //     }
-        // },
-        setLastState({ commit }, lastState) {
-            commit('setLastState', lastState);
-        },
+
         setEditMode({commit}, isEdit) {
             commit('setEditMode', isEdit);
         },
@@ -101,7 +90,6 @@ export default createStore({
         setFilters({commit}, filters) {
             commit('setFilters', filters);
         },
-
         async getFilteredApplicants({commit, state}, {page = 1, perPage = 12} = {}) {
             try {
                 commit('clearError');
@@ -112,6 +100,8 @@ export default createStore({
                         per_page: perPage
                     }
                 });
+                console.log(response.data)
+
                 commit('setFilteredApplicants', response.data);
                 commit('setCurrentPage', page);
             } catch (error) {
@@ -125,10 +115,10 @@ export default createStore({
         async searchApplicants({commit, state}, {page = 1, perPage = 12} = {}) {
             try {
                 commit('clearError');
-                commit('clearSearchedApplicants');
                 const response = await axios.get('/api/applicants/search', {
                     params: {
                         search: state.searchQuery,
+                        ...state.filters,
                         page,
                         per_page: perPage
                     }
@@ -154,20 +144,6 @@ export default createStore({
         },
     },
     mutations: {
-        setLastScrollPosition(state, position) {
-            state.lastScrollPosition = position;
-        },
-        setLastState(state, lastState) {
-            state.lastState = lastState;
-        },
-        restoreLastState(state) {
-            state.searchMode = state.lastState.searchMode;
-            state.filters = { ...state.lastState.filters };
-            state.lastScrollPosition = state.lastState.scrollPosition;
-        },
-        // setFormValidity(state, isValid) {
-        //     state.isFormValid = isValid;
-        // },
         setUser(state, user) {
             state.user = user;
             const userAsString = JSON.stringify(user);
@@ -264,7 +240,6 @@ export default createStore({
         },
     },
     getters: {
-        lastState: state => state.lastState,
         getCurrentApplicantId: (state) => state.user?.applicant?.id || null,
         isFormValid: state => state.isFormValid,
         user: (state) => state.user,

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Applicant;
 use App\Models\FormControl;
+use App\Services\ApplicantFilterService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -12,9 +13,15 @@ use Illuminate\Support\Str;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Database\Eloquent\Builder;
 
-
 class ApplicantController extends Controller
 {
+    protected $filterService;
+
+    public function __construct(ApplicantFilterService $filterService)
+    {
+        $this->filterService = $filterService;
+    }
+
     public function generateApplicantProfile($id)
     {
         try {
@@ -40,7 +47,6 @@ class ApplicantController extends Controller
                     $this->validateImage($imagePath);
                     $applicant->image = $imagePath;
                 } catch (\Exception $e) {
-//                    \Log::error('Image processing error: ' . $e->getMessage());
                     $applicant->image = null;
                 }
             } else {
@@ -153,17 +159,6 @@ class ApplicantController extends Controller
         return response()->json($applicants);
     }
 
-    private function applySearchQuery(Builder $query, string $searchTerm): Builder
-    {
-        return $query->where(function ($q) use ($searchTerm) {
-            $q->whereRaw("LOWER(summary) LIKE ?", ["%{$searchTerm}%"])
-                ->orWhereRaw("LOWER(tools::text) LIKE ?", ["%{$searchTerm}%"])
-                ->orWhereRaw("LOWER(speciality::text) LIKE ?", ["%{$searchTerm}%"])
-                ->orWhereRaw("LOWER(employment::text) LIKE ?", ["%{$searchTerm}%"]);
-        });
-    }
-
-
     public function searchApplicants(Request $request): JsonResponse
     {
         try {
@@ -201,8 +196,6 @@ class ApplicantController extends Controller
 
             return response()->json($results);
         } catch (\Exception $e) {
-//            Log::error('Error in searchApplicants: ' . $e->getMessage());
-//            Log::error($e->getTraceAsString());
             return response()->json(['error' => 'An error occurred while searching applicants: ' . $e->getMessage()], 500);
         }
     }
@@ -213,9 +206,9 @@ class ApplicantController extends Controller
             $perPage = $request->input('per_page', 12);
             $query = Applicant::query()->where('published', true);
 
-            $this->applyFilters($query, $request);
-
+            $this->filterService->applyFilters($query, $request);
             $results = $query->paginate($perPage);
+
             return response()->json($results);
         } catch (\Exception $e) {
             \Log::error('Error in getFilteredApplicants: ' . $e->getMessage());
@@ -233,149 +226,6 @@ class ApplicantController extends Controller
         }
     }
 
-    private function applyFilters(Builder $query, Request $request): void
-    {
-        $isPostgres = DB::connection()->getPdo()->getAttribute(\PDO::ATTR_DRIVER_NAME) === 'pgsql';
-
-        // Gender
-        if ($request->filled('gender')) {
-            $genderValue = strtolower($request->input('gender'));
-            if ($isPostgres) {
-                $query->whereRaw("LOWER(contact->>'gender') ILIKE ?", [$genderValue]);
-            } else {
-                $query->whereRaw("LOWER(JSON_UNQUOTE(JSON_EXTRACT(contact, '$.gender'))) LIKE ?", [$genderValue]);
-            }
-        }
-
-        // City
-        if ($request->filled('city')) {
-            $cityValue = strtolower($request->input('city'));
-            if ($isPostgres) {
-                $query->whereRaw("LOWER(contact->>'city') ILIKE ?", [$cityValue]);
-            } else {
-                $query->whereRaw("LOWER(JSON_UNQUOTE(JSON_EXTRACT(contact, '$.city'))) LIKE ?", [$cityValue]);
-            }
-
-            // Zone (only if city is Baghdad)
-            if (strtolower($request->input('city')) === 'baghdad' && $request->filled('zone')) {
-                $zoneValue = strtolower($request->input('zone'));
-                if ($isPostgres) {
-                    $query->whereRaw("LOWER(contact->>'zone') ILIKE ?", [$zoneValue]);
-                } else {
-                    $query->whereRaw("LOWER(JSON_UNQUOTE(JSON_EXTRACT(contact, '$.zone'))) LIKE ?", [$zoneValue]);
-                }
-            }
-        }
-
-        // Age Range
-        if ($request->filled('age') && is_array($request->input('age')) && count($request->input('age')) == 2) {
-            $ageRange = $request->input('age');
-            if ($isPostgres) {
-                $query->whereRaw(
-                    "CASE WHEN contact->>'birthdate' ~ '^\d{4}-\d{2}-\d{2}$' THEN DATE_PART('year', AGE(CURRENT_DATE, (contact->>'birthdate')::DATE)) ELSE NULL END BETWEEN ? AND ?",
-                    [min($ageRange), max($ageRange)]
-                );
-            } else {
-                $query->whereRaw(
-                    "CASE WHEN JSON_UNQUOTE(JSON_EXTRACT(contact, '$.birthdate')) REGEXP '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' THEN YEAR(CURDATE()) - YEAR(STR_TO_DATE(JSON_UNQUOTE(JSON_EXTRACT(contact, '$.birthdate')), '%Y-%m-%d')) ELSE NULL END BETWEEN ? AND ?",
-                    [min($ageRange), max($ageRange)]
-                );
-            }
-        }
-
-        // Degree
-        if ($request->filled('degree')) {
-            $degreeValue = strtolower($request->input('degree'));
-            if ($isPostgres) {
-                $query->whereRaw("education::jsonb @> ?::jsonb", [json_encode([['degree' => $degreeValue]])]);
-            } else {
-                $query->whereRaw("JSON_CONTAINS(LOWER(education), JSON_ARRAY(?))", [$degreeValue]);
-            }
-        }
-
-        // Fresh Graduate
-        if ($request->filled('freshGraduate')) {
-            $isFreshGraduate = filter_var($request->input('freshGraduate'), FILTER_VALIDATE_BOOLEAN);
-            if ($isFreshGraduate) {
-                $twoYearsAgo = now()->subYears(2)->startOfYear()->year;
-                $currentYear = now()->year;
-                if ($isPostgres) {
-                    $query->whereRaw(
-                        "education::jsonb @> ?::jsonb AND (education->0->>'degree')::text ILIKE ? AND (education->0->'duration'->1)::int BETWEEN ? AND ?",
-                        [json_encode([['degree' => "Bachelor's Degree"]]), strtolower("Bachelor's Degree"), $twoYearsAgo, $currentYear]
-                    );
-                } else {
-                    $query->whereRaw(
-                        "JSON_CONTAINS(education, ?, '$') AND LOWER(JSON_UNQUOTE(JSON_EXTRACT(education, '$[0].degree'))) = ? AND CAST(JSON_UNQUOTE(JSON_EXTRACT(education, '$[0].duration[1]')) AS UNSIGNED) BETWEEN ? AND ?",
-                        [json_encode(['degree' => "Bachelor's Degree"]), strtolower("Bachelor's Degree"), $twoYearsAgo, $currentYear]
-                    );
-                }
-            }
-        }
-
-        // Work Availability
-        if ($request->filled('workAvailability')) {
-            $isAvailable = filter_var($request->input('workAvailability'), FILTER_VALIDATE_BOOLEAN);
-            if ($isPostgres) {
-                $query->whereRaw("(contact->>'workAvailability')::boolean = ?", [$isAvailable]);
-            } else {
-                $query->where(function ($q) use ($isAvailable) {
-                    $trueValues = ['true', '1', 1, true];
-                    $falseValues = ['false', '0', 0, false, null];
-                    $compareValues = $isAvailable ? $trueValues : $falseValues;
-
-                    foreach ($compareValues as $value) {
-                        $q->orWhereRaw(
-                            "JSON_UNQUOTE(JSON_EXTRACT(contact, '$.workAvailability')) <=> ?",
-                            [$value]
-                        );
-                    }
-                });
-            }
-        }
-
-        // Experience
-        if ($request->filled('experience') && is_array($request->input('experience')) && count($request->input('experience')) == 2) {
-            $experienceRange = $request->input('experience');
-            if ($isPostgres) {
-                $query->whereRaw(
-                    "COALESCE((SELECT SUM(CASE WHEN (job->>'duration')::json->>1 = 'present' THEN EXTRACT(YEAR FROM CURRENT_DATE) - ((job->>'duration')::json->>0)::int ELSE ((job->>'duration')::json->>1)::int - ((job->>'duration')::json->>0)::int END) FROM jsonb_array_elements(employment::jsonb) AS job), 0) BETWEEN ? AND ?",
-                    [min($experienceRange), max($experienceRange)]
-                );
-            } else {
-                $query->whereRaw(
-                    "COALESCE((SELECT SUM(CASE WHEN JSON_UNQUOTE(JSON_EXTRACT(job, '$.duration[1]')) = 'present' THEN YEAR(CURDATE()) - CAST(JSON_UNQUOTE(JSON_EXTRACT(job, '$.duration[0]')) AS UNSIGNED) ELSE CAST(JSON_UNQUOTE(JSON_EXTRACT(job, '$.duration[1]')) AS UNSIGNED) - CAST(JSON_UNQUOTE(JSON_EXTRACT(job, '$.duration[0]')) AS UNSIGNED) END) FROM JSON_TABLE(employment, '$[*]' COLUMNS (job JSON PATH '$')) AS jobs), 0) BETWEEN ? AND ?",
-                    [min($experienceRange), max($experienceRange)]
-                );
-            }
-        }
-
-        // Main Specializations
-        if ($request->filled('mainSpecializations') && is_array($request->input('mainSpecializations'))) {
-            $mainSpecializations = $request->input('mainSpecializations');
-            if ($isPostgres) {
-                $query->whereIn(DB::raw("speciality->>'parent'"), $mainSpecializations);
-            } else {
-                $query->whereIn(DB::raw("JSON_UNQUOTE(JSON_EXTRACT(speciality, '$.parent'))"), $mainSpecializations);
-            }
-        }
-
-        // Sub Specialities
-        if ($request->filled('subSpecialities') && is_array($request->input('subSpecialities'))) {
-            $subSpecialities = $request->input('subSpecialities');
-            if ($isPostgres) {
-                $query->whereRaw(
-                    "speciality->>'children' ?| array[" . implode(',', array_fill(0, count($subSpecialities), '?')) . "]",
-                    $subSpecialities
-                );
-            } else {
-                $query->whereRaw(
-                    "JSON_OVERLAPS(JSON_EXTRACT(speciality, '$.children'), JSON_ARRAY(" . implode(',', array_fill(0, count($subSpecialities), '?')) . "))",
-                    $subSpecialities
-                );
-            }
-        }
-    }
     public function store(Request $request)
     {
         try {

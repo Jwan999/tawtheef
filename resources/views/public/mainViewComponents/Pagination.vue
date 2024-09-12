@@ -1,31 +1,29 @@
 <template>
     <div class="flex items-center justify-between border-t border-b border-zinc-200 bg-white px-4 py-3 md:px-16">
+        <!-- Mobile view pagination -->
         <div class="flex flex-1 justify-between md:hidden">
-            <button @click="$emit('changePage', currentPage - 1)" :disabled="currentPage === 1"
-                    class="relative inline-flex items-center rounded-md border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50">
+            <button @click="changePage(currentPage - 1)" :disabled="currentPage === 1"
+                    class="relative inline-flex items-center rounded-md border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50 disabled:opacity-50 disabled:cursor-not-allowed">
                 Previous
             </button>
-            <button @click="$emit('changePage', currentPage + 1)" :disabled="currentPage === lastPage"
-                    class="relative ml-3 inline-flex items-center rounded-md border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50">
+            <button @click="changePage(currentPage + 1)" :disabled="currentPage === lastPage"
+                    class="relative ml-3 inline-flex items-center rounded-md border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50 disabled:opacity-50 disabled:cursor-not-allowed">
                 Next
             </button>
         </div>
+        <!-- Desktop view pagination -->
         <div class="hidden md:flex md:flex-1 md:items-center md:justify-between">
             <div>
                 <p class="text-sm text-zinc-700">
-                    <!--                    Showing-->
-                    <!--                    <span class="font-medium">{{ (currentPage - 1) * perPage + 1 }}</span>-->
-                    <!--                    to-->
-                    <!--                    <span class="font-medium">{{ Math.min(currentPage * perPage, totalItems) }}</span>-->
                     All results:
                     <span class="font-medium">{{ totalItems }}</span>
-
                 </p>
             </div>
             <div>
                 <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
-                    <button @click="$emit('changePage', currentPage - 1)" :disabled="currentPage === 1"
-                            class="cursor-pointer relative inline-flex items-center rounded-l-md px-2 py-1 text-zinc-400 hover:bg-zinc-50 focus:z-20 focus:outline-offset-0">
+                    <!-- Previous page button -->
+                    <button @click="changePage(currentPage - 1)" :disabled="currentPage === 1"
+                            class="cursor-pointer relative inline-flex items-center rounded-l-md px-2 py-1 text-zinc-400 hover:bg-zinc-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50 disabled:cursor-not-allowed">
                         <span class="sr-only">Previous</span>
                         <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                             <path fill-rule="evenodd"
@@ -33,14 +31,18 @@
                                   clip-rule="evenodd"/>
                         </svg>
                     </button>
-                    <button v-for="page in visiblePages" :key="page" @click="$emit('changePage', page)"
+                    <!-- Page numbers -->
+                    <button v-for="page in visiblePages" :key="page" @click="changePage(page)"
                             :class="[
-            page === currentPage ? 'relative z-10 inline-flex items-center bg-orange px-4 py-1 text-sm font-semibold text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange' : 'relative inline-flex items-center px-4 py-2 text-sm font-semibold text-zinc-900 ring-1 ring-inset ring-zinc-300 hover:bg-zinc-50 focus:z-20 focus:outline-offset-0',
-          ]">
+                                page === currentPage
+                                    ? 'relative z-10 inline-flex items-center bg-orange px-4 py-1 text-sm font-semibold text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange'
+                                    : 'relative inline-flex items-center px-4 py-2 text-sm font-semibold text-zinc-900 ring-1 ring-inset ring-zinc-300 hover:bg-zinc-50 focus:z-20 focus:outline-offset-0',
+                            ]">
                         {{ page }}
                     </button>
-                    <button @click="$emit('changePage', currentPage + 1)" :disabled="currentPage === lastPage"
-                            class="cursor-pointer relative inline-flex items-center rounded-r-md px-2 py-1 text-zinc-400 hover:bg-zinc-50 focus:z-20 focus:outline-offset-0">
+                    <!-- Next page button -->
+                    <button @click="changePage(currentPage + 1)" :disabled="currentPage === lastPage"
+                            class="cursor-pointer relative inline-flex items-center rounded-r-md px-2 py-1 text-zinc-400 hover:bg-zinc-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50 disabled:cursor-not-allowed">
                         <span class="sr-only">Next</span>
                         <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                             <path fill-rule="evenodd"
@@ -55,36 +57,65 @@
 </template>
 
 <script setup>
-import {computed} from 'vue';
+import { computed } from 'vue';
 
 const props = defineProps({
-    currentPage: Number,
-    lastPage: Number,
-    perPage: Number,
-    totalItems: Number,
+    currentPage: {
+        type: Number,
+        required: true
+    },
+    lastPage: {
+        type: Number,
+        required: true
+    },
+    perPage: {
+        type: Number,
+        required: true
+    },
+    totalItems: {
+        type: Number,
+        required: true
+    }
 });
 
 const emit = defineEmits(['changePage']);
 
+// Calculate visible page numbers
 const visiblePages = computed(() => {
     const delta = 2;
     const range = [];
-    for (let i = Math.max(2, props.currentPage - delta); i <= Math.min(props.lastPage - 1, props.currentPage + delta); i++) {
-        range.push(i);
+    const rangeWithDots = [];
+    let l;
+
+    range.push(1);
+
+    for (let i = props.currentPage - delta; i <= props.currentPage + delta; i++) {
+        if (i < props.lastPage && i > 1) {
+            range.push(i);
+        }
     }
 
-    if (props.currentPage - delta > 2) {
-        range.unshift("...");
-    }
-    if (props.currentPage + delta < props.lastPage - 1) {
-        range.push("...");
+    range.push(props.lastPage);
+
+    for (let i of range) {
+        if (l) {
+            if (i - l === 2) {
+                rangeWithDots.push(l + 1);
+            } else if (i - l !== 1) {
+                rangeWithDots.push('...');
+            }
+        }
+        rangeWithDots.push(i);
+        l = i;
     }
 
-    range.unshift(1);
-    if (props.lastPage !== 1) {
-        range.push(props.lastPage);
-    }
-
-    return range;
+    return rangeWithDots;
 });
+
+// Handle page change
+const changePage = (page) => {
+    if (page >= 1 && page <= props.lastPage && page !== props.currentPage) {
+        emit('changePage', page);
+    }
+};
 </script>

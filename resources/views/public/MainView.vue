@@ -26,7 +26,6 @@ const searchMode = computed(() => store.state.searchMode);
 const lastState = ref({
     searchMode: false,
     filters: {},
-    scrollPosition: 0
 });
 
 watch(() => store.state.filters, (newFilters) => {
@@ -37,35 +36,4 @@ watch(() => store.state.filters, (newFilters) => {
     store.commit('setSearchMode', hasActiveFilters);
 }, { deep: true });
 
-onMounted(() => {
-    // Save the current state before navigating away
-    router.beforeEach((to, from, next) => {
-        store.commit('setLastState', {
-            searchMode: searchMode.value,
-            filters: { ...store.state.filters },
-            scrollPosition: window.pageYOffset
-        });
-        next();
-    });
-
-    // Handle back button press
-    window.addEventListener('popstate', handleBackButton);
-});
-
-const handleBackButton = () => {
-    // Restore the previous state
-    store.commit('restoreLastState');
-
-    // Scroll to the previous position or to the search area
-    nextTick(() => {
-        if (store.state.searchMode) {
-            const searchArea = document.getElementById('search-area');
-            if (searchArea) {
-                searchArea.scrollIntoView({ behavior: 'smooth' });
-            }
-        } else {
-            window.scrollTo(0, store.state.lastScrollPosition);
-        }
-    });
-};
 </script>

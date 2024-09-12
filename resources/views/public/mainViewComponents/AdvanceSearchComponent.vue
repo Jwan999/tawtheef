@@ -1,20 +1,18 @@
-<!-- AdvancedSearch.vue -->
 <template>
     <div
         class="advance-search-component fixed top-0 right-0 h-full w-full md:w-1/2 lg:w-1/3 bg-zinc-800 text-white z-50 overflow-y-auto transition-transform duration-300"
-        :class="{ 'translate-x-0': showAdvanceSearch, 'translate-x-full': !showAdvanceSearch }">
+        :class="{ 'translate-x-0': showAdvanceSearch, 'translate-x-full': !showAdvanceSearch }"
+    >
         <div class="p-6">
             <div class="flex justify-between items-center mb-9">
                 <h2 class="text-2xl font-bold">Advanced Search</h2>
                 <button @click="$emit('close')" class="text-white hover:text-orange">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                         stroke="currentColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
                 </button>
             </div>
 
-            <!-- Active Filters Component -->
             <ActiveFilters
                 :filters="filters"
                 @update:filter="updateFilter"
@@ -25,15 +23,14 @@
             <div class="mb-9">
                 <h3 class="text-lg mb-3">Applicant Gender</h3>
                 <div class="flex space-x-2">
-                    <button @click="updateFilter('gender', 'Female')"
-                            :class="{ 'bg-orange text-white': filters.gender === 'Female' }"
-                            class="px-4 py-2 rounded w-6/12 bg-zinc-50 hover:bg-zinc-700 hover:text-white text-zinc-700 hover:bg-orange hover:text-white transition-colors duration-300">
-                        Female
-                    </button>
-                    <button @click="updateFilter('gender', 'Male')"
-                            :class="{ 'bg-orange text-white': filters.gender === 'Male' }"
-                            class="px-4 py-2 rounded w-6/12 bg-zinc-50 hover:bg-zinc-700 hover:text-white text-zinc-700 hover:bg-orange hover:text-white transition-colors duration-300">
-                        Male
+                    <button
+                        v-for="gender in ['Female', 'Male']"
+                        :key="gender"
+                        @click="updateFilter('gender', gender)"
+                        :class="{ 'bg-orange text-white': filters.gender === gender }"
+                        class="px-4 py-2 rounded w-6/12 bg-zinc-50 hover:bg-zinc-700 hover:text-white text-zinc-700 hover:bg-orange hover:text-white transition-colors duration-300"
+                    >
+                        {{ gender }}
                     </button>
                 </div>
             </div>
@@ -41,13 +38,18 @@
             <!-- Location -->
             <div class="mb-9">
                 <h3 class="text-lg mb-3">Base City</h3>
-                <select v-model="filters.city"
-                        class="w-full p-2 rounded text-zinc-700 border border-zinc-600 focus:border-orange focus:ring focus:ring-orange focus:ring-opacity-50">
+                <select
+                    v-model="filters.city"
+                    class="w-full p-2 rounded text-zinc-700 border border-zinc-600 focus:border-orange focus:ring focus:ring-orange focus:ring-opacity-50"
+                >
                     <option value="" disabled selected>Choose a city...</option>
                     <option v-for="city in cities" :key="city" :value="city">{{ city }}</option>
                 </select>
-                <select v-if="filters.city === 'Baghdad'" v-model="filters.zone"
-                        class="w-full p-2 rounded bg-zinc-700 text-zinc-200 mt-2 border border-zinc-600 focus:border-orange focus:ring focus:ring-orange focus:ring-opacity-50">
+                <select
+                    v-if="filters.city === 'Baghdad'"
+                    v-model="filters.zone"
+                    class="w-full p-2 rounded bg-zinc-700 text-zinc-200 mt-2 border border-zinc-600 focus:border-orange focus:ring focus:ring-orange focus:ring-opacity-50"
+                >
                     <option value="" disabled selected>Choose a zone...</option>
                     <option>Karkh</option>
                     <option>Risafa</option>
@@ -64,12 +66,13 @@
                 />
             </div>
 
-
             <!-- Educational Degree -->
             <div class="mb-9">
                 <h3 class="text-lg mb-3">Educational Degree</h3>
-                <select v-model="filters.degree"
-                        class="w-full p-2 rounded bg-zinc-50 text-zinc-700 border border-zinc-600 focus:border-orange focus:ring focus:ring-orange focus:ring-opacity-50">
+                <select
+                    v-model="filters.degree"
+                    class="w-full p-2 rounded bg-zinc-50 text-zinc-700 border border-zinc-600 focus:border-orange focus:ring focus:ring-orange focus:ring-opacity-50"
+                >
                     <option value="" selected>Choose a degree...</option>
                     <option v-for="degree in degrees" :key="degree">{{ degree }}</option>
                 </select>
@@ -81,11 +84,18 @@
                 <label class="flex items-center cursor-pointer">
                     <div class="relative mr-2">
                         <input type="checkbox" v-model="filters.freshGraduate" class="sr-only">
-                        <div class="w-10 h-6 rounded-full shadow-inner transition-colors duration-300 ease-in-out"
-                             :class="filters.freshGraduate ? 'bg-orange' : 'bg-zinc-50'"></div>
+                        <div
+                            class="w-10 h-6 rounded-full shadow-inner transition-colors duration-300 ease-in-out"
+                            :class="filters.freshGraduate ? 'bg-orange' : 'bg-zinc-50'"
+                        ></div>
                         <div
                             class="absolute w-[17px] h-[17px] rounded-full shadow top-1 left-1 transition-transform duration-300 ease-in-out"
-                            :class="[{'bg-zinc-50':filters.freshGraduate},{'bg-zinc-500': !filters.freshGraduate},{ 'translate-x-4': filters.freshGraduate }]"></div>
+                            :class="[
+                {'bg-zinc-50': filters.freshGraduate},
+                {'bg-zinc-500': !filters.freshGraduate},
+                { 'translate-x-4': filters.freshGraduate }
+              ]"
+                        ></div>
                     </div>
                     <span>Include Fresh Graduates</span>
                 </label>
@@ -95,15 +105,14 @@
             <div class="mb-9">
                 <h3 class="text-lg mb-3">Work Availability</h3>
                 <div class="flex space-x-2">
-                    <button @click="updateFilter('workAvailability', true)"
-                            :class="{ 'bg-orange text-white': filters.workAvailability === true }"
-                            class="px-4 py-2 rounded w-6/12 bg-zinc-50 hover:bg-zinc-700 hover:text-white text-zinc-700 hover:bg-orange hover:text-white transition-colors duration-300">
-                        Available
-                    </button>
-                    <button @click="updateFilter('workAvailability', false)"
-                            :class="{ 'bg-orange text-white': filters.workAvailability === false }"
-                            class="px-4 py-2 rounded w-6/12 bg-zinc-50 hover:bg-zinc-700 hover:text-white text-zinc-700 hover:bg-orange hover:text-white transition-colors duration-300">
-                        Not Available
+                    <button
+                        v-for="option in [{ label: 'Available', value: true }, { label: 'Not Available', value: false }]"
+                        :key="option.label"
+                        @click="updateFilter('workAvailability', option.value)"
+                        :class="{ 'bg-orange text-white': filters.workAvailability === option.value }"
+                        class="px-4 py-2 rounded w-6/12 bg-zinc-50 hover:bg-zinc-700 hover:text-white text-zinc-700 hover:bg-orange hover:text-white transition-colors duration-300"
+                    >
+                        {{ option.label }}
                     </button>
                 </div>
             </div>
@@ -125,8 +134,10 @@
             />
 
             <!-- Apply Search Button -->
-            <button @click="handleAdvancedSearch"
-                    class="w-full bg-orange text-white py-2 rounded mt-6 hover:bg-orange-600 transition-colors duration-300">
+            <button
+                @click="handleAdvancedSearch"
+                class="w-full bg-orange text-white py-2 rounded mt-6 hover:bg-orange-600 transition-colors duration-300"
+            >
                 Apply Search
             </button>
         </div>
@@ -162,23 +173,8 @@ const filters = ref({
     subSpecialities: [],
 });
 
-
-const clearAllFilters = () => {
-    filters.value = {
-        gender: '',
-        city: '',
-        zone: '',
-        age: null,
-        degree: '',
-        freshGraduate: null,
-        workAvailability: '',
-        experience: null,
-        mainSpecializations: [],
-        subSpecialities: [],
-    };
-    store.dispatch('resetFilters');
-    store.dispatch('setSearchMode', false);
-};
+const cities = ref([]);
+const degrees = ref([]);
 
 const activeFilters = computed(() => {
     return Object.entries(filters.value).reduce((acc, [key, value]) => {
@@ -189,8 +185,13 @@ const activeFilters = computed(() => {
     }, {});
 });
 
-const cities = ref([]);
-const degrees = ref([]);
+const clearAllFilters = () => {
+    Object.keys(filters.value).forEach(key => {
+        filters.value[key] = Array.isArray(filters.value[key]) ? [] : '';
+    });
+    store.dispatch('resetFilters');
+    store.dispatch('setSearchMode', false);
+};
 
 const updateFilter = (key, value) => {
     filters.value[key] = value;
@@ -210,10 +211,6 @@ const handleAdvancedSearch = async () => {
         await store.dispatch('getFilteredApplicants', { page: 1 });
         store.dispatch('setSearchMode', true);
         emit('advancedSearch', activeFilters.value);
-        if (store.getters.error) {
-            console.error(store.getters.error);
-            // Handle error (e.g., show an error message to the user)
-        }
     } catch (error) {
         console.error("Error in advanced search:", error);
         // Handle error (e.g., show an error message to the user)
@@ -222,15 +219,16 @@ const handleAdvancedSearch = async () => {
 
 onMounted(async () => {
     try {
-        cities.value = await getSelectables('cities');
-        degrees.value = await getSelectables('degrees');
+        [cities.value, degrees.value] = await Promise.all([
+            getSelectables('cities'),
+            getSelectables('degrees')
+        ]);
     } catch (error) {
         console.error('Error fetching selectables:', error);
         // Implement user-friendly error handling here
     }
 });
 </script>
-
 
 <style scoped>
 .advance-search-component {
