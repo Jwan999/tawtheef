@@ -170,13 +170,16 @@ class ApplicantFilterService
                 $query->whereRaw("(contact->>'workAvailability')::boolean = ?", [$isAvailable]);
             } else {
                 $query->whereRaw(
-                    "JSON_EXTRACT(contact, '$.workAvailability') = ?",
-                    [$isAvailable ? 'true' : 'false']
+                    "CASE
+                    WHEN JSON_EXTRACT(contact, '$.workAvailability') = 'true' THEN 1
+                    WHEN JSON_EXTRACT(contact, '$.workAvailability') = 'false' THEN 0
+                    ELSE JSON_EXTRACT(contact, '$.workAvailability')
+                END = ?",
+                    [$isAvailable ? 1 : 0]
                 );
             }
         }
     }
-
     protected function filterExperience(Builder $query, Request $request): void
     {
         if ($request->filled('experience') && is_array($request->input('experience')) && count($request->input('experience')) == 2) {
