@@ -207,23 +207,7 @@ class ApplicantController extends Controller
             $query = Applicant::query()->where('published', true);
 
             $this->filterService->applyFilters($query, $request);
-
-            // Log the SQL query and bindings before pagination
-            \Log::info('Filtered query SQL: ' . $query->toSql());
-            \Log::info('Filtered query bindings: ' . json_encode($query->getBindings()));
-
             $results = $query->paginate($perPage);
-
-            if ($results->isEmpty()) {
-                \Log::info('No results found for the applied filters.');
-                return response()->json([
-                    'data' => [],
-                    'current_page' => 1,
-                    'per_page' => $perPage,
-                    'total' => 0,
-                    'last_page' => 1
-                ]);
-            }
 
             return response()->json($results);
         } catch (\Exception $e) {
@@ -241,6 +225,7 @@ class ApplicantController extends Controller
             }
         }
     }
+
     public function store(Request $request)
     {
         try {
