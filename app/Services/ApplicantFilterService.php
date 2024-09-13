@@ -138,23 +138,28 @@ class ApplicantFilterService
                         [strtolower("Bachelor's Degree"), $twoYearsAgo, $currentYear]
                     );
                 } else {
-                    // MySQL query mirroring PostgreSQL logic
+                    // Updated MySQL query
                     $query->whereRaw(
                         "EXISTS (
                         SELECT 1
-                        FROM JSON_TABLE(
-                            education,
-                            '$[*]' COLUMNS (
-                                degree VARCHAR(255) PATH '$.degree',
-                                grad_year VARCHAR(255) PATH '$.duration[1]'
-                            )
-                        ) AS edu
-                        WHERE LOWER(edu.degree) = ?
+                        FROM (
+                            SELECT a.id, b.n
+                            FROM applicants a
+                            JOIN (
+                                SELECT 0 AS n UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
+                            ) b
+                            WHERE b.n < JSON_LENGTH(a.education)
+                        ) AS numbers
+                        WHERE numbers.id = applicants.id
+                        AND LOWER(JSON_UNQUOTE(JSON_EXTRACT(education, CONCAT('$[', numbers.n, '].degree')))) = ?
                         AND (
                             CASE
-                                WHEN JSON_TYPE(edu.grad_year) = 'INTEGER' THEN CAST(edu.grad_year AS UNSIGNED)
-                                WHEN edu.grad_year REGEXP '^[0-9]+$' THEN CAST(edu.grad_year AS UNSIGNED)
-                                WHEN edu.grad_year = 'present' THEN ?
+                                WHEN JSON_TYPE(JSON_EXTRACT(education, CONCAT('$[', numbers.n, '].duration[1]'))) = 'INTEGER'
+                                    THEN CAST(JSON_UNQUOTE(JSON_EXTRACT(education, CONCAT('$[', numbers.n, '].duration[1]'))) AS UNSIGNED)
+                                WHEN JSON_UNQUOTE(JSON_EXTRACT(education, CONCAT('$[', numbers.n, '].duration[1]'))) REGEXP '^[0-9]+$'
+                                    THEN CAST(JSON_UNQUOTE(JSON_EXTRACT(education, CONCAT('$[', numbers.n, '].duration[1]'))) AS UNSIGNED)
+                                WHEN JSON_UNQUOTE(JSON_EXTRACT(education, CONCAT('$[', numbers.n, '].duration[1]'))) = 'present'
+                                    THEN ?
                                 ELSE ?
                             END
                         ) BETWEEN ? AND ?
