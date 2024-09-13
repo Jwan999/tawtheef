@@ -223,6 +223,7 @@ class ApplicantFilterService
             Log::info('Filtering by main specialization: ' . $mainSpecialization);
 
             if ($this->isPostgres) {
+                // PostgreSQL query remains unchanged
                 $query->whereRaw("
                     EXISTS (
                         SELECT 1
@@ -231,7 +232,8 @@ class ApplicantFilterService
                     )
                 ", [$mainSpecialization]);
             } else {
-                $query->whereRaw("JSON_CONTAINS(LOWER(JSON_EXTRACT(speciality, '$.specializations')), ?)", [json_encode($mainSpecialization)]);
+                // Updated MySQL query
+                $query->whereRaw("JSON_CONTAINS(LOWER(JSON_EXTRACT(speciality, '$.specializations')), LOWER(?), '$')", [json_encode($mainSpecialization)]);
             }
 
             // Log the SQL query and bindings
@@ -239,6 +241,7 @@ class ApplicantFilterService
             Log::info('Query Bindings: ' . json_encode($query->getBindings()));
         }
     }
+
     protected function filterSubSpecialities(Builder $query, Request $request): void
     {
         if ($request->filled('subSpecialities') && is_array($request->input('subSpecialities'))) {
@@ -246,6 +249,7 @@ class ApplicantFilterService
             Log::info('Filtering by sub specialities: ' . json_encode($subSpecialities));
 
             if ($this->isPostgres) {
+                // PostgreSQL query remains unchanged
                 $placeholders = implode(',', array_fill(0, count($subSpecialities), '?'));
                 $query->whereRaw("
                     EXISTS (
@@ -255,8 +259,21 @@ class ApplicantFilterService
                     )
                 ", $subSpecialities);
             } else {
-                $placeholders = implode(',', array_fill(0, count($subSpecialities), '?'));
-                $query->whereRaw("JSON_OVERLAPS(LOWER(JSON_EXTRACT(speciality, '$.children')), JSON_ARRAY($placeholders))", $subSpecialities);
+                // Updated MySQL query
+                $subSpecialitiesJson = json_encode($subSpecialities);
+                $query->whereRaw("
+                    JSON_CONTAINS(
+                        (SELECT JSON_ARRAYAGG(LOWER(TRIM(BOTH '\"' FROM JSON_UNQUOTE(elem))))
+                         FROM JSON_TABLE(JSON_EXTRACT(speciality, '$.children'), '$[*]' COLUMNS (elem VARCHAR(255) PATH '$')) AS jt),
+                        ?,
+                        '$'
+                    )
+                ", [$subSpecialitiesJson]);
             }
+
+            // Log the SQL query and bindings
+            Log::info('SQL Query: ' . $query->toSql());
+            Log::info('Query Bindings: ' . json_encode($query->getBindings()));
         }
-    }}
+    }
+}
