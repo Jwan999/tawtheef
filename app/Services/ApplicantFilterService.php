@@ -185,37 +185,42 @@ class ApplicantFilterService
             if ($this->isPostgres) {
                 $query->whereRaw(
                     "COALESCE((
-                        SELECT SUM(
-                            CASE
-                                WHEN (job->>'duration')::json->>1 = 'present' THEN
-                                    EXTRACT(YEAR FROM CURRENT_DATE) - NULLIF((job->>'duration')::json->>0, '')::int
-                                WHEN (job->>'duration')::json->>1 ~ '^[0-9]+$' AND (job->>'duration')::json->>0 ~ '^[0-9]+$' THEN
-                                    NULLIF((job->>'duration')::json->>1, '')::int - NULLIF((job->>'duration')::json->>0, '')::int
-                                ELSE 0
-                            END
-                        ) FROM jsonb_array_elements(employment::jsonb) AS job
-                    ), 0) BETWEEN ? AND ?",
+                    SELECT SUM(
+                        CASE
+                            WHEN (job->>'duration')::json->>1 = 'present' THEN
+                                EXTRACT(YEAR FROM CURRENT_DATE) - NULLIF((job->>'duration')::json->>0, '')::int
+                            WHEN (job->>'duration')::json->>1 ~ '^[0-9]+$' AND (job->>'duration')::json->>0 ~ '^[0-9]+$' THEN
+                                NULLIF((job->>'duration')::json->>1, '')::int - NULLIF((job->>'duration')::json->>0, '')::int
+                            ELSE 0
+                        END
+                    ) FROM jsonb_array_elements(employment::jsonb) AS job
+                ), 0) BETWEEN ? AND ?",
                     [min($experienceRange), max($experienceRange)]
                 );
             } else {
                 $query->whereRaw(
                     "COALESCE((
-                        SELECT SUM(
-                            CASE
-                                WHEN JSON_UNQUOTE(JSON_EXTRACT(job, '$.duration[1]')) = 'present' THEN
-                                    YEAR(CURDATE()) - NULLIF(CAST(JSON_UNQUOTE(JSON_EXTRACT(job, '$.duration[0]')) AS UNSIGNED), 0)
-                                WHEN JSON_UNQUOTE(JSON_EXTRACT(job, '$.duration[1]')) REGEXP '^[0-9]+$' AND JSON_UNQUOTE(JSON_EXTRACT(job, '$.duration[0]')) REGEXP '^[0-9]+$' THEN
-                                    CAST(JSON_UNQUOTE(JSON_EXTRACT(job, '$.duration[1]')) AS UNSIGNED) - CAST(JSON_UNQUOTE(JSON_EXTRACT(job, '$.duration[0]')) AS UNSIGNED)
-                                ELSE 0
-                            END
-                        ) FROM JSON_TABLE(employment, '$[*]' COLUMNS (job JSON PATH '$')) AS jobs
-                    ), 0) BETWEEN ? AND ?",
+                    SELECT SUM(
+                        CASE
+                            WHEN JSON_UNQUOTE(JSON_EXTRACT(job_duration, '$[1]')) = 'present' THEN
+                                YEAR(CURDATE()) - NULLIF(CAST(JSON_UNQUOTE(JSON_EXTRACT(job_duration, '$[0]')) AS UNSIGNED), 0)
+                            WHEN JSON_UNQUOTE(JSON_EXTRACT(job_duration, '$[1]')) REGEXP '^[0-9]+$'
+                                 AND JSON_UNQUOTE(JSON_EXTRACT(job_duration, '$[0]')) REGEXP '^[0-9]+$' THEN
+                                CAST(JSON_UNQUOTE(JSON_EXTRACT(job_duration, '$[1]')) AS UNSIGNED)
+                                - CAST(JSON_UNQUOTE(JSON_EXTRACT(job_duration, '$[0]')) AS UNSIGNED)
+                            ELSE 0
+                        END
+                    )
+                    FROM (
+                        SELECT JSON_EXTRACT(jobs.value, '$.duration') AS job_duration
+                        FROM JSON_TABLE(employment, '$[*]' COLUMNS (value JSON PATH '$')) AS jobs
+                    ) AS job_durations
+                ), 0) BETWEEN ? AND ?",
                     [min($experienceRange), max($experienceRange)]
                 );
             }
         }
     }
-
     protected function filterMainSpecializations(Builder $query, Request $request): void
     {
         if ($request->filled('mainSpecializations')) {
