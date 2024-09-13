@@ -3,7 +3,7 @@
         class="advance-search-component fixed top-0 right-0 h-full w-full sm:w-3/12 md:w-4/12 lg:w-4/12 bg-zinc-800 text-white z-50 overflow-y-auto transition-transform duration-300"
         :class="{ 'translate-x-0': showAdvanceSearch, 'translate-x-full': !showAdvanceSearch }">
         <div class="p-2 px-8">
-            <div class="sticky w-full top-0 bg-zinc-800 py-2">
+            <div class="sticky z-40 w-full top-0 bg-zinc-800 py-2">
 
                 <div class="flex justify-between items-center mb-3">
                     <h2 class="text-xl text-zinc-100 font-semibold">Advanced Search</h2>
@@ -53,7 +53,7 @@
                     v-if="filters.city === 'Baghdad'"
                     v-model="filters.zone"
                     @change="updateFilter('zone', $event.target.value)"
-                    class="w-full p-2 rounded bg-zinc-700 text-zinc-200 mt-2 border border-zinc-600 focus:border-orange focus:ring focus:ring-orange focus:ring-opacity-50"
+                    class="w-full p-2 rounded text-zinc-700 border border-zinc-600 focus:border-orange focus:ring focus:ring-orange focus:ring-opacity-50"
                 >
                     <option value="" disabled selected>Choose a zone...</option>
                     <option>Karkh</option>
@@ -90,7 +90,7 @@
                 <label class="flex items-center cursor-pointer">
                     <div class="relative mr-2">
                         <input type="checkbox" v-model="filters.freshGraduate"
-                               @change="updateFilter('freshGraduate', $event.target.checked)" class="sr-only">
+                               @change="updateFilter('freshGraduate', $event.target.checked ? $event.target.checked : null)" class="sr-only">
                         <div
                             class="w-10 h-6 rounded-full shadow-inner transition-colors duration-300 ease-in-out"
                             :class="filters.freshGraduate ? 'bg-orange' : 'bg-zinc-50'"
@@ -141,7 +141,7 @@
                 @update:mainSpecializations="(value) => updateFilter('mainSpecializations', value)"
                 @update:subSpecialities="(value) => updateFilter('subSpecialities', value)"
             />
-            <div class="sticky w-full bottom-0 bg-zinc-800 py-2">
+            <div class="sticky z-40 w-full bottom-0 bg-zinc-800 py-2 ">
                 <!-- Apply Search Button -->
                 <button
                     @click="handleAdvancedSearch"
