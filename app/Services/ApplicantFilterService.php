@@ -137,10 +137,8 @@ class ApplicantFilterService
                         [strtolower("Bachelor's Degree"), $twoYearsAgo, $currentYear]
                     );
                 } else {
-                    // MySQL query remains the same
                     $query->whereRaw(
-                        "JSON_CONTAINS(education, JSON_OBJECT('degree', ?))
-                        AND EXISTS (
+                        "EXISTS (
                             SELECT 1
                             FROM JSON_TABLE(
                                 education,
@@ -151,17 +149,18 @@ class ApplicantFilterService
                             ) AS edu
                             WHERE LOWER(edu.degree) = ?
                             AND CASE
-                                WHEN edu.grad_year REGEXP '^[0-9]+$'
-                                THEN CAST(edu.grad_year AS UNSIGNED)
-                                ELSE YEAR(CURDATE())
+                                WHEN edu.grad_year = 'present' THEN ?
+                                WHEN edu.grad_year REGEXP '^[0-9]+$' THEN CAST(edu.grad_year AS UNSIGNED)
+                                ELSE ?
                             END BETWEEN ? AND ?
                         )",
-                        ["Bachelor's Degree", strtolower("Bachelor's Degree"), $twoYearsAgo, $currentYear]
+                        [strtolower("Bachelor's Degree"), $currentYear, $currentYear, $twoYearsAgo, $currentYear]
                     );
                 }
             }
         }
     }
+
     protected function filterWorkAvailability(Builder $query, Request $request): void
     {
         if ($request->filled('workAvailability')) {
@@ -171,8 +170,8 @@ class ApplicantFilterService
                 $query->whereRaw("(contact->>'workAvailability')::boolean = ?", [$isAvailable]);
             } else {
                 $query->whereRaw(
-                    "CASE WHEN ? THEN JSON_EXTRACT(contact, '$.workAvailability') IN ('true', '1') ELSE JSON_EXTRACT(contact, '$.workAvailability') IN ('false', '0', 'null') OR JSON_EXTRACT(contact, '$.workAvailability') IS NULL END",
-                    [$isAvailable]
+                    "JSON_EXTRACT(contact, '$.workAvailability') = ?",
+                    [$isAvailable ? 'true' : 'false']
                 );
             }
         }
@@ -216,6 +215,7 @@ class ApplicantFilterService
             }
         }
     }
+
     protected function filterMainSpecializations(Builder $query, Request $request): void
     {
         if ($request->filled('mainSpecializations')) {
@@ -223,7 +223,6 @@ class ApplicantFilterService
             Log::info('Filtering by main specialization: ' . $mainSpecialization);
 
             if ($this->isPostgres) {
-                // PostgreSQL query remains unchanged
                 $query->whereRaw("
                     EXISTS (
                         SELECT 1
@@ -232,14 +231,10 @@ class ApplicantFilterService
                     )
                 ", [$mainSpecialization]);
             } else {
-                // Updated MySQL query
                 $query->whereRaw("
-                JSON_CONTAINS(
-                    LOWER(JSON_EXTRACT(speciality, '$.specializations')),
-                    LOWER(?),
-                    '$'
-                )
-            ", ['"' . $mainSpecialization . '"']);            }
+                    JSON_SEARCH(LOWER(JSON_EXTRACT(speciality, '$.specializations')), 'one', ?) IS NOT NULL
+                ", [$mainSpecialization]);
+            }
 
             // Log the SQL query and bindings
             Log::info('SQL Query: ' . $query->toSql());
@@ -254,7 +249,6 @@ class ApplicantFilterService
             Log::info('Filtering by sub specialities: ' . json_encode($subSpecialities));
 
             if ($this->isPostgres) {
-                // PostgreSQL query remains unchanged
                 $placeholders = implode(',', array_fill(0, count($subSpecialities), '?'));
                 $query->whereRaw("
                     EXISTS (
@@ -264,16 +258,12 @@ class ApplicantFilterService
                     )
                 ", $subSpecialities);
             } else {
-                // Updated MySQL query
-                $subSpecialitiesJson = json_encode($subSpecialities);
-                $query->whereRaw("
-                    JSON_CONTAINS(
-                        (SELECT JSON_ARRAYAGG(LOWER(TRIM(BOTH '\"' FROM JSON_UNQUOTE(elem))))
-                         FROM JSON_TABLE(JSON_EXTRACT(speciality, '$.children'), '$[*]' COLUMNS (elem VARCHAR(255) PATH '$')) AS jt),
-                        ?,
-                        '$'
-                    )
-                ", [$subSpecialitiesJson]);
+                $conditions = [];
+                foreach ($subSpecialities as $index => $subSpeciality) {
+                    $conditions[] = "JSON_SEARCH(LOWER(JSON_EXTRACT(speciality, '$.children')), 'one', ?) IS NOT NULL";
+                }
+
+                $query->whereRaw('(' . implode(' OR ', $conditions) . ')', $subSpecialities);
             }
 
             // Log the SQL query and bindings
