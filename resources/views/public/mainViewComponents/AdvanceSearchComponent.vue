@@ -1,23 +1,26 @@
 <template>
     <div
-        class="advance-search-component fixed top-0 right-0 h-full w-full md:w-1/2 lg:w-1/3 bg-zinc-800 text-white z-50 overflow-y-auto transition-transform duration-300"
-        :class="{ 'translate-x-0': showAdvanceSearch, 'translate-x-full': !showAdvanceSearch }"
-    >
-        <div class="p-6">
-            <div class="flex justify-between items-center mb-9">
-                <h2 class="text-2xl font-bold">Advanced Search</h2>
-                <button @click="$emit('close')" class="text-white hover:text-orange">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
-                </button>
-            </div>
+        class="advance-search-component fixed top-0 right-0 h-full w-full sm:w-3/12 md:w-4/12 lg:w-4/12 bg-zinc-800 text-white z-50 overflow-y-auto transition-transform duration-300"
+        :class="{ 'translate-x-0': showAdvanceSearch, 'translate-x-full': !showAdvanceSearch }">
+        <div class="p-2 px-8">
+            <div class="sticky w-full top-0 bg-zinc-800 py-2">
 
-            <ActiveFilters
-                :filters="filters"
-                @update:filter="updateFilter"
-                @clear-all="clearAllFilters"
-            />
+                <div class="flex justify-between items-center mb-3">
+                    <h2 class="text-xl text-zinc-100 font-semibold">Advanced Search</h2>
+                    <button @click="$emit('close')" class="text-white hover:text-orange">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                             stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+                <ActiveFilters
+                    :filters="filters"
+                    @update:filter="updateFilter"
+                    @clear-all="clearAllFilters"
+                />
+            </div>
 
             <!-- Gender -->
             <div class="mb-9">
@@ -40,6 +43,7 @@
                 <h3 class="text-lg mb-3">Base City</h3>
                 <select
                     v-model="filters.city"
+                    @change="updateFilter('city', $event.target.value)"
                     class="w-full p-2 rounded text-zinc-700 border border-zinc-600 focus:border-orange focus:ring focus:ring-orange focus:ring-opacity-50"
                 >
                     <option value="" disabled selected>Choose a city...</option>
@@ -48,6 +52,7 @@
                 <select
                     v-if="filters.city === 'Baghdad'"
                     v-model="filters.zone"
+                    @change="updateFilter('zone', $event.target.value)"
                     class="w-full p-2 rounded bg-zinc-700 text-zinc-200 mt-2 border border-zinc-600 focus:border-orange focus:ring focus:ring-orange focus:ring-opacity-50"
                 >
                     <option value="" disabled selected>Choose a zone...</option>
@@ -62,7 +67,7 @@
                 <RangeInput
                     label="Age Range"
                     :modelValue="filters.age || { min: 18, max: 50 }"
-                    @update:modelValue="updateAgeFilter"
+                    @update:modelValue="(value) => updateFilter('age', value)"
                 />
             </div>
 
@@ -71,6 +76,7 @@
                 <h3 class="text-lg mb-3">Educational Degree</h3>
                 <select
                     v-model="filters.degree"
+                    @change="updateFilter('degree', $event.target.value)"
                     class="w-full p-2 rounded bg-zinc-50 text-zinc-700 border border-zinc-600 focus:border-orange focus:ring focus:ring-orange focus:ring-opacity-50"
                 >
                     <option value="" selected>Choose a degree...</option>
@@ -83,7 +89,8 @@
                 <h3 class="text-lg mb-3">Fresh Graduates</h3>
                 <label class="flex items-center cursor-pointer">
                     <div class="relative mr-2">
-                        <input type="checkbox" v-model="filters.freshGraduate" class="sr-only">
+                        <input type="checkbox" v-model="filters.freshGraduate"
+                               @change="updateFilter('freshGraduate', $event.target.checked)" class="sr-only">
                         <div
                             class="w-10 h-6 rounded-full shadow-inner transition-colors duration-300 ease-in-out"
                             :class="filters.freshGraduate ? 'bg-orange' : 'bg-zinc-50'"
@@ -91,10 +98,10 @@
                         <div
                             class="absolute w-[17px] h-[17px] rounded-full shadow top-1 left-1 transition-transform duration-300 ease-in-out"
                             :class="[
-                {'bg-zinc-50': filters.freshGraduate},
-                {'bg-zinc-500': !filters.freshGraduate},
-                { 'translate-x-4': filters.freshGraduate }
-              ]"
+                                {'bg-zinc-50': filters.freshGraduate},
+                                {'bg-zinc-500': !filters.freshGraduate},
+                                { 'translate-x-4': filters.freshGraduate }
+                            ]"
                         ></div>
                     </div>
                     <span>Include Fresh Graduates</span>
@@ -123,34 +130,38 @@
                 <RangeInput
                     label="Work Experience (years)"
                     :modelValue="filters.experience || { min: 2, max: 10 }"
-                    @update:modelValue="updateExperienceFilter"
+                    @update:modelValue="(value) => updateFilter('experience', value)"
                 />
             </div>
 
             <!-- Specialization -->
             <SpecializationSelectsAdvanceSearch
-                v-model:mainSpecializations="filters.mainSpecializations"
-                v-model:subSpecialities="filters.subSpecialities"
+                :mainSpecializations="filters.mainSpecializations"
+                :subSpecialities="filters.subSpecialities"
+                @update:mainSpecializations="(value) => updateFilter('mainSpecializations', value)"
+                @update:subSpecialities="(value) => updateFilter('subSpecialities', value)"
             />
-
-            <!-- Apply Search Button -->
-            <button
-                @click="handleAdvancedSearch"
-                class="w-full bg-orange text-white py-2 rounded mt-6 hover:bg-orange-600 transition-colors duration-300"
-            >
-                Apply Search
-            </button>
+            <div class="sticky w-full bottom-0 bg-zinc-800 py-2">
+                <!-- Apply Search Button -->
+                <button
+                    @click="handleAdvancedSearch"
+                    class="w-full bg-orange text-white py-2 rounded mt-6 hover:bg-orange-600 transition-colors duration-300">
+                    Apply Search
+                </button>
+            </div>
         </div>
     </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
-import { useStore } from 'vuex';
-import { getSelectables } from "../../../js/utils/storeHelpers.js";
+import {ref, computed, onMounted} from 'vue';
+import {useStore} from 'vuex';
+import {getSelectables} from "../../../js/utils/storeHelpers.js";
 import RangeInput from "./RangeInput.vue";
 import SpecializationSelectsAdvanceSearch from "./SpecializationSelectsAdvanceSearch.vue";
 import ActiveFilters from "./ActiveFilters.vue";
+
+const store = useStore();
 
 const props = defineProps({
     showAdvanceSearch: Boolean,
@@ -158,64 +169,32 @@ const props = defineProps({
 
 const emit = defineEmits(['update:showAdvanceSearch', 'advancedSearch', 'close']);
 
-const store = useStore();
-
-const filters = ref({
-    gender: '',
-    city: '',
-    zone: '',
-    age: null,
-    degree: '',
-    freshGraduate: null,
-    workAvailability: '',
-    experience: null,
-    mainSpecializations: [],
-    subSpecialities: [],
-});
-
-const cities = ref([]);
-const degrees = ref([]);
-
-const activeFilters = computed(() => {
-    return Object.entries(filters.value).reduce((acc, [key, value]) => {
-        if (value !== null && value !== '' && !(Array.isArray(value) && value.length === 0)) {
-            acc[key] = value;
-        }
-        return acc;
-    }, {});
-});
-
-const clearAllFilters = () => {
-    Object.keys(filters.value).forEach(key => {
-        filters.value[key] = Array.isArray(filters.value[key]) ? [] : '';
-    });
-    store.dispatch('resetFilters');
-    store.dispatch('setSearchMode', false);
-};
+const filters = computed(() => store.state.filters);
 
 const updateFilter = (key, value) => {
-    filters.value[key] = value;
+    store.dispatch('updateFilter', {key, value});
 };
 
-const updateAgeFilter = (value) => {
-    filters.value.age = value;
-};
-
-const updateExperienceFilter = (value) => {
-    filters.value.experience = value;
+const clearAllFilters = () => {
+    store.dispatch('resetFilters');
 };
 
 const handleAdvancedSearch = async () => {
     try {
-        await store.dispatch('setFilters', activeFilters.value);
-        await store.dispatch('getFilteredApplicants', { page: 1 });
-        store.dispatch('setSearchMode', true);
-        emit('advancedSearch', activeFilters.value);
+        await store.dispatch('getFilteredApplicants', {page: 1});
+        await store.dispatch('setSearchMode', true);
+        emit('advancedSearch');
+        // emit('close');
     } catch (error) {
         console.error("Error in advanced search:", error);
         // Handle error (e.g., show an error message to the user)
     }
 };
+
+
+const cities = ref([]);
+const degrees = ref([]);
+
 
 onMounted(async () => {
     try {
@@ -229,6 +208,7 @@ onMounted(async () => {
     }
 });
 </script>
+
 
 <style scoped>
 .advance-search-component {

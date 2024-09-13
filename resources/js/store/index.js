@@ -8,12 +8,27 @@ function getUserFromLocalStorage() {
         return userString ? JSON.parse(userString) : null;
     } catch (error) {
         console.error('Error parsing user data from localStorage:', error);
-        localStorage.removeItem('user'); // Clear the invalid data
+        localStorage.removeItem('user');
         return null;
     }
 }
+
+const defaultFilters = {
+    experience: null,
+    age: null,
+    gender: null,
+    workAvailability: null,
+    freshGraduate: null,
+    mainSpecializations: [],
+    subSpecialities: [],
+    degree: '',
+    city: '',
+    zone: '',
+};
+
 export default createStore({
     state: {
+        advanceSearchInUse: false,
         isFormValid: false,
         editMode: false,
         previewMode: false,
@@ -36,23 +51,20 @@ export default createStore({
             total: 0
         },
         currentPage: 1,
-        filters: {
-            experience: null,
-            age: null,
-            gender: null,
-            workAvailability: null,
-            freshGraduate: null,
-            mainSpecializations: [],
-            subSpecialities: [],
-            degree: '',
-            city: '',
-            zone: '',
-        },
+        filters: {...defaultFilters},
         searchQuery: '',
         error: null,
     },
     actions: {
-
+        setAdvanceSearchInUse({ commit }, isInUse) {
+            commit('setAdvanceSearchInUse', isInUse);
+        },
+        resetFilters({commit}) {
+            commit('resetFilters');
+        },
+        updateFilter({commit}, {key, value}) {
+            commit('updateFilter', {key, value});
+        },
         setEditMode({commit}, isEdit) {
             commit('setEditMode', isEdit);
         },
@@ -93,14 +105,21 @@ export default createStore({
         async getFilteredApplicants({commit, state}, {page = 1, perPage = 12} = {}) {
             try {
                 commit('clearError');
-                const response = await axios.get('/applicants/filter', {
+                const filteredParams = Object.entries(state.filters).reduce((acc, [key, value]) => {
+                    if (value !== null && value !== '' && !(Array.isArray(value) && value.length === 0)) {
+                        acc[key] = value;
+                    }
+                    return acc;
+                }, {});
+
+                const response = await axios.get('/api/applicants/filter', {
                     params: {
-                        ...state.filters,
+                        ...filteredParams,
                         page,
                         per_page: perPage
                     }
                 });
-                console.log(response.data)
+                console.log(response.data);
 
                 commit('setFilteredApplicants', response.data);
                 commit('setCurrentPage', page);
@@ -136,14 +155,14 @@ export default createStore({
                 commit('setSearchedApplicants', {data: [], current_page: 1, last_page: 1, per_page: 12, total: 0});
             }
         },
-        resetFilters({commit}) {
-            commit('resetFilters');
-        },
         setSearchQuery({commit}, query) {
             commit('setSearchQuery', query);
         },
     },
     mutations: {
+        setAdvanceSearchInUse(state, isInUse) {
+            state.advanceSearchInUse = isInUse;
+        },
         setUser(state, user) {
             state.user = user;
             const userAsString = JSON.stringify(user);
@@ -192,25 +211,10 @@ export default createStore({
             state.filters = {...state.filters, ...filters};
         },
         updateFilter(state, {key, value}) {
-            if (key === 'mainSpecializations' || key === 'subSpecialities') {
-                state.filters[key] = Array.isArray(value) ? value : [value].filter(Boolean);
-            } else {
-                state.filters[key] = value;
-            }
+            state.filters[key] = value;
         },
         resetFilters(state) {
-            state.filters = {
-                experience: null,
-                age: null,
-                gender: null,
-                workAvailability: null,
-                freshGraduate: null,
-                mainSpecializations: [],
-                subSpecialities: [],
-                degree: null,
-                city: null,
-                zone: null,
-            };
+            state.filters = {...defaultFilters};
         },
         setCurrentPage(state, page) {
             state.currentPage = page;
@@ -240,6 +244,7 @@ export default createStore({
         },
     },
     getters: {
+        advanceSearchInUse: state => state.advanceSearchInUse,
         getCurrentApplicantId: (state) => state.user?.applicant?.id || null,
         isFormValid: state => state.isFormValid,
         user: (state) => state.user,
@@ -255,5 +260,13 @@ export default createStore({
         currentPage: state => state.currentPage,
         searchQuery: state => state.searchQuery,
         error: state => state.error,
+        activeFilters: (state) => {
+            return Object.entries(state.filters).reduce((acc, [key, value]) => {
+                if (value !== null && value !== '' && !(Array.isArray(value) && value.length === 0)) {
+                    acc[key] = value;
+                }
+                return acc;
+            }, {});
+        },
     }
 });

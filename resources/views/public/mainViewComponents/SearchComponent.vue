@@ -52,9 +52,10 @@
                             <div class="absolute right-0 top-1" ref="buttonContainer">
                                 <button @click="toggleAdvanceSearch"
                                         :class="{'bg-orange text-white': showAdvanceSearch, 'fixed-position': isButtonFixed}"
-                                        class="advanced-search-button transition-all duration-300 flex items-center bg-white hover:bg-orange hover:text-white text-zinc-600 rounded-full px-8 py-2">
+                                        class="advanced-search-button z-40 transition-all duration-300 flex items-center bg-orange hover:bg-dark text-white rounded-bl-xl rounded-tr-xl
+                                         py-2 px-3">
                                     <svg
-                                        class="w-6 h-6 md:mr-2 md:hidden block"
+                                        class="w-6 h-6 md:mr-2 fill-white md:hidden block"
                                         viewBox="0 0 189.524 189.524"
                                         xmlns="http://www.w3.org/2000/svg">
                                         <g>
@@ -79,7 +80,7 @@
                                             </g>
                                         </g>
                                     </svg>
-                                    <span class="whitespace-nowrap md:block hidden">{{ showAdvanceSearch ? 'Close' : 'Advanced Search' }}</span>
+                                    <span class="whitespace-nowrap md:block hidden px-6">{{ showAdvanceSearch ? 'Close' : 'Advanced Search' }}</span>
                                 </button>
                             </div>
                         </div>
@@ -100,10 +101,11 @@
 
 <script setup>
 import { ref, watch, onMounted, onUnmounted } from "vue";
-import store from "../../../js/store/index.js";
+import { useStore } from 'vuex';
 import ActiveFilters from "./ActiveFilters.vue";
 import AdvanceSearchComponent from "./AdvanceSearchComponent.vue";
 
+const store = useStore();
 const showAdvanceSearch = ref(false);
 const searchApplied = ref(false);
 const searchTerm = ref('');
@@ -120,7 +122,9 @@ const handleSearch = async () => {
         await store.dispatch('resetFilters');
         await store.dispatch('getFilteredApplicants', { page: 1 });
     }
-};const clearSearch = () => {
+};
+
+const clearSearch = () => {
     searchTerm.value = '';
     store.dispatch('setSearchMode', false);
     store.dispatch('resetFilters');
@@ -132,7 +136,7 @@ const handleAdvancedSearch = async (advancedFilters) => {
         await store.dispatch('setFilters', advancedFilters);
         await store.dispatch('getFilteredApplicants', { page: 1 });
         searchApplied.value = true;
-        store.dispatch('setSearchMode', true);
+        await store.dispatch('setSearchMode', true);
         if (store.getters.error) {
             console.error(store.getters.error);
             // Handle error (e.g., show an error message to the user)
@@ -142,12 +146,15 @@ const handleAdvancedSearch = async (advancedFilters) => {
         // Handle error (e.g., show an error message to the user)
     }
 };
+
 const toggleAdvanceSearch = () => {
     showAdvanceSearch.value = !showAdvanceSearch.value;
+    store.dispatch('setAdvanceSearchInUse', showAdvanceSearch.value);
 };
 
 const closeAdvanceSearch = () => {
     showAdvanceSearch.value = false;
+    store.dispatch('setAdvanceSearchInUse', false);
 };
 
 const handleScroll = () => {
@@ -174,13 +181,9 @@ onUnmounted(() => {
     window.removeEventListener('scroll', handleScroll);
 });
 
-// watch(() => store.state.filters, () => {
-//     if (Object.values(store.state.filters).some(value => value !== null && value !== undefined && value !== '')) {
-//         searchApplied.value = true;
-//     } else {
-//         searchApplied.value = false;
-//     }
-// }, { deep: true });
+watch(showAdvanceSearch, (newValue) => {
+    store.dispatch('setAdvanceSearchInUse', newValue);
+});
 </script>
 
 <style scoped>

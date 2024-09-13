@@ -161,12 +161,13 @@ class ApplicantFilterService
         if ($request->filled('mainSpecializations') && is_array($request->input('mainSpecializations'))) {
             $mainSpecializations = $request->input('mainSpecializations');
             if ($this->isPostgres) {
-                $query->whereIn(DB::raw("speciality->>'parent'"), $mainSpecializations);
+                $query->whereRaw("speciality->>'parent' = ANY(?::text[])", [json_encode($mainSpecializations)]);
             } else {
-                $query->whereIn(DB::raw("JSON_UNQUOTE(JSON_EXTRACT(speciality, '$.parent'))"), $mainSpecializations);
+                $query->whereRaw("JSON_CONTAINS(JSON_ARRAY(?), JSON_UNQUOTE(JSON_EXTRACT(speciality, '$.parent')))", [json_encode($mainSpecializations)]);
             }
         }
     }
+
 
     protected function filterSubSpecialities(Builder $query, Request $request): void
     {

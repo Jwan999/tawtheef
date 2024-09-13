@@ -10,10 +10,12 @@
             </div>
         </div>
 
-        <Loader v-if="loading" />
+        <Loader v-if="loading"/>
 
-        <div v-else class="px-10 mt-16">
-            <div v-if="applicantsToShow.length" class="grid grid-cols-1 md:grid-cols-4 justify-items-center gap-x-4 gap-y-14">
+        <div v-else class="mt-16">
+            <div v-if="applicantsToShow.length"
+                 :class="isAdvanceSearchInUse ? 'px-4 sm:w-8/12 md:w-8/12 lg:w-8/12 grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3' : 'px-10 grid-cols-1 sm:grid-cols-2 md:grid-cols-4 justify-items-center'"
+                 class="grid gap-x-4 gap-y-14 justify-items-center">
                 <ApplicantCard
                     v-for="applicant in applicantsToShow"
                     :key="applicant.id"
@@ -45,8 +47,8 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue';
-import { useStore } from 'vuex';
+import {ref, computed, watch} from 'vue';
+import {useStore} from 'vuex';
 import ApplicantCard from './ApplicantCard.vue';
 import Pagination from './Pagination.vue';
 import Loader from '../../../js/components/LottieLoader.vue';
@@ -57,26 +59,28 @@ const currentPage = ref(1);
 const loading = ref(false);
 const alertMessage = ref('');
 const alertType = ref('info');
+const isAdvanceSearchInUse = computed(() => store.state.advanceSearchInUse);
+
 
 const isSearchMode = computed(() => store.state.searchMode);
-// const combinedApplicants = computed(() =>
-//     isSearchMode.value && store.state.searchedApplicants.data.length > 0
-//         ? store.state.searchedApplicants
-//         : store.state.filteredApplicants
-// );
-const combinedApplicants = ref(store.state.filteredApplicants);
+const combinedApplicants = computed(() =>
+    isSearchMode.value && store.state.searchedApplicants.data.length > 0
+        ? store.state.searchedApplicants
+        : store.state.filteredApplicants
+);
 
 const applicantsToShow = computed(() => combinedApplicants.value.data || []);
 
 const fetchApplicants = async (page) => {
+    if (!isSearchMode.value) return;
+
     loading.value = true;
     alertMessage.value = '';
     try {
-        const action = isSearchMode.value ? 'searchApplicants' : 'getFilteredApplicants';
+        const action = 'getFilteredApplicants';
         await store.dispatch(action, {
             page,
             perPage: combinedApplicants.value.per_page,
-            ...(isSearchMode.value ? { search: store.state.searchQuery } : {})
         });
     } catch (error) {
         console.error('Error fetching applicants:', error);
@@ -92,20 +96,18 @@ const changePage = (page) => {
     fetchApplicants(page);
 };
 
-const refreshApplicants = () => {
+watch(isSearchMode, (newValue) => {
+    if (newValue) {
+        fetchApplicants(1);
+    }
+});
+
+// Method to be called when "Apply" is clicked in the AdvancedSearch component
+const handleAdvancedSearch = () => {
     currentPage.value = 1;
-    store.commit('clearSearchedApplicants');
     fetchApplicants(1);
 };
 
-watch(() => store.state.searchQuery, refreshApplicants);
-
-watch(() => store.state.filters, () => {
-    store.dispatch('setSearchMode', false);
-    refreshApplicants();
-}, { deep: true });
-
-onMounted(() => {
-    fetchApplicants(1);
-});
+// Expose the method to parent components
+defineExpose({handleAdvancedSearch});
 </script>

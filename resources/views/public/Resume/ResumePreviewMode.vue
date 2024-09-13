@@ -2,13 +2,12 @@
     <div class="mt-6 px-4 md:px-10 flex w-full justify-end">
         <div class="flex justify-between w-full mb-6">
             <div class="md:w-1/12 sm:w-1/12 w-2/12">
-                <a href="/">
-                    <button @click="handleBackButton"
-                            class="appearance-none w-full text-sm font-semibold tracking-wide py-3 border-[1px] border-zinc-700">
+                    <button
+                        class="appearance-none text-zinc-700 hover:text-white hover:bg-dark w-full text-sm font-semibold tracking-wide py-3 border-[1px] border-zinc-700"
+                    >
                         Back
                     </button>
 
-                </a>
 
             </div>
             <div class="md:w-2/12 sm:w-3/12 w-5/12">
@@ -104,7 +103,8 @@ const {
     publishResume,
     validateAndPublish,
     isDashboard,
-    handleBackButton,
+    goBack,
+    canGoBack,
 
 } = useResumeLogic();
 </script>

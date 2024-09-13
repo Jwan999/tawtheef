@@ -3,7 +3,7 @@
     <div class="mb-6 bg-zinc-700 rounded-lg p-4">
         <div class="flex justify-between items-center mb-2">
             <h3 class="text-lg font-semibold">Active Filters</h3>
-            <button @click="$emit('clear-all')" v-if="Object.keys(groupedFilters).length > 0"
+            <button @click="clearAllFilters" v-if="Object.keys(groupedFilters).length > 0"
                     class="text-orange hover:text-orange-300 text-sm font-semibold transition-colors duration-300">
                 Clear All
             </button>
@@ -35,6 +35,9 @@
 
 <script setup>
 import { computed } from 'vue';
+import { useStore } from 'vuex';
+
+const store = useStore();
 
 const props = defineProps({
     filters: {
@@ -96,7 +99,11 @@ const isEmptyValue = (value) => {
     return value === '' || value === null || value === undefined || (Array.isArray(value) && value.length === 0);
 };
 
-// In the removeFilter function, update these lines:
+const clearAllFilters = () => {
+    // store.dispatch('resetFilters');
+    emit('clear-all');
+};
+
 const removeFilter = (key) => {
     let resetValue;
     switch (key) {
@@ -106,14 +113,15 @@ const removeFilter = (key) => {
             break;
         case 'age':
         case 'experience':
-            resetValue = null;  // Keep these as null
+            resetValue = null;
             break;
         case 'freshGraduate':
             resetValue = null;
             break;
         default:
-            resetValue = '';
+            resetValue = null;
     }
+    // store.commit('updateFilter', { key, value: resetValue });
     emit('update:filter', key, resetValue);
 };
 </script>

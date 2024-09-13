@@ -23,17 +23,4 @@ const store = useStore();
 
 const searchMode = computed(() => store.state.searchMode);
 
-const lastState = ref({
-    searchMode: false,
-    filters: {},
-});
-
-watch(() => store.state.filters, (newFilters) => {
-    const hasActiveFilters = Object.values(newFilters).some(value =>
-        value !== null && value !== '' && value !== undefined &&
-        !(Array.isArray(value) && value.length === 0)
-    );
-    store.commit('setSearchMode', hasActiveFilters);
-}, { deep: true });
-
 </script>

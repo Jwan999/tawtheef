@@ -228,21 +228,25 @@ export function useResumeLogic() {
         checkRouteAndFetchData().then(r => {});
     });
     const handleBackButton = () => {
-        // Restore the previous state
-        store.commit('restoreLastState');
+        // Go back to the previous page
+        router.back();
 
-        // Scroll to the previous position or to the search area
+        // Use nextTick to ensure the navigation has completed before attempting to access DOM elements
         nextTick(() => {
-            if (store.state.searchMode) {
+            const searchMode = store.state.searchMode;
+            if (searchMode) {
                 const searchArea = document.getElementById('search-area');
                 if (searchArea) {
                     searchArea.scrollIntoView({ behavior: 'smooth' });
                 }
             } else {
-                window.scrollTo(0, store.state.lastScrollPosition);
+                // If not in search mode, restore the last known scroll position
+                const lastScrollPosition = store.state.lastScrollPosition || 0;
+                window.scrollTo(0, lastScrollPosition);
             }
         });
     };
+
     onMounted(() => {
         store.commit('setPreviewMode', route.name === 'preview-view');
         checkRouteAndFetchData().then(r => {});
