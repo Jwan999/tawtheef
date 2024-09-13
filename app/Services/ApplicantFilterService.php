@@ -233,8 +233,13 @@ class ApplicantFilterService
                 ", [$mainSpecialization]);
             } else {
                 // Updated MySQL query
-                $query->whereRaw("JSON_CONTAINS(LOWER(JSON_EXTRACT(speciality, '$.specializations')), LOWER(?), '$')", [json_encode($mainSpecialization)]);
-            }
+                $query->whereRaw("
+                JSON_CONTAINS(
+                    LOWER(JSON_EXTRACT(speciality, '$.specializations')),
+                    LOWER(?),
+                    '$'
+                )
+            ", ['"' . $mainSpecialization . '"']);            }
 
             // Log the SQL query and bindings
             Log::info('SQL Query: ' . $query->toSql());
