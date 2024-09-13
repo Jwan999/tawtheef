@@ -19,6 +19,8 @@ class ApplicantFilterService
     public function applyFilters(Builder $query, Request $request): void
     {
         try {
+            Log::info('Applying filters with request data: ' . json_encode($request->all()));
+
             $this->filterGender($query, $request);
             $this->filterCity($query, $request);
             $this->filterAgeRange($query, $request);
@@ -37,7 +39,6 @@ class ApplicantFilterService
             throw $e;
         }
     }
-
     protected function filterGender(Builder $query, Request $request): void
     {
         if ($request->filled('gender')) {
