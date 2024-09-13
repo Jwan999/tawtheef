@@ -138,30 +138,15 @@ class ApplicantFilterService
                         [strtolower("Bachelor's Degree"), $twoYearsAgo, $currentYear]
                     );
                 } else {
-                    // Updated MySQL query
+                    // Simplified MySQL query
                     $query->whereRaw(
-                        "JSON_CONTAINS(
-                        education,
-                        JSON_OBJECT('degree', ?),
-                        '$'
-                    ) AND (
-                        SELECT MAX(
-                            CASE
-                                WHEN CAST(JSON_UNQUOTE(JSON_EXTRACT(edu.value, '$.duration[1]')) AS CHAR) = 'present' THEN ?
-                                WHEN JSON_UNQUOTE(JSON_EXTRACT(edu.value, '$.duration[1]')) REGEXP '^[0-9]+$'
-                                    THEN CAST(JSON_UNQUOTE(JSON_EXTRACT(edu.value, '$.duration[1]')) AS UNSIGNED)
-                                ELSE ?
-                            END
-                        )
-                        FROM JSON_TABLE(
-                            education,
-                            '$[*]' COLUMNS (
-                                value JSON PATH '$'
-                            )
-                        ) AS edu
-                        WHERE LOWER(JSON_UNQUOTE(JSON_EXTRACT(edu.value, '$.degree'))) = ?
-                    ) BETWEEN ? AND ?",
-                        ["Bachelor's Degree", $currentYear, $currentYear, strtolower("Bachelor's Degree"), $twoYearsAgo, $currentYear]
+                        "education REGEXP ?",
+                        ['\"degree\"[[:space:]]*:[[:space:]]*\"Bachelor\'s Degree\"']
+                    )->whereRaw(
+                        "CAST(SUBSTRING_INDEX(SUBSTRING_INDEX(education, '\"duration\":[', -1), ',', 1) AS UNSIGNED) BETWEEN ? AND ?
+                    OR
+                    SUBSTRING_INDEX(SUBSTRING_INDEX(education, '\"duration\":[', -1), ',', 1) = 'present'",
+                        [$twoYearsAgo, $currentYear]
                     );
                 }
 
@@ -170,8 +155,7 @@ class ApplicantFilterService
                 Log::info('Fresh Graduate Query Bindings: ' . json_encode($query->getBindings()));
             }
         }
-    }
-    protected function filterWorkAvailability(Builder $query, Request $request): void
+    }    protected function filterWorkAvailability(Builder $query, Request $request): void
     {
         if ($request->filled('workAvailability')) {
             $isAvailable = filter_var($request->input('workAvailability'), FILTER_VALIDATE_BOOLEAN);
