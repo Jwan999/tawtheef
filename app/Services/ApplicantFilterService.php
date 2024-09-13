@@ -140,25 +140,28 @@ class ApplicantFilterService
                 } else {
                     // Updated MySQL query
                     $query->whereRaw(
-                        "EXISTS (
-                        SELECT 1
+                        "JSON_CONTAINS(
+                        education,
+                        JSON_OBJECT('degree', ?),
+                        '$'
+                    ) AND (
+                        SELECT MAX(
+                            CASE
+                                WHEN CAST(JSON_UNQUOTE(JSON_EXTRACT(edu.value, '$.duration[1]')) AS CHAR) = 'present' THEN ?
+                                WHEN JSON_UNQUOTE(JSON_EXTRACT(edu.value, '$.duration[1]')) REGEXP '^[0-9]+$'
+                                    THEN CAST(JSON_UNQUOTE(JSON_EXTRACT(edu.value, '$.duration[1]')) AS UNSIGNED)
+                                ELSE ?
+                            END
+                        )
                         FROM JSON_TABLE(
                             education,
                             '$[*]' COLUMNS (
-                                degree VARCHAR(255) PATH '$.degree',
-                                grad_year VARCHAR(255) PATH '$.duration[1]'
+                                value JSON PATH '$'
                             )
                         ) AS edu
-                        WHERE LOWER(edu.degree) = ?
-                        AND (
-                            CASE
-                                WHEN edu.grad_year = 'present' THEN ?
-                                WHEN edu.grad_year REGEXP '^[0-9]+$' THEN CAST(edu.grad_year AS UNSIGNED)
-                                ELSE ?
-                            END
-                        ) BETWEEN ? AND ?
-                    )",
-                        [strtolower("Bachelor's Degree"), $currentYear, $currentYear, $twoYearsAgo, $currentYear]
+                        WHERE LOWER(JSON_UNQUOTE(JSON_EXTRACT(edu.value, '$.degree'))) = ?
+                    ) BETWEEN ? AND ?",
+                        ["Bachelor's Degree", $currentYear, $currentYear, strtolower("Bachelor's Degree"), $twoYearsAgo, $currentYear]
                     );
                 }
 
