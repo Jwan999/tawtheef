@@ -138,15 +138,28 @@ class ApplicantFilterService
                         [strtolower("Bachelor's Degree"), $twoYearsAgo, $currentYear]
                     );
                 } else {
-                    // Simplified MySQL query
+                    // MySQL query mirroring PostgreSQL logic
                     $query->whereRaw(
-                        "education REGEXP ?",
-                        ['\"degree\"[[:space:]]*:[[:space:]]*\"Bachelor\'s Degree\"']
-                    )->whereRaw(
-                        "CAST(SUBSTRING_INDEX(SUBSTRING_INDEX(education, '\"duration\":[', -1), ',', 1) AS UNSIGNED) BETWEEN ? AND ?
-                    OR
-                    SUBSTRING_INDEX(SUBSTRING_INDEX(education, '\"duration\":[', -1), ',', 1) = 'present'",
-                        [$twoYearsAgo, $currentYear]
+                        "EXISTS (
+                        SELECT 1
+                        FROM JSON_TABLE(
+                            education,
+                            '$[*]' COLUMNS (
+                                degree VARCHAR(255) PATH '$.degree',
+                                grad_year VARCHAR(255) PATH '$.duration[1]'
+                            )
+                        ) AS edu
+                        WHERE LOWER(edu.degree) = ?
+                        AND (
+                            CASE
+                                WHEN JSON_TYPE(edu.grad_year) = 'INTEGER' THEN CAST(edu.grad_year AS UNSIGNED)
+                                WHEN edu.grad_year REGEXP '^[0-9]+$' THEN CAST(edu.grad_year AS UNSIGNED)
+                                WHEN edu.grad_year = 'present' THEN ?
+                                ELSE ?
+                            END
+                        ) BETWEEN ? AND ?
+                    )",
+                        [strtolower("Bachelor's Degree"), $currentYear, $currentYear, $twoYearsAgo, $currentYear]
                     );
                 }
 
@@ -155,7 +168,8 @@ class ApplicantFilterService
                 Log::info('Fresh Graduate Query Bindings: ' . json_encode($query->getBindings()));
             }
         }
-    }    protected function filterWorkAvailability(Builder $query, Request $request): void
+    }
+    protected function filterWorkAvailability(Builder $query, Request $request): void
     {
         if ($request->filled('workAvailability')) {
             $isAvailable = filter_var($request->input('workAvailability'), FILTER_VALIDATE_BOOLEAN);
