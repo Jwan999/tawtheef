@@ -183,6 +183,7 @@ class ApplicantFilterService
             $experienceRange = array_map('intval', $request->input('experience'));
             Log::info('Filtering by experience range: ' . json_encode($experienceRange));
             if ($this->isPostgres) {
+                // PostgreSQL query remains unchanged
                 $query->whereRaw(
                     "COALESCE((
                     SELECT SUM(
@@ -198,23 +199,34 @@ class ApplicantFilterService
                     [min($experienceRange), max($experienceRange)]
                 );
             } else {
+                // Updated MySQL query
                 $query->whereRaw(
                     "COALESCE((
                     SELECT SUM(
                         CASE
-                            WHEN JSON_UNQUOTE(JSON_EXTRACT(job_duration, '$[1]')) = 'present' THEN
-                                YEAR(CURDATE()) - NULLIF(CAST(JSON_UNQUOTE(JSON_EXTRACT(job_duration, '$[0]')) AS UNSIGNED), 0)
-                            WHEN JSON_UNQUOTE(JSON_EXTRACT(job_duration, '$[1]')) REGEXP '^[0-9]+$'
-                                 AND JSON_UNQUOTE(JSON_EXTRACT(job_duration, '$[0]')) REGEXP '^[0-9]+$' THEN
-                                CAST(JSON_UNQUOTE(JSON_EXTRACT(job_duration, '$[1]')) AS UNSIGNED)
-                                - CAST(JSON_UNQUOTE(JSON_EXTRACT(job_duration, '$[0]')) AS UNSIGNED)
+                            WHEN JSON_UNQUOTE(JSON_EXTRACT(employment, CONCAT('$[', job_index, '].duration[1]'))) = 'present' THEN
+                                YEAR(CURDATE()) - CAST(JSON_UNQUOTE(JSON_EXTRACT(employment, CONCAT('$[', job_index, '].duration[0]'))) AS UNSIGNED)
+                            WHEN JSON_UNQUOTE(JSON_EXTRACT(employment, CONCAT('$[', job_index, '].duration[1]'))) REGEXP '^[0-9]+$'
+                                 AND JSON_UNQUOTE(JSON_EXTRACT(employment, CONCAT('$[', job_index, '].duration[0]'))) REGEXP '^[0-9]+$' THEN
+                                CAST(JSON_UNQUOTE(JSON_EXTRACT(employment, CONCAT('$[', job_index, '].duration[1]'))) AS UNSIGNED)
+                                - CAST(JSON_UNQUOTE(JSON_EXTRACT(employment, CONCAT('$[', job_index, '].duration[0]'))) AS UNSIGNED)
                             ELSE 0
                         END
                     )
                     FROM (
-                        SELECT JSON_EXTRACT(jobs.value, '$.duration') AS job_duration
-                        FROM JSON_TABLE(employment, '$[*]' COLUMNS (value JSON PATH '$')) AS jobs
-                    ) AS job_durations
+                        SELECT a.id, b.job_index
+                        FROM applicants a
+                        JOIN (
+                            SELECT 0 AS job_index
+                            UNION ALL SELECT 1
+                            UNION ALL SELECT 2
+                            UNION ALL SELECT 3
+                            UNION ALL SELECT 4
+                            -- Add more UNION ALL SELECT statements if you need to support more than 5 jobs
+                        ) b
+                        WHERE b.job_index < JSON_LENGTH(a.employment)
+                    ) as job_indices
+                    WHERE job_indices.id = applicants.id
                 ), 0) BETWEEN ? AND ?",
                     [min($experienceRange), max($experienceRange)]
                 );
