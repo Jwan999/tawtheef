@@ -119,48 +119,55 @@ class ApplicantFilterService
                 $twoYearsAgo = now()->subYears(2)->startOfYear()->year;
                 $currentYear = now()->year;
                 if ($this->isPostgres) {
+                    // PostgreSQL query remains unchanged
                     $query->whereRaw(
                         "EXISTS (
-                            SELECT 1
-                            FROM jsonb_array_elements(education::jsonb) AS edu
-                            WHERE LOWER(edu->>'degree') = ?
-                            AND (
-                                CASE
-                                    WHEN jsonb_typeof(edu->'duration'->1) = 'number'
-                                    THEN (edu->'duration'->1)::int
-                                    WHEN jsonb_typeof(edu->'duration'->1) = 'string' AND (edu->'duration'->1)::text ~ '^[0-9]+$'
-                                    THEN (edu->'duration'->1)::text::int
-                                    ELSE EXTRACT(YEAR FROM CURRENT_DATE)
-                                END
-                            ) BETWEEN ? AND ?
-                        )",
+                        SELECT 1
+                        FROM jsonb_array_elements(education::jsonb) AS edu
+                        WHERE LOWER(edu->>'degree') = ?
+                        AND (
+                            CASE
+                                WHEN jsonb_typeof(edu->'duration'->1) = 'number'
+                                THEN (edu->'duration'->1)::int
+                                WHEN jsonb_typeof(edu->'duration'->1) = 'string' AND (edu->'duration'->1)::text ~ '^[0-9]+$'
+                                THEN (edu->'duration'->1)::text::int
+                                ELSE EXTRACT(YEAR FROM CURRENT_DATE)
+                            END
+                        ) BETWEEN ? AND ?
+                    )",
                         [strtolower("Bachelor's Degree"), $twoYearsAgo, $currentYear]
                     );
                 } else {
+                    // Updated MySQL query
                     $query->whereRaw(
                         "EXISTS (
-                            SELECT 1
-                            FROM JSON_TABLE(
-                                education,
-                                '$[*]' COLUMNS (
-                                    degree VARCHAR(255) PATH '$.degree',
-                                    grad_year VARCHAR(255) PATH '$.duration[1]'
-                                )
-                            ) AS edu
-                            WHERE LOWER(edu.degree) = ?
-                            AND CASE
+                        SELECT 1
+                        FROM JSON_TABLE(
+                            education,
+                            '$[*]' COLUMNS (
+                                degree VARCHAR(255) PATH '$.degree',
+                                grad_year VARCHAR(255) PATH '$.duration[1]'
+                            )
+                        ) AS edu
+                        WHERE LOWER(edu.degree) = ?
+                        AND (
+                            CASE
                                 WHEN edu.grad_year = 'present' THEN ?
                                 WHEN edu.grad_year REGEXP '^[0-9]+$' THEN CAST(edu.grad_year AS UNSIGNED)
                                 ELSE ?
-                            END BETWEEN ? AND ?
-                        )",
+                            END
+                        ) BETWEEN ? AND ?
+                    )",
                         [strtolower("Bachelor's Degree"), $currentYear, $currentYear, $twoYearsAgo, $currentYear]
                     );
                 }
+
+                // Add logging for debugging
+                Log::info('Fresh Graduate SQL Query: ' . $query->toSql());
+                Log::info('Fresh Graduate Query Bindings: ' . json_encode($query->getBindings()));
             }
         }
     }
-
     protected function filterWorkAvailability(Builder $query, Request $request): void
     {
         if ($request->filled('workAvailability')) {
