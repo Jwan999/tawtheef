@@ -108,15 +108,22 @@ const clearAllFilters = () => {
 };
 
 const removeFilter = (key, index) => {
-    let updatedValue = [...props.filters[key]];
+    let updatedValue = props.filters[key];
+
     if (Array.isArray(updatedValue)) {
+        updatedValue = [...updatedValue];
         updatedValue.splice(index, 1);
         if (updatedValue.length === 0) {
             updatedValue = null;
         }
+    } else if (typeof updatedValue === 'object' && updatedValue !== null) {
+        // Handle object types (like age and experience ranges)
+        updatedValue = null;
     } else {
+        // For primitive types, just set to null
         updatedValue = null;
     }
+
     emit('update:filter', key, updatedValue);
 };
 </script>
