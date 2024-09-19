@@ -3,7 +3,7 @@
         <h1 class="flex-none text-xl font-semibold text-dark">Personal Skills</h1>
         <hr class="h-px w-full bg-orange border-0 mt-1">
     </div>
-    <div v-if="!editMode" class="rounded-md p-4 bg-white text-sm md:text-sm">
+    <div v-if="!editMode" class="rounded-md py-4 bg-white text-sm md:text-sm">
         <div class="space-y-1">
             <div v-if="!editMode && selectedSkills.length == 0">
                 <p class="text-sm text-zinc-700">
@@ -23,11 +23,10 @@
         </div>
     </div>
     <div v-else>
-        <div class="rounded-md p-4 bg-white text-sm md:text-base">
-            <div class="space-y-1">
-                <div class="py-2">
-                    <h1 class="block mb-3 text-zinc-600 mt-2">* You can pick five personal-skills only.</h1>
-                </div>
+        <div class="rounded-md py-2 pb-0 bg-white text-sm md:text-base">
+            <div class="">
+                <h1 class="block mb-3 text-zinc-600">* You can pick maximum 5 personal-skills.</h1>
+
                 <div class="space-y-3">
 
                     <div class="">
@@ -73,14 +72,14 @@ const selectedSkills = ref([])
 const selectSkill = (event) => {
     const skill = event.target.value;
     const index = selectedSkills.value.indexOf(skill);
-    if(selectedSkills.value.length == 5 && index == -1) {
+    if (selectedSkills.value.length == 5 && index == -1) {
         return event.preventDefault();
     }
 
-    if(index == -1) {
+    if (index == -1) {
         selectedSkills.value.push(skill)
     } else {
-        selectedSkills.value.splice(index,1);
+        selectedSkills.value.splice(index, 1);
     }
 }
 

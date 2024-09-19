@@ -11,6 +11,7 @@
         body {
             font-family: 'Dosis', sans-serif;
             background-color: #ffffff;
+            font-weight: 600;
         }
 
         .container {
@@ -70,7 +71,7 @@
         }
 
         .skill-tag {
-            background-color: #fff7ed;
+            background-color: #F4F4F5;
             color: #3F3F46;
             padding: 0.25rem 0.75rem;
             border-radius: 9999px;

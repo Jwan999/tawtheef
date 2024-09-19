@@ -41,7 +41,7 @@
                     </h1>
                 </div>
                 <div class="mt-2">
-                    <div v-if="applicant.topTools && applicant.topTools.length > 0" class="flex items-center space-x-2 capitalize">
+                    <div v-if="applicant.topTools && applicant.topTools.length > 0" class="flex flew-wrap items-center space-x-2 capitalize">
                         <div v-for="tool in applicant.topTools" :key="tool.item">
               <span class="bg-dark text-xs text-white font-semibold py-1 px-3 rounded-full">
                 {{ tool.item }}

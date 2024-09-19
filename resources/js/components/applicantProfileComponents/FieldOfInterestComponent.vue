@@ -28,12 +28,12 @@
             </div>
         </div>
 
-        <div v-else class="bg-white rounded-md shadow-sm">
-            <div class="bg-orange text-lg text-white py-3 px-4 font-semibold rounded-t-md">
-                <h2>Select Your Specializations (Max 2)</h2>
-            </div>
-            <div class="p-4">
-                <p class="text-zinc-500 mb-4">* You can pick two main specializations only.</p>
+        <div v-else class="bg-white rounded-md">
+<!--            <div class="bg-dark text-lg text-white py-3 px-4 font-semibold rounded-t-md">-->
+<!--                <h2>Select Your Specializations (Maximum 2)</h2>-->
+<!--            </div>-->
+            <div class="">
+                <p class="text-zinc-500 mb-4">Select Your Specializations (Maximum 2)</p>
                 <div class="space-y-4">
                     <div v-for="(item, index) in specialities" :key="index" class="border-b border-orange-200 pb-4 last:border-b-0">
                         <div class="flex items-center space-x-2 mb-2">

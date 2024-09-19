@@ -10,7 +10,7 @@ import ResumePreviewMode from "../../views/public/Resume/ResumePreviewMode.vue"
 import ResumeProfileMode from "../../views/public/Resume/ResumeProfileMode.vue"
 
 const routes = [
-    {path: '/', component: Home},
+    {path: '/', component: Home, name: 'home'},
 
     // {path: '/profile/:id', component: ApplicantProfileView, name: 'profile-view', meta: {requiresAuth: true}},
     // {path: '/profile/:id/edit', component: ApplicantProfileView, name: 'profile-edit', meta: {requiresAuth: true}},

@@ -28,7 +28,6 @@
                         {{ workAvailability ? 'Available for Work' : 'Not currently looking' }}
                     </span>
                     </div>
-
                 </div>
 
                 <div class="flex md:flex-nowrap flex-wrap md:space-y-0 space-y-10">
@@ -44,7 +43,7 @@
                         </h2>
                         <div class="ml-7 space-y-2">
                             <p class="text-zinc-700">{{ emailValue }}</p>
-                            <p v-if="isChecked" class="text-zinc-700">{{ phone }}</p>
+                            <p v-if="phone" class="text-zinc-700 text-sm">{{ phone }}</p>
                         </div>
                     </div>
 
@@ -98,7 +97,7 @@
 
         <!-- form -->
         <div v-else class="rounded-md pt-2 pb-4 bg-white">
-            <div class="px-4 text-sm md:text-sm space-y-6">
+            <div class="text-sm md:text-sm space-y-6">
                 <!-- Work Availability -->
                 <label class="inline-flex items-center cursor-pointer mt-3">
                     <input type="checkbox" v-model="workAvailability" class="sr-only peer">
@@ -109,7 +108,7 @@
 
                 <!-- Full Name -->
                 <div class="w-full">
-                    <span class="mb-2 text-zinc-500 text-base">* Provide your First and Last name.</span>
+                    <span class="mb-2 text-zinc-500 text-base">* Add your Firstname and Lastname.</span>
                     <div class="relative mt-1">
                         <input v-model="fullName"
                                placeholder="Full name"
@@ -127,8 +126,6 @@
                 <div class="flex md:flex-nowrap flex-wrap md:space-y-0 space-y-8 items-start md:space-x-3 space-x-0">
                     <PhoneInput
                         v-model="phone"
-                        :is-checked="isChecked"
-                        @update:isChecked="updateIsChecked"
                     />
                     <div class="relative w-full">
                         <span class="text-orange absolute top-0 right-0 ml-24 -mt-3">*</span>
@@ -221,7 +218,6 @@ const gender = ref(props.modelValue?.gender || '');
 const zone = ref('');
 const emailValue = ref('');
 const phone = ref('');
-const isChecked = ref(false);
 const workAvailability = ref(false);
 const fullName = ref('');
 const birthdate = ref('');
@@ -266,7 +262,6 @@ onMounted(async () => {
     workAvailability.value = props.modelValue?.workAvailability || false;
     emailValue.value = props.modelValue?.email || '';
     phone.value = props.modelValue?.phone || '';
-    isChecked.value = props.modelValue?.showPhone || false;
     city.value = props.modelValue?.city || '';
     zone.value = props.modelValue?.zone || '';
     gender.value = props.modelValue?.gender || '';
@@ -274,22 +269,17 @@ onMounted(async () => {
     links.value = props.modelValue?.links || [];
 });
 
-const updateIsChecked = (value) => {
-    isChecked.value = value;
-};
-
 const updateLinks = (newLinks) => {
     links.value = newLinks;
 };
 
 const emit = defineEmits(["update:modelValue"]);
 
-watch([phone, isChecked, emailValue, city, zone, gender, links, birthdate, fullName, workAvailability], () => {
+watch([phone, emailValue, city, zone, gender, links, birthdate, fullName, workAvailability], () => {
     emit('update:modelValue', {
         fullName: fullName.value,
         workAvailability: workAvailability.value,
         phone: phone.value,
-        showPhone: isChecked.value,
         gender: gender.value,
         email: emailValue.value,
         links: links.value,
@@ -303,13 +293,6 @@ watch([phone, isChecked, emailValue, city, zone, gender, links, birthdate, fullN
 watch([fullName, emailValue, city, zone, gender, birthdate], () => {
     v$.value.$touch();
     let isValid = !v$.value.$invalid;
-
-    // Allow default zone value for Baghdad
-    // if (city.value === 'Baghdad' && zone.value === 'Choose your zone...') {
-    //     isValid = true;
-    // }
-
-    // store.dispatch('setFormValidity', isValid);
 }, { deep: true });
 
 // Updated validateFields method

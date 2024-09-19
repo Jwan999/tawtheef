@@ -25,7 +25,7 @@
 
     </div>
 
-    <div v-else class="rounded-md p-4 pb-6 bg-white text-sm md:text-sm mt-4">
+    <div v-else class="rounded-md pb-6 bg-white text-sm md:text-sm mt-4">
         <div class="relative w-full space-y-3">
             <div class="w-full" v-for="(item,index) in value"
                  :key="index">

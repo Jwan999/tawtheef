@@ -2,8 +2,8 @@
     <div>
         <HeroComponent></HeroComponent>
         <SearchComponent id="search-area"></SearchComponent>
-        <SlidersComponent v-if="!searchMode"></SlidersComponent>
-        <PreviewAllComponent v-else></PreviewAllComponent>
+        <SlidersComponent v-if="(!searchMode) && (!isAdvanceSearchInUse)"></SlidersComponent>
+        <PreviewAllComponent v-if="(searchMode) || (isAdvanceSearchInUse)"></PreviewAllComponent>
         <FooterComponent></FooterComponent>
     </div>
 </template>
@@ -21,6 +21,7 @@ import HeroComponent from "./mainViewComponents/HeroComponent.vue";
 const router = useRouter();
 const store = useStore();
 
+const isAdvanceSearchInUse = computed(() => store.state.advanceSearchInUse);
 const searchMode = computed(() => store.state.searchMode);
 
 </script>

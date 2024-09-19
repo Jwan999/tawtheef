@@ -84,34 +84,30 @@
             <!-- Content area -->
             <div class="w-full md:w-10/12 md:ml-4">
                 <!--personal information-->
-                <div v-if="personalInformation || !isAnyOtherTabActive" class="w-full space-y-6">
+                <div v-if="personalInformation || !isAnyOtherTabActive"
+                     class="w-full space-y-6 bg-white p-4 md:p-6 rounded-lg">
                     <ApplicantPhotoUpload v-model="image"></ApplicantPhotoUpload>
                     <ContactComponent v-model="contact" ref="contactComponent"></ContactComponent>
                 </div>
                 <!--educational background-->
-                <div v-if="educationalInformation" class="w-full space-y-6">
-                    <FieldOfInterestComponent class="md:w-8/12 w-full" v-model="speciality"
+                <div v-if="educationalInformation" class="w-full space-y-8 bg-white p-4 md:p-6 rounded-lg">
+                    <FieldOfInterestComponent class="w-full" v-model="speciality"
                                               ref="fieldOfInterestComponent"></FieldOfInterestComponent>
-                    <div class="md:w-8/12 w-full">
+                    <div class="w-full">
                         <EducationComponent v-model="education" ref="educationComponent"></EducationComponent>
                     </div>
                     <CoursesComponent v-model="courses" ref="coursesComponent"></CoursesComponent>
                 </div>
                 <!--professional information-->
-                <div v-if="professionalInformation" class="w-full space-y-6">
-                    <div class="md:w-8/12 w-full space-y-6">
-                        <SummaryComponent v-model="summary" ref="summaryComponent"></SummaryComponent>
-                        <ToolsComponent v-model="tools" ref="toolsComponent"></ToolsComponent>
-                    </div>
+                <div v-if="professionalInformation" class="w-full space-y-8 bg-white p-4 md:p-6 rounded-lg">
+                    <SummaryComponent v-model="summary" ref="summaryComponent"></SummaryComponent>
+                    <ToolsComponent v-model="tools" ref="toolsComponent"></ToolsComponent>
                     <EmploymentComponent v-model="employment" ref="employmentComponent"></EmploymentComponent>
                 </div>
                 <!--skills and activities-->
-                <div v-if="skillsAndActivities" class="w-full space-y-6">
-                    <div class="md:w-8/12 w-full space-y-6">
-                        <SkillsComponent v-model="skills" ref="skillsComponent"></SkillsComponent>
-                        <LanguagesComponent v-model="languages" ref="languagesComponent"></LanguagesComponent>
-                    </div>
-
+                <div v-if="skillsAndActivities" class="w-full space-y-8 bg-white p-4 md:p-6 rounded-lg">
+                    <SkillsComponent v-model="skills" ref="skillsComponent"></SkillsComponent>
+                    <LanguagesComponent v-model="languages" ref="languagesComponent"></LanguagesComponent>
                     <ActivitiesComponent v-model="activities" ref="activitiesComponent"></ActivitiesComponent>
                 </div>
             </div>

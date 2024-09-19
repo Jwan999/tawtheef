@@ -30,7 +30,7 @@
         </div>
 
 
-        <div v-else class="rounded-md bg-white p-4 pb-6">
+        <div v-else class="rounded-md bg-white pb-6">
             <div class="space-y-6">
                 <div v-for="(item,index) in value" :key="index">
                     <div class="w-full">

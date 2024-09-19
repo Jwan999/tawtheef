@@ -20,13 +20,13 @@
                        accept="image/*">
             </div>
         </div>
-        <div v-if="editMode" class="md:w-9/12 w-full mb-4 p-4 pt-0 bg-zinc-100 dark:bg-zinc-700 rounded-md">
+        <div v-if="editMode" class="md:w-9/12 w-full mb-4 p-4 pt-0 rounded-md">
             <h2 class="text-lg font-semibold mb-2">Photo Upload Instructions:</h2>
             <ul class="list-disc list-inside text-sm">
-                <li>Upload a clear headshot photo</li>
-                <li>Ensure your face is centered and well-lit</li>
-                <li>The photo should fit within the square box below</li>
-                <li>Avoid using group photos or images with multiple people</li>
+                <li>Ensure your face is centered.</li>
+                <li>Upload a clear headshot photo with proper light.</li>
+                <li>The photo should be a square to 6 within the square box.</li>
+                <li>Avoid using group photos or images with multiple people.</li>
             </ul>
         </div>
     </div>

@@ -1,8 +1,10 @@
 <template>
     <div class="flex justify-center mt-24">
         <div class="w-full mx-4 md:w-4/12 bg-white rounded-md">
-            <h2 class="text-lg text-zinc-600 font-semibold mt-8 px-6">Login to your account <router-link to="/signup" class="text-orange font-semibold hover:text-orange-500">OR SIGN UP</router-link>
-            </h2>
+            <div class="flex justify-between items-center mt-8 px-6">
+                <h2 class="text-lg text-zinc-600 font-semibold">Login to your account</h2>
+                <router-link to="/signup" class="text-orange text-lg font-semibold hover:text-orange-500">OR SIGNUP</router-link>
+            </div>
             <div class="pl-6">
                 <hr class="h-px w-full bg-orange  border-0 mt-1 mb-8">
             </div>

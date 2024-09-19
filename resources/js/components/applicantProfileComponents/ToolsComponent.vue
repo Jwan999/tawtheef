@@ -18,7 +18,7 @@
     </div>
 
     <div v-else class="rounded-md py-4 bg-white text-sm md:text-sm">
-        <div class="px-4 text-sm md:text-sm">
+        <div class="text-sm md:text-sm">
             <div class="relative w-full">
                 <div class="space-y-6">
                     <div v-for="(item,index) in value" :key="index">
@@ -33,7 +33,7 @@
                             </button>
                         </div>
                         <p class="block mb-3 text-zinc-500 -mt-3">* List all the tools and technologies you're familiar with such as (MS Excel, Photoshop, PHP, React, etc...)</p>
-                        <ratingComponent placeholder-label="Tool or technology"
+                        <ratingComponent placeholder-label="Ex: MS Excel"
                                          v-model="value[index]"></ratingComponent>
                     </div>
                 </div>

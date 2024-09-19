@@ -1,7 +1,8 @@
 <template>
     <div class="relative">
         <div class="flex justify-start -mt-16 md:-mt-32">
-            <div class="w-full md:w-10/12 mr-6 md:mr-0 md:px-0 px-6 bg-zinc-800 text-white rounded-r-[4rem] md:rounded-r-full py-14 md:py-28">
+            <div
+                class="w-full md:w-10/12 mr-6 md:mr-0 md:px-0 px-6 bg-zinc-800 text-white rounded-r-[4rem] md:rounded-r-full py-14 md:py-28">
                 <div class="flex justify-center items-center w-full">
                     <div class="w-full md:w-10/12">
                         <div class="w-full md:w-8/12 flex flex-wrap">
@@ -49,11 +50,12 @@
                                     </button>
                                 </div>
                             </div>
-                            <div class="absolute right-0 top-1" ref="buttonContainer">
+                            <div :class="isButtonFixed ? 'bottom-10 right-4': 'right-0 top-1'"
+                                 class="absolute right-0 top-1" ref="buttonContainer">
                                 <button @click="toggleAdvanceSearch"
                                         :class="{'bg-orange text-white': showAdvanceSearch, 'fixed-position': isButtonFixed}"
                                         class="advanced-search-button z-40 transition-all duration-300 flex items-center bg-orange hover:bg-dark text-white rounded-bl-xl rounded-tr-xl
-                                         py-2 px-3">
+                                         py-2 px-2">
                                     <svg
                                         class="w-6 h-6 md:mr-2 fill-white md:hidden block"
                                         viewBox="0 0 189.524 189.524"
@@ -80,7 +82,9 @@
                                             </g>
                                         </g>
                                     </svg>
-                                    <span class="whitespace-nowrap md:block hidden px-6">{{ showAdvanceSearch ? 'Close' : 'Advanced Search' }}</span>
+                                    <span class="whitespace-nowrap md:block hidden px-6 font-semibold tracking-wide">{{
+                                            showAdvanceSearch ? 'Close' : 'Advanced Search'
+                                        }}</span>
                                 </button>
                             </div>
                         </div>
@@ -100,8 +104,8 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted, onUnmounted } from "vue";
-import { useStore } from 'vuex';
+import {ref, watch, onMounted, onUnmounted} from "vue";
+import {useStore} from 'vuex';
 import ActiveFilters from "./ActiveFilters.vue";
 import AdvanceSearchComponent from "./AdvanceSearchComponent.vue";
 
@@ -116,11 +120,11 @@ const handleSearch = async () => {
     if (searchTerm.value.trim() !== '') {
         await store.dispatch('setSearchMode', true);
         await store.dispatch('setSearchQuery', searchTerm.value);
-        await store.dispatch('searchApplicants', { page: 1 });
+        await store.dispatch('searchApplicants', {page: 1});
     } else {
         await store.dispatch('setSearchMode', false);
         await store.dispatch('resetFilters');
-        await store.dispatch('getFilteredApplicants', { page: 1 });
+        await store.dispatch('getFilteredApplicants', {page: 1});
     }
 };
 
@@ -134,7 +138,7 @@ const clearSearch = () => {
 const handleAdvancedSearch = async (advancedFilters) => {
     try {
         await store.dispatch('setFilters', advancedFilters);
-        await store.dispatch('getFilteredApplicants', { page: 1 });
+        await store.dispatch('getFilteredApplicants', {page: 1});
         searchApplied.value = true;
         await store.dispatch('setSearchMode', true);
         if (store.getters.error) {
@@ -195,8 +199,8 @@ watch(showAdvanceSearch, (newValue) => {
 
 .fixed-position {
     position: fixed;
-    bottom: 1rem;
-    right: 1rem;
+    bottom: 2.5rem;
+    right: 2rem;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 

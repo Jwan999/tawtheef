@@ -23,7 +23,8 @@
                     :rounded="applicant === applicantsToShow[0] ? 'rounded-r-lg' : 'rounded-lg'"
                 />
             </div>
-            <div v-else class="flex justify-center items-center h-64">
+            <div v-else :class="isAdvanceSearchInUse ? 'sm:w-8/12 md:w-8/12 lg:w-8/12' : 'w-full'"
+                 class="flex justify-center items-center h-64">
                 <p class="text-2xl font-semibold text-zinc-600">No search results available with your search query.</p>
             </div>
         </div>

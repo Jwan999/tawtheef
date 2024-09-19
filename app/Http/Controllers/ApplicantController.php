@@ -156,7 +156,7 @@ class ApplicantController extends Controller
     public function index()
     {
         $applicants = Applicant::where('published', true)->get();
-        return response()->json($applicants);
+        return response()->json($this->processApplicantsData($applicants));
     }
 
     public function searchApplicants(Request $request): JsonResponse
@@ -186,8 +186,10 @@ class ApplicantController extends Controller
             $totalResults = $query->count();
             $applicants = $query->skip(($page - 1) * $perPage)->take($perPage)->get();
 
+            $processedApplicants = $this->processApplicantsData($applicants);
+
             $results = [
-                'data' => $applicants,
+                'data' => $processedApplicants,
                 'current_page' => $page,
                 'per_page' => $perPage,
                 'total' => $totalResults,
@@ -208,6 +210,8 @@ class ApplicantController extends Controller
 
             $this->filterService->applyFilters($query, $request);
             $results = $query->paginate($perPage);
+
+            $results->setCollection($this->processApplicantsData($results->getCollection()));
 
             return response()->json($results);
         } catch (\Exception $e) {
@@ -292,22 +296,34 @@ class ApplicantController extends Controller
     public function showResume($id)
     {
         $applicant = Applicant::findOrFail($id);
-        $applicantData = $applicant->toArray();
-
-        if (isset($applicantData['contact']['showPhone'])) {
-            if (!$applicantData['contact']['showPhone']) {
-                unset($applicantData['contact']['phone']);
-            }
-            unset($applicantData['contact']['showPhone']);
-        }
-
-        return response()->json($applicantData, 200);
+        $processedApplicant = $this->processApplicantData($applicant->toArray());
+        return response()->json($processedApplicant, 200);
     }
 
     public function getAuthUser()
     {
         $user = Auth::user()->load("applicant");
         return response()->json($user);
+    }
+
+    // Helper method to process applicant data
+    private function processApplicantData(array $applicantData): array
+    {
+        if (isset($applicantData['contact']['showPhone'])) {
+            if (!$applicantData['contact']['showPhone']) {
+                unset($applicantData['contact']['phone']);
+            }
+            unset($applicantData['contact']['showPhone']);
+        }
+        return $applicantData;
+    }
+
+    // Helper method to process multiple applicants' data
+    private function processApplicantsData($applicants)
+    {
+        return $applicants->map(function ($applicant) {
+            return $this->processApplicantData($applicant->toArray());
+        });
     }
 
     // Placeholder methods

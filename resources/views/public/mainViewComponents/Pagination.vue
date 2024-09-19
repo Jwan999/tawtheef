@@ -12,7 +12,8 @@
             </button>
         </div>
         <!-- Desktop view pagination -->
-        <div class="hidden md:flex md:flex-1 md:items-center md:justify-between">
+        <div class="hidden md:flex md:items-center md:justify-between"
+             :class="isAdvanceSearchInUse ? 'md:w-8/12' : 'w-full'">
             <div>
                 <p class="text-sm text-zinc-700">
                     All results:
@@ -57,8 +58,10 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import {computed} from 'vue';
+import store from '../../../js/store/index'
 
+const isAdvanceSearchInUse = computed(() => store.state.advanceSearchInUse);
 const props = defineProps({
     currentPage: {
         type: Number,

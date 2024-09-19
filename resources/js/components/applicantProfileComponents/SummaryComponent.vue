@@ -13,7 +13,7 @@
             </div>
             <p class="capitalize">{{ summary }}</p>
         </div>
-        <div v-else class="rounded-md p-4 bg-white">
+        <div v-else class="rounded-md bg-white">
 
             <div class="w-full">
                 <label for="message" class="block mb-3 text-zinc-500 mt-2">* Your professional summary is a

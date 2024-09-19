@@ -11,7 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Dosis:wght@200..800&display=swap" rel="stylesheet">
     <title>Tawtheef</title>
 </head>
-<body class="bg-light font-sans">
+<body class="bg-light">
 
 <div id="app"></div>
 

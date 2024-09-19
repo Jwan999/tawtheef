@@ -57,7 +57,7 @@
                         isValid ? 'bg-orange hover:bg-dark' : 'bg-zinc-300 cursor-not-allowed'
                     ]"
                 >
-                    ADD
+                    ADD MORE
                 </button>
             </div>
 

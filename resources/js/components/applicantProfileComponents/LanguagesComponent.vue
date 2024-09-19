@@ -18,7 +18,7 @@
     </div>
 
     <div v-else class="rounded-md py-4 bg-white text-sm md:text-sm">
-        <div class="px-4 text-sm md:text-sm">
+        <div class="text-sm md:text-sm">
             <div class="relative w-full">
                 <div class="space-y-4">
                     <div v-for="(item,index) in languages" :key="index">

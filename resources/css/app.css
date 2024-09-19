@@ -8,19 +8,18 @@
 @font-face {
     font-family: 'Dosis';
     src: url('../fonts/Dosis-VariableFont_wght.woff') format('woff');
-    /*font-style: normal;*/
+    font-style: normal;
+    font-weight: 900;
     /*font-display: swap;*/
 }
 
 body {
     font-family: 'Dosis';
 }
-/*body, h1, h2, h3, h4, h5, h6, p, span, div {*/
-/*    font-family: 'Dosis', sans-serif;*/
-/*}*/
 
-/* Optional: Define specific weight classes if needed */
+
 .font-dosis-light { font-weight: 300; }
 .font-dosis-regular { font-weight: 400; }
 .font-dosis-medium { font-weight: 500; }
 .font-dosis-bold { font-weight: 700; }
+.font-semibold { font-weight: 600; }
