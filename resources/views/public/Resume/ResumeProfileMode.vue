@@ -49,22 +49,22 @@
                     <div class="flex-grow p-4 overflow-y-auto">
                         <div class="grid grid-cols-1 gap-4 md:mt-0 mt-8">
                             <button :class="personalInformation ? 'bg-zinc-100 text-orange': 'text-zinc-700'"
-                                    class="rounded-tl-lg rounded-br-lg hover:text-orange font-semibold tracking-wider px-10 py-3 text-start hover:bg-zinc-100"
+                                    class="rounded-lg hover:text-orange font-semibold tracking-wider px-10 py-3 text-start hover:bg-zinc-100"
                                     @click="openTab('personalInformation')">Personal Information
                             </button>
                             <button
                                 :class="educationalInformation ? 'bg-zinc-100 text-orange': 'text-zinc-700'"
-                                class="rounded-tl-lg rounded-br-lg hover:text-orange font-semibold tracking-wider px-10 py-3 text-start hover:bg-zinc-100"
+                                class=" rounded-lg hover:text-orange font-semibold tracking-wider px-10 py-3 text-start hover:bg-zinc-100"
                                 @click="openTab('educationalInformation')">Educational Background
                             </button>
                             <button
                                 :class="professionalInformation ? 'bg-zinc-100 text-orange': 'text-zinc-700'"
-                                class="rounded-tl-lg rounded-br-lg hover:text-orange font-semibold tracking-wider px-10 py-3 text-start hover:bg-zinc-100"
+                                class="rounded-lg hover:text-orange font-semibold tracking-wider px-10 py-3 text-start hover:bg-zinc-100"
                                 @click="openTab('professionalInformation')">Professional Information
                             </button>
                             <button
                                 :class="skillsAndActivities ? 'bg-zinc-100 text-orange': 'text-zinc-700'"
-                                class="rounded-tl-lg rounded-br-lg hover:text-orange font-semibold tracking-wider px-10 py-3 text-start hover:bg-zinc-100"
+                                class="rounded-lg hover:text-orange font-semibold tracking-wider px-10 py-3 text-start hover:bg-zinc-100"
                                 @click="openTab('skillsAndActivities')">Skills and Activities
                             </button>
                         </div>

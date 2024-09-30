@@ -12,7 +12,7 @@
             </p>
         </div>
         <div v-else>
-            <div class="mt-6" v-for="item in modelValue">
+            <div class="mt-2 space-y-1" v-for="item in modelValue">
                 <h1 v-if="item.duration[0] !== 'Start Year' && item.duration[1] !== 'End Year'"
                     class="font-semibold text-orange">{{ item.duration[0] + ' - ' + item.duration[1] }}</h1>
                 <h1 class="font-semibold text-lg capitalize">{{ item.institute }}</h1>

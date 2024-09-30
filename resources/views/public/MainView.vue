@@ -1,9 +1,11 @@
 <template>
-    <div className="">
-        <HeroComponent class="mb-44"></HeroComponent>
-        <NumbersComponent class="mb-44"></NumbersComponent>
-        <div className="mt-20" id="search-area-spacer"></div>
-        <SearchComponent id="search-area"></SearchComponent>
+    <div>
+        <div class="bg-pattern">
+            <HeroComponent class="mb-44"></HeroComponent>
+            <NumbersComponent class="mb-44"></NumbersComponent>
+            <div class="mt-10" id="search-area-spacer"></div>
+            <SearchComponent id="search-area"></SearchComponent>
+        </div>
         <SlidersComponent v-if="(!searchMode) && (!isAdvanceSearchInUse)"></SlidersComponent>
         <PreviewAllComponent v-if="(searchMode) || (isAdvanceSearchInUse)"></PreviewAllComponent>
         <FooterComponent></FooterComponent>
@@ -48,6 +50,10 @@ onMounted(() => {
 
 <style scoped>
 #search-area-spacer {
-    height: 2.5rem; /* Equivalent to Tailwind's mt-10 */
+    height: 1.5rem; /* Equivalent to Tailwind's mt-10 */
+}
+.bg-pattern{
+    background-image: url("/../../../public/svgs/pattern.svg");
+    background-repeat: repeat;
 }
 </style>

@@ -72,7 +72,7 @@ class GenerateFieldSelects extends Command
             ],
             [
                 'key' => 'cities',
-                'value' => json_encode(['Baghdad', 'Basra', 'Mosul', 'Erbil', 'Kirkuk', 'Najaf', 'Karbala', 'Nasiriyah', 'Sulaymaniyah', 'Ramadi', 'Fallujah', 'Diyala', 'Hilla', 'Tikrit', 'Samarra', 'Kut', 'Amara', 'Kufa']),
+                'value' => json_encode(['Baghdad', 'Basra', 'Mosul', 'Erbil', 'Kirkuk', 'Najaf', 'Karbala', 'Nasiriyah', 'Sulaymaniyah', 'Al Anbar', 'Fallujah', 'Diyala', 'Babil', 'Saladin', 'Samarra', 'Wasit', 'Maysan','Diyala']),
             ],
         ];
 

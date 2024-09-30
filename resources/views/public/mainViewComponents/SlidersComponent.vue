@@ -5,12 +5,12 @@
                 <div class="w-full md:w-3/12">
                     <div class="mb-10 w-full">
                         <div class="mt-3 md:mt-6 w-full">
-                            <h1 class="w-full text-start py-1 my-2 px-3 font-bold tracking-wider text-2xl md:text-3xl uppercase">
+                            <h1 class="w-full text-start py-1 my-2 px-3 font-bold tracking-wider text-2xl md:text-3xl">
                                 {{ item.specialization === 'Other' ? 'Other Specialization' : item.specialization }}
                             </h1>
-                            <div class="w-10/12 mt-6">
-                                <div class="-mt-4 h-2.5 mb-2 w-11/12 rounded-br-2xl bg-orange"></div>
-                                <div class="-mt-3 ml-8 h-2.5 w-full rounded-br-2xl bg-dark"></div>
+                            <div class="mt-6">
+                                <div class="-mt-4 h-2.5 mb-2 w-full rounded-full shadow-custom-3d bg-orange"></div>
+<!--                                <div class="-mt-3 ml-8 h-2.5 w-full rounded-br-2xl bg-dark"></div>-->
                             </div>
                         </div>
                     </div>

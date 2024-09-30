@@ -1,8 +1,7 @@
-<!-- NumbersComponent.vue -->
 <template>
     <div ref="componentRef" class="flex justify-center items-center w-full">
         <div
-            class="rounded-full bg-orange flex justify-center items-center md:h-64 h-32 md:w-64 w-32 md:-mr-24 -mr-10 z-40"
+            class="rounded-full bg-orange-500 flex justify-center items-center md:h-64 h-32 md:w-64 w-32 md:-mr-24 -mr-10 z-40"
         >
             <div class="mb-2">
                 <h1 class="text-white text-center font-semibold text-3xl md:text-6xl">
@@ -17,15 +16,15 @@
             <div class="pl-16 md:py-16 py-6 sm:px-24 lg:px-32 w-full">
                 <div class="flex items-center">
                     <transition name="fade-slide" mode="out-in">
-                        <p
-                            v-if="isNumberAnimationComplete"
-                            :key="currentSentenceIndex"
-                            class="text-lg md:text-5xl text-white items-center font-semibold text-start kanit-black-italic tracking-wider animated-sentence"
-                        >
-                            <span class="text-orange text-2xl md:text-5xl mr-1 md:mr-3">{{
+                        <p v-if="isNumberAnimationComplete"
+                           :key="currentSentenceIndex"
+                           class="flex justify-start items-center space-x-3 text-lg md:text-5xl text-white font-semibold text-start kanit-black-italic tracking-wider animated-sentence">
+                            <span class="text-orange-500 text-3xl md:text-7xl mr-1 md:mr-3">{{
                                     currentSentence.number
                                 }}</span>
-                            {{ currentSentence.text }}
+                            <span class="text-2xl md:text-4xl">
+                                {{ currentSentence.text }}
+                            </span>
                         </p>
                     </transition>
                 </div>
@@ -38,26 +37,31 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, watch } from 'vue';
+import {ref, onMounted, onUnmounted, watch} from 'vue';
 
 const sentences = [
-    { number: "43", text: "job placements this month" },
-    { number: "78", text: "new partner companies joined this year" },
-    { number: "56", text: "candidates secured interviews within a month" },
-    { number: "25", text: "industry sectors represented in our talent pool" },
-    { number: "62", text: "placements resulted in long-term employment" },
-    { number: "39", text: "countries represented in our global talent network" },
-    { number: "81", text: "clients reported high satisfaction with our service" },
-    { number: "47", text: "specialized skill categories in our database" },
-    { number: "33", text: "new tech sector placements this quarter" },
-    { number: "59", text: "leadership positions filled this quarter" },
+    {number: "305", text: "Total resumes in our database"},
+    {number: "189", text: "Candidates are available for immediate work"},
+    {number: "116", text: "Candidates have a Bachelor's degree or higher"},
+    {number: "93", text: "Undergraduates seeking opportunities"},
+    {number: "127", text: "Candidates specialize in Creative & Design"},
+    {number: "98", text: "Candidates have expertise in Engineering"},
+    {number: "76", text: "Candidates are proficient in Graphic Design"},
+    {number: "62", text: "Candidates are skilled in various Development fields"},
+    {number: "217", text: "Male candidates in our talent pool"},
+    {number: "88", text: "Female candidates ready for new opportunities"},
+    {number: "183", text: "Candidates are proficient in Microsoft Office tools"},
+    {number: "112", text: "Candidates have experience with Adobe Creative Suite"},
+    {number: "95", text: "Candidates are fluent in both Arabic and English"},
+    {number: "57", text: "Candidates have expertise in Business & Management"},
+    {number: "41", text: "Candidates have participated in relevant events or workshops"}
 ];
 
 const componentRef = ref(null);
 const currentSentenceIndex = ref(0);
 const currentSentence = ref(sentences[0]);
 
-const totalResumes = ref(384); // This will be updated with the actual value from the backend
+const totalResumes = ref(305); // This is updated with the actual value from the data
 const displayedTotal = ref(0);
 const isNumberAnimationComplete = ref(false);
 const isComponentVisible = ref(false);
@@ -106,7 +110,7 @@ onMounted(() => {
             startAnimation();
             observer.disconnect(); // Stop observing once animation starts
         }
-    }, { threshold: 0.5 }); // Trigger when 50% of the component is visible
+    }, {threshold: 0.5}); // Trigger when 50% of the component is visible
 
     if (componentRef.value) {
         observer.observe(componentRef.value);
@@ -136,7 +140,6 @@ watch(totalResumes, () => {
         observer.observe(componentRef.value);
     }
 });
-
 
 </script>
 

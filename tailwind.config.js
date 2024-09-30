@@ -19,7 +19,7 @@ module.exports = {
                 'sans': ['Dosis', ...defaultTheme.fontFamily.sans],
             },
             colors: {
-                'orange': '#FF7400',
+                'orange': '#E26600',
                 'orange-800': '#E26600',
                 'orange-50': '#fefbf8',
                 'orange-100': '#f6d1b3',

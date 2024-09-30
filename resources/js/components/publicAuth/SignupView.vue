@@ -3,10 +3,9 @@
         <div class="w-full mx-4 md:w-4/12 bg-white rounded-md">
             <div class="flex justify-between items-center mt-8 px-6">
                 <h2 class="text-lg text-zinc-600 font-semibold">Start with creating your account</h2>
-                <router-link to="/login" class="text-orange text-lg font-semibold hover:text-orange-500">OR LOGIN</router-link>
             </div>
             <div class="pl-6">
-                <hr class="h-px w-full bg-orange  border-0 mt-1 mb-8">
+                <hr class="h-0.5 w-full bg-orange  border-0 mt-2 mb-8">
             </div>
 
             <div class="px-6 space-y-6 my-10">
@@ -45,15 +44,17 @@
                 </div>
             </div>
 
-            <div class="flex justify-end border-t"
-                 :class="hovered ? 'border-dark' : 'border-orange'">
-                <form @mouseover="hovered = !hovered"
-                      @mouseleave="hovered = !hovered"
-                      class="uppercase text-sm cursor-pointer inline-block font-semibold bg-orange text-white hover:bg-dark px-4 py-2 rounded-br-md"
+            <div class="flex justify-end space-x-6 items-center pt-2 p-6">
+                <router-link to="/login" class="text-orange text-lg font-semibold hover:text-zinc-800">or Login</router-link>
+
+                <form
+                      class="bg-orange cursor-pointer text-white font-semibold text-md px-12 py-2 shadow-custom-3d rounded-full hover:bg-zinc-800 hover:shadow-none transition-all duration-300 ease-in-out transform hover:scale-105"
                       @click.prevent="handleSignup">
-                    signup
+                    Signup
                 </form>
+
             </div>
+
         </div>
     </div>
 

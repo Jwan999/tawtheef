@@ -2,26 +2,18 @@
     <div class="mt-6 px-4 md:px-10 flex w-full justify-end">
         <div class="flex justify-between w-full mb-6">
             <div class="md:w-1/12 sm:w-1/12 w-2/12">
-                <button
-                    @click="handleBackClick"
-                    class="appearance-none text-zinc-700 hover:text-white hover:bg-dark w-full text-sm font-semibold tracking-wide py-3 border-[1px] border-zinc-700">
-                    Back
-                </button>
-
-
+                <!-- Back button commented out -->
             </div>
-            <div class="md:w-2/12 sm:w-3/12 w-5/12">
+            <div class="fixed bottom-12 right-6 z-50">
                 <GeneratePDFButton/>
             </div>
         </div>
-
     </div>
     <div v-if="!dataFetched" class="flex justify-center items-center h-screen">
         <LottieLoader/>
     </div>
     <div v-else :class="!isDashboard ? 'px-4 md:px-10 mt-6 mb-10' : ''"
          class="grid grid-cols-12 grid-flow-row gap-6 mb-10">
-
 
         <div class="md:hidden block col-span-12">
             <ApplicantPhotoUpload v-model="image"></ApplicantPhotoUpload>
@@ -107,27 +99,5 @@ const {
     canGoBack,
 
 } = useResumeLogic();
-// const handleBackClick = async () => {
-//     const activeFilters = store.getters.activeFilters;
-//     const searchMode = store.state.searchMode;
-//     const searchQuery = store.state.searchQuery;
-//
-//     // Navigate to the home page
-//     await router.push({ name: 'home' }); // Replace 'home' with your actual home page route name
-//
-//     // Apply filters and search if they exist
-//     if (Object.keys(activeFilters).length > 0 || (searchMode && searchQuery)) {
-//         if (Object.keys(activeFilters).length > 0) {
-//             await store.dispatch('getFilteredApplicants', { page: 1 });
-//         }
-//         if (searchMode && searchQuery) {
-//             await store.dispatch('searchApplicants', { page: 1 });
-//         }
-//     }
-//
-//     // Reset filters and search mode after applying them
-//     store.dispatch('resetFilters');
-//     store.dispatch('setSearchMode', false);
-//     store.dispatch('setSearchQuery', '');
-// };
+// handleBackClick function commented out
 </script>

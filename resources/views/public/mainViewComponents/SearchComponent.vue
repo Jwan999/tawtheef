@@ -1,7 +1,7 @@
 <template>
     <div class="relative">
         <div class="flex justify-center">
-            <div class="md:w-10/12 w-full ">
+            <div class="md:w-10/12 w-full">
                 <div
                     class="w-full bg-white border-none md:border-2 md:rounded-full border-orange md:px-24 md:pt-20 md:pb-16 px-10 py-10">
                     <div class="flex justify-center items-center w-full">

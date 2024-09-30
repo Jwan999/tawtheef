@@ -6,7 +6,7 @@
     <div v-if="!editMode" class="rounded-md py-4 bg-white text-sm md:text-sm">
         <div class="space-y-1">
             <div v-if="!editMode && selectedSkills.length == 0">
-                <p class="text-sm text-zinc-700">
+                <p class="text-sm text-zinc-700 px-4">
                     Data not filled yet.
                 </p>
             </div>

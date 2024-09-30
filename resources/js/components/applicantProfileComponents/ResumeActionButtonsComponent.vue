@@ -6,25 +6,25 @@
                 <button
                     v-if="editMode"
                     @click="saveResume"
-                    class="appearance-none w-full mt-3 text-sm font-semibold tracking-wide text-orange hover:text-white py-3 hover:bg-dark border-[1px] border-orange hover:border-zinc-700">
+                    class="appearance-none rounded-full w-full mt-3 text-sm font-semibold tracking-wide text-orange hover:text-white py-3 hover:bg-dark border-[1px] border-orange hover:border-zinc-700">
                     Save
                 </button>
 
 
                 <button v-if="!editMode"
                         @click="togglePreviewMode"
-                        class="appearance-none mt-3 w-full text-sm font-semibold tracking-wide text-zinc-700 hover:text-white py-3 hover:bg-dark border-[1px] border-zinc-700">
+                        class="appearance-none rounded-full mt-3 w-full text-sm font-semibold tracking-wide text-zinc-700 hover:text-white py-3 hover:bg-dark border-[1px] border-zinc-700">
                     Edit
                 </button>
                 <a v-else :href="`/preview/${currentApplicantId}`">
                     <button
-                        class="appearance-none mt-3 w-full text-sm font-semibold tracking-wide text-zinc-700 hover:text-white py-3 hover:bg-dark border-[1px] border-zinc-700">
+                        class="appearance-none mt-3 w-full rounded-full text-sm font-semibold tracking-wide text-zinc-700 hover:text-white py-3 hover:bg-dark border-[1px] border-zinc-700">
                         Preview
                     </button>
                 </a>
 
                 <button v-if="editMode" @click="handlePublishResume"
-                        class="appearance-none mt-3 w-full text-sm font-semibold tracking-wide text-zinc-700 hover:text-white py-3 hover:bg-dark border-[1px] border-zinc-700">
+                        class="appearance-none mt-3 w-full rounded-full text-sm font-semibold tracking-wide text-zinc-700 hover:text-white py-3 hover:bg-dark border-[1px] border-zinc-700">
                     <span v-if="!published">Publish</span>
                     <span v-else>Unpublish</span>
                 </button>

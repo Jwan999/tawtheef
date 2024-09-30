@@ -88,7 +88,7 @@
             object-fit: cover;
             border-radius: 1rem;
             object-position: center;
-            height: 12rem;
+            height: 16rem;
             width: 100%;
         }
 
@@ -285,7 +285,7 @@
                     @foreach($applicant->education ?? [] as $education)
                         @if(!empty($education['institute']) || !empty($education['degree']))
                             <div style="margin-bottom: 1rem; font-size: 0.875rem;">
-                                <p style="font-weight: 600; color: #f97316; font-size: 0.75rem;">
+                                <p style="font-weight: 600; color: #3f3f46; font-size: 0.75rem;">
                                     {{ $education['duration'][0] ?? '' }} - {{ $education['duration'][1] ?? 'Present' }}
                                 </p>
                                 <p style="font-weight: 600;">{{ $education['degree'] ?? '' }}</p>
