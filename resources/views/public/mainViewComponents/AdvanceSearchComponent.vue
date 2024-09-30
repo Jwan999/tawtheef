@@ -47,7 +47,7 @@
                     class="w-full p-2 rounded text-zinc-700 border border-zinc-600 focus:border-orange focus:ring focus:ring-orange focus:ring-opacity-50"
                 >
                     <option value="" disabled selected>Choose a city...</option>
-                    <option v-for="city in cities" :key="city" :value="city">{{ city }}</option>
+                    <option class="notranslate" v-for="city in cities" :key="city" :value="city">{{ city }}</option>
                 </select>
                 <select
                     v-if="filters.city === 'Baghdad'"
@@ -56,8 +56,8 @@
                     class="w-full p-2 rounded text-zinc-700 border border-zinc-600 focus:border-orange focus:ring focus:ring-orange focus:ring-opacity-50"
                 >
                     <option value="" disabled selected>Choose a zone...</option>
-                    <option>Karkh</option>
-                    <option>Risafa</option>
+                    <option class="notranslate">Karkh</option>
+                    <option class="notranslate">Risafa</option>
                 </select>
             </div>
 
@@ -80,7 +80,7 @@
                     class="w-full p-2 rounded bg-zinc-50 text-zinc-700 border border-zinc-600 focus:border-orange focus:ring focus:ring-orange focus:ring-opacity-50"
                 >
                     <option value="" selected>Choose a degree...</option>
-                    <option v-for="degree in degrees" :key="degree">{{ degree }}</option>
+                    <option class="notranslate" v-for="degree in degrees" :key="degree">{{ degree }}</option>
                 </select>
             </div>
 

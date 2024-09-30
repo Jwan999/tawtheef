@@ -1,7 +1,7 @@
 <template>
     <nav class="px-6 py-2 flex justify-between items-center">
         <div>
-            <router-link to="/" class="self-center text-xl md:text-3xl font-semibold whitespace-nowrap text-zinc-800">
+            <router-link to="/" class="tracking-wider text-dark self-center text-xl md:text-3xl whitespace-nowrap font-semibold">
                 TAWTHEEF
             </router-link>
         </div>
@@ -9,18 +9,18 @@
         <!-- Full menu for md and larger screens -->
         <div class="hidden md:flex items-center justify-between space-x-6">
             <template v-if="!isAuthenticated">
+<!--                <router-link v-slot="{ navigate }" custom to="/login">-->
+<!--                    <button @click="navigate" class="text-orange font-semibold text-md hover:bg-zinc-800 hover:text-white rounded-full px-12 py-2.5 transition-all duration-300 ease-in-out transform hover:scale-105">Login</button>-->
+<!--                </router-link>-->
                 <router-link v-slot="{ navigate }" custom to="/login">
-                    <button @click="navigate" class="nav-link">Login</button>
-                </router-link>
-                <router-link v-slot="{ navigate }" custom to="/login">
-                    <button @click="navigate" class="nav-link">Create Resume</button>
+                    <button @click="navigate" class="bg-orange text-white font-semibold text-md px-12 py-2 shadow-custom-3d rounded-full hover:bg-zinc-800 hover:shadow-none transition-all duration-300 ease-in-out transform hover:scale-105">Get Started</button>
                 </router-link>
             </template>
             <template v-else>
+                <button @click="logout" class="text-orange font-semibold text-md hover:bg-zinc-800 hover:text-white rounded-full px-12 py-2 transition-all duration-300 ease-in-out transform hover:scale-105">Logout</button>
                 <router-link v-slot="{ navigate }" custom :to="`/profile/${user?.applicant?.id}`">
-                    <button @click="navigate" class="nav-link">Resume</button>
+                    <button @click="navigate" class="bg-orange text-white font-semibold text-md px-12 py-2 shadow-custom-3d rounded-full hover:bg-zinc-800 hover:shadow-none transition-all duration-300 ease-in-out transform hover:scale-105">Resume</button>
                 </router-link>
-                <button @click="logout" class="nav-link">Logout</button>
             </template>
         </div>
 

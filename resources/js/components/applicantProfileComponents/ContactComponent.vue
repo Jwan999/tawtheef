@@ -147,7 +147,7 @@
                                 class="h-10 text-sm focus:border-orange focus:ring-0 bg-zinc-50 w-full border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none"
                                 @blur="v$.city.$touch">
                             <option value="Choose your city..." class="hidden" selected>Choose your city...</option>
-                            <option v-for="cityOption in cities" :key="cityOption">{{ cityOption }}</option>
+                            <option class="notranslate" v-for="cityOption in cities" :key="cityOption">{{ cityOption }}</option>
                         </select>
 
                         <select v-if="city == 'Baghdad'" v-model="zone"
@@ -155,8 +155,8 @@
                                 class="h-10 text-sm focus:border-orange focus:ring-0 bg-zinc-50 w-full rounded-r-md border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none"
                                 @blur="v$.zone.$touch">
                             <option value="Choose your zone..." class="hidden">Choose your zone...</option>
-                            <option>Karkh</option>
-                            <option>Risafa</option>
+                            <option class="notranslate">Karkh</option>
+                            <option class="notranslate">Risafa</option>
                         </select>
                     </div>
                     <span v-if="showErrors && v$.city.$error" class="text-red-500 text-xs">City is required</span>
@@ -182,8 +182,8 @@
                                 class="h-10 focus:border-orange focus:ring-0 bg-zinc-50 w-full rounded-md md:text-sm text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none"
                                 @blur="v$.gender.$touch">
                             <option value="Gender" class="hidden" selected>Gender</option>
-                            <option>Female</option>
-                            <option>Male</option>
+                            <option class="notranslate">Female</option>
+                            <option class="notranslate">Male</option>
                         </select>
                         <span v-if="showErrors && v$.gender.$error"
                               class="text-red-500 text-xs">Gender is required</span>

@@ -18,7 +18,7 @@
 
                 <select v-model="modelValue.participatedAs"
                         class="rounded text-sm focus:border-orange focus:ring-0 bg-zinc-50 w-full border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none">
-                    <option value="Participated as" class="hidden" selected>Participated as</option>
+                    <option value="Participated as" class="notranslate hidden" selected>Participated as</option>
                     <option v-for="item in participation">{{ item }}</option>
 
                 </select>

@@ -20,11 +20,6 @@ class GenerateFieldSelects extends Command
 
     public function handle()
     {
-        if (FormControl::exists()) {
-            $this->info('Field selects data already exists. Skipping insertion.');
-            return;
-        }
-
         $data = [
             [
                 'key' => 'specialities',
@@ -56,8 +51,12 @@ class GenerateFieldSelects extends Command
                 ]),
             ],
             [
+                'key' => 'keywords',
+                'value' => json_encode(["Python", "Photoshop", "Frontend Developer", "UX Designer", "Project Management", "Client Relations"]),
+            ],
+            [
                 'key' => 'degrees',
-                'value' => json_encode(["Bachelor's Degree", "Master's Degree", "Doctorate (Ph.D.)", "High School", "Diploma", "Undergraduate","Minor Degree"]),
+                'value' => json_encode(["Bachelor's Degree", "Master's Degree", "Doctorate (Ph.D.)", "High School", "Diploma", "Undergraduate", "Minor Degree"]),
             ],
             [
                 'key' => 'languages',
@@ -76,11 +75,23 @@ class GenerateFieldSelects extends Command
                 'value' => json_encode(['Baghdad', 'Basra', 'Mosul', 'Erbil', 'Kirkuk', 'Najaf', 'Karbala', 'Nasiriyah', 'Sulaymaniyah', 'Ramadi', 'Fallujah', 'Diyala', 'Hilla', 'Tikrit', 'Samarra', 'Kut', 'Amara', 'Kufa']),
             ],
         ];
-        foreach ($data as $record) {
-            FormControl::create($record);
-        }
-//        $this->formControl->fill($data)->save();
 
-        $this->info('Field selects data generated successfully.');
+        $insertedCount = 0;
+        $skippedCount = 0;
+
+        foreach ($data as $record) {
+            $existingRecord = FormControl::where('key', $record['key'])->first();
+
+            if (!$existingRecord) {
+                FormControl::create($record);
+                $insertedCount++;
+            } else {
+                $skippedCount++;
+            }
+        }
+
+        $this->info("Field selects data operation completed.");
+        $this->info("Inserted records: $insertedCount");
+        $this->info("Skipped existing records: $skippedCount");
     }
 }

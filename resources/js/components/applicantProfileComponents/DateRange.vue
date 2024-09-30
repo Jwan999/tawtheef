@@ -17,7 +17,7 @@
                 v-model="localEndYear"
                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange focus:ring-orange sm:text-sm"
             >
-                <option v-if="allowPresent" value="present">To present</option>
+                <option class="notranslate" v-if="allowPresent" value="present">To present</option>
                 <option v-for="year in availableEndYears" :key="year" :value="year">{{ year }}</option>
             </select>
         </div>

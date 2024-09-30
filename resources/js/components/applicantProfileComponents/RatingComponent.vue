@@ -8,7 +8,7 @@
                 class="capitalize text-sm focus:border-orange rounded focus:ring-0 bg-zinc-50 w-full border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none py-2 px-3"
             >
                 <option value="" class="hidden" selected>Languages</option>
-                <option v-for="language in languages" :key="language">{{ language }}</option>
+                <option class="notranslate" v-for="language in languages" :key="language">{{ language }}</option>
             </select>
 
             <div v-else class="relative">

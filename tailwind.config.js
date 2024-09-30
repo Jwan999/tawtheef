@@ -11,11 +11,16 @@ module.exports = {
     ],
     theme: {
         extend: {
+            boxShadow: {
+                'custom-3d': '1px 2.5px 0 0 #3F3F46',
+                'custom-3d-orange': '1px 2.5px 0 0 #FF7400',
+            },
             fontFamily: {
                 'sans': ['Dosis', ...defaultTheme.fontFamily.sans],
             },
             colors: {
-                'orange': '#E26600',
+                'orange': '#FF7400',
+                'orange-800': '#E26600',
                 'orange-50': '#fefbf8',
                 'orange-100': '#f6d1b3',
                 'orange-400': '#fb923c',

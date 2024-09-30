@@ -31,7 +31,7 @@
                         <select v-model="modelValue.duration[1]" @change="updateDuration" name="endYear"
                                 class="w-full focus:border-orange focus:ring-0 bg-zinc-50 rounded-r-md md:text-sm text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none appearance-none">
                             <option selected>{{ modelValue.duration[1] }}</option>
-                            <option value="Present">Present</option>
+                            <option class="notranslate" value="Present">Present</option>
                             <template v-for="year in years">
                                 <option :value="year">{{ year }}</option>
                             </template>
