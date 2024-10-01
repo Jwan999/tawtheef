@@ -67,8 +67,8 @@
 </template>
 
 <script setup>
-import {computed} from 'vue';
-import {useRouter} from 'vue-router';
+import { computed } from 'vue';
+import { useRouter } from 'vue-router';
 
 const props = defineProps({
     applicant: {
@@ -91,12 +91,12 @@ const isTruncated = computed(() => {
 
 const truncatedSummary = computed(() => {
     if (isTruncated.value) {
-        return props.applicant.summary.split(' ').slice(0, wordLimit).join(' ');
+        return props.applicant.summary.split(' ').slice(0, wordLimit).join(' ') + '...';
     }
     return props.applicant.summary;
 });
 
 const goToResume = (id) => {
-    router.push({name: 'preview-view', params: {id}});
+    window.open(router.resolve({ name: 'preview-view', params: { id } }).href, '_blank');
 };
 </script>
