@@ -36,14 +36,18 @@
                     <!-- Menu toggle button (attached to the menu) -->
                     <button
                         @click="toggleMobileMenu"
-                        :class="[
-            'md:hidden absolute top-16 z-50 bg-white p-2 px-3 rounded-md shadow-md',
-            mobileMenuOpen ? '-right-10' : '-right-12',
-            'transition-all duration-300 ease-in-out'
-          ]"
-                    >
-                        <span v-if="mobileMenuOpen">&times;</span>
-                        <span v-else>&#9776;</span>
+                        :class="['md:hidden absolute top-16 z-50 bg-orange px-3 py-3 rounded-full shadow-lg',mobileMenuOpen ? '-right-16' : '-right-16','transition-all duration-300 ease-in-out' ]">
+                        <span v-if="mobileMenuOpen">
+                            <svg class="fill-current group-hover:fill-white fill-white w-6 h-6"
+                                 viewBox="0 0 1024 1024"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="m808.1 265.9c-.1 12.8-5.7 26.3-14.7 35.4l-.8.8c-6.4 6.5-12.8 12.8-19.2 19.2l-190.7 190.7 210.7 210.7c9.5 9.5 14.1 22.1 14.7 35.4.5 13.4-6 25.8-14.7 35.4-8.4 9.3-23.1 14.7-35.4 14.7-12.8-.1-26.3-5.7-35.4-14.7l-.8-.8c-6.5-6.4-12.8-12.8-19.2-19.2l-190.6-190.8-210.7 210.7c-9.6 9.6-22.1 14.1-35.4 14.7-13.4.5-25.8-6-35.4-14.7-9.3-8.4-14.7-23.1-14.7-35.4.1-12.8 5.7-26.3 14.7-35.4l.8-.8c6.4-6.5 12.8-12.8 19.2-19.2l190.8-190.6-210.7-210.7c-9.6-9.6-14.1-22.1-14.7-35.4-.5-13.4 6-25.8 14.7-35.4 8.4-9.3 23.1-14.7 35.4-14.7 12.8.1 26.3 5.7 35.4 14.7l.8.8c6.5 6.4 12.8 12.8 19.2 19.2l190.6 190.8 210.7-210.7c9.5-9.5 22.1-14.1 35.4-14.7 13.4-.5 25.8 6 35.4 14.7 9.2 8.4 14.6 23 14.6 35.3z"></path>
+                                </svg>
+                        </span>
+                        <span v-else>
+                            <img class="w-5 h-5" src="../../../../public/svgs/sidemenu.svg" alt="">
+                        </span>
                     </button>
 
                     <div class="flex-grow p-4 overflow-y-auto">

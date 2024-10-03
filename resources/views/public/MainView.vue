@@ -1,8 +1,8 @@
 <template>
     <div>
         <div class="bg-pattern">
-            <HeroComponent class="mb-44"></HeroComponent>
-            <NumbersComponent class="mb-44"></NumbersComponent>
+            <HeroComponent class="mb-10"></HeroComponent>
+            <NumbersComponent class="md:mb-44 mb-32"></NumbersComponent>
             <div class="mt-10" id="search-area-spacer"></div>
             <SearchComponent id="search-area"></SearchComponent>
         </div>

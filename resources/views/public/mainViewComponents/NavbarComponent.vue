@@ -2,7 +2,7 @@
     <nav class="px-6 py-2 flex justify-between items-center">
         <div>
             <router-link to="/" class="flex items-center tracking-wider text-dark self-center text-xl md:text-3xl whitespace-nowrap font-semibold">
-                <img class="h-10 w-10 mr-3" src="/public/svgs/tawtheefLogo.svg" alt="">
+                <img class="md:h-10 w-7 h-7 md:w-10 mr-3" src="/public/svgs/tawtheefLogo.svg" alt="">
                 Tawtheef
             </router-link>
         </div>

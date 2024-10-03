@@ -1,10 +1,7 @@
 <template>
-    <div class="space-y-20">
+    <div class="md:space-y-32 space-y-24">
         <div class="flex justify-center">
             <div class="w-11/12">
-                <h1 class="text-7xl text-start shadow-text font-bold text-orange tracking-wider mt-6">
-                    Tawtheef
-                </h1>
                 <div class="md:block hidden md:text-6xl text-start font-bold text-orange tracking-wider mt-6">
                     <span class="shadow-text">Nexus of </span>
                     <span class="bg-orange text-white md:text-5xl px-10 pt-1 pb-2 shadow-custom-3d rounded-full">talent</span>
@@ -16,18 +13,18 @@
             </div>
         </div>
         <div class="lg:flex lg:space-y-0 space-y-16 md:flex-nowrap flex-wrap justify-center justify-around">
-            <div class="w-full lg:w-5/12">
+            <div class="w-full lg:w-5/12 relative overflow-visible">
                 <div
                     @click="scrollToSearch"
-                    class="hover:bg-white shadow-custom-3d hover:shadow-none hover:border-[1px] cursor-pointer hover:border-orange group bg-orange rounded-full w-full relative flex justify-center py-6 animated-bubble orange transition-all duration-300 ease-in-out transform hover:scale-105">
+                    class="bubble-container hover:bg-white shadow-custom-3d hover:shadow-none hover:border-[1px] cursor-pointer hover:border-orange group bg-orange rounded-full w-full relative flex justify-center py-6 animated-bubble orange transition-all duration-300 ease-in-out transform hover:scale-105">
                     <div class="ring"></div>
+                    <img class="h-16 absolute -top-8 z-10 pointer-events-none" src="../../../../public/svgs/search.svg" alt="Search">
                     <div class="md:m-6 mx-4 my-2">
                         <div class="flex flex-col items-start">
-                            <img class="h-16" src="../../../../public/svgs/search.svg" alt="Search">
                             <div class="flex items-center space-x-3">
-                                <h1 class="text-white mt-3 text-3xl md:text-4xl font-semibold tracking-wider group-hover:text-orange transition-colors duration-300">
+                                <h1 class="text-white text-2xl md:text-4xl font-semibold tracking-wider group-hover:text-orange transition-colors duration-300">
                                     Discover exceptional talent</h1>
-                                <img class="h-6 w-6 mt-4 transition-transform duration-300 group-hover:translate-x-1"
+                                <img class="md:h-6 h-5 md:w-6 w-5 md:mt-4 mt-1 transition-transform duration-300 group-hover:translate-x-1 pointer-events-none"
                                      src="../../../../public/svgs/down-arrow-3.svg" alt="">
                             </div>
                         </div>
@@ -35,17 +32,18 @@
                 </div>
             </div>
 
-            <div class="lg:w-5/12 w-full">
-                <router-link :to="user ? `/profile/${user?.applicant?.id}` : '/login'">
+            <div class="lg:w-5/12 w-full relative overflow-visible">
+                <router-link :to="user ? `/profile/${user?.applicant?.id}` : '/login'" custom v-slot="{ navigate }">
                     <div
-                        class="hover:bg-white shadow-custom-3d-orange hover:shadow-none hover:border-[1px] cursor-pointer hover:border-zinc-800 group bg-zinc-800 rounded-full w-full relative flex justify-center py-6 animated-bubble dark transition-all duration-300 ease-in-out transform hover:scale-105">
+                        @click="navigate"
+                        class="bubble-container hover:bg-white shadow-custom-3d-orange hover:shadow-none hover:border-[1px] cursor-pointer hover:border-zinc-800 group bg-zinc-800 rounded-full w-full relative flex justify-center py-6 animated-bubble dark transition-all duration-300 ease-in-out transform hover:scale-105">
                         <div class="ring"></div>
+                        <img class="h-16 absolute -top-8 z-10 pointer-events-none" src="../../../../public/svgs/cv.svg" alt="Resume">
                         <div class="md:m-6 mx-4 my-2 flex flex-col items-start">
-                            <img class="h-16 mb-2" src="../../../../public/svgs/cv.svg" alt="Resume">
                             <div class="flex items-center space-x-3">
-                                <h1 class="text-white text-3xl md:text-4xl font-semibold tracking-wider group-hover:text-zinc-800 transition-colors duration-300">
+                                <h1 class="text-white text-2xl md:text-4xl font-semibold tracking-wider group-hover:text-zinc-800 transition-colors duration-300">
                                     {{ buttonText }} resume</h1>
-                                <img class="h-6 w-6 mt-3 transition-transform duration-300 group-hover:translate-x-1"
+                                <img class="md:h-6 h-5 md:w-6 w-5 md:mt-4 mt-1 transition-transform duration-300 group-hover:translate-x-1 pointer-events-none"
                                      src="../../../../public/svgs/down-arrow-2.svg" alt="Arrow">
                             </div>
                         </div>
@@ -57,9 +55,9 @@
 </template>
 
 <script setup>
-import {computed, onMounted, ref} from 'vue';
-import {useStore} from 'vuex';
-import {getSelectables} from '../../../js/utils/storeHelpers.js';
+import { computed, onMounted, ref } from 'vue';
+import { useStore } from 'vuex';
+import { getSelectables } from '../../../js/utils/storeHelpers.js';
 
 const store = useStore();
 const user = computed(() => store.getters.user);
@@ -129,8 +127,9 @@ const scrollToSearch = () => {
 
 .animated-bubble {
     position: relative;
-    overflow: hidden;
+    overflow: visible;
     opacity: 0;
+    will-change: transform;
 }
 
 .animated-bubble.orange {
@@ -151,6 +150,7 @@ const scrollToSearch = () => {
     border: 2px solid rgba(255, 255, 255, 0.5);
     border-radius: 50%;
     transform: translate(-50%, -50%) scale(0);
+    pointer-events: none;
 }
 
 .animated-bubble.orange .ring {
@@ -171,6 +171,7 @@ const scrollToSearch = () => {
     bottom: 0;
     background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 70%);
     opacity: 0;
+    pointer-events: none;
 }
 
 .animated-bubble.orange::after {
@@ -228,5 +229,14 @@ html {
 .animated-svg {
     animation: slide-in 1s ease-out forwards;
     animation-delay: 0.5s; /* Delay to sync with the bubble animation */
+}
+
+.bubble-container {
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    -moz-backface-visibility: hidden;
+    -webkit-transform: translate3d(0, 0, 0);
+    -moz-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
 }
 </style>

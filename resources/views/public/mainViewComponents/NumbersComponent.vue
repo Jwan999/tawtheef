@@ -1,8 +1,7 @@
 <template>
-    <div ref="componentRef" class="flex justify-center items-center w-full">
+    <div ref="componentRef" class="flex flex-wrap justify-start items-center w-full">
         <div
-            class="rounded-full bg-orange-500 flex justify-center items-center md:h-64 h-32 md:w-64 w-32 md:-mr-24 -mr-10 z-40"
-        >
+            class="rounded-full bg-orange flex justify-center items-center md:h-64 h-32 md:w-64 w-32 ml-0 md:-mb-10 -mb-6 z-40">
             <div class="mb-2">
                 <h1 class="text-white text-center font-semibold text-3xl md:text-6xl">
                     {{ displayedTotal }}
@@ -12,23 +11,23 @@
                 </h1>
             </div>
         </div>
-        <div class="bg-zinc-800 flex justify-center rounded-full md:w-8/12 w-10/12">
-            <div class="pl-16 md:py-16 py-6 sm:px-24 lg:px-32 w-full">
+        <div class="bg-zinc-800 flex justify-center rounded-full w-full">
+            <div class="md:pl-16 px-16 md:py-16 py-8 sm:px-24 lg:px-32 w-full">
                 <div class="flex items-center">
                     <transition name="fade-slide" mode="out-in">
                         <p v-if="isNumberAnimationComplete"
                            :key="currentSentenceIndex"
-                           class="flex justify-start items-center space-x-3 text-lg md:text-5xl text-white font-semibold text-start kanit-black-italic tracking-wider animated-sentence">
-                            <span class="text-orange-500 text-3xl md:text-7xl mr-1 md:mr-3">{{
-                                    currentSentence.number
-                                }}</span>
-                            <span class="text-2xl md:text-4xl">
+                           class="flex md:flex-nowrap flex-wrap justify-start items-center md:space-x-3 space-x-0 text-lg md:text-5xl text-white font-semibold text-start kanit-black-italic tracking-wider animated-sentence">
+                            <span class="text-orange-500 text-3xl md:text-7xl m-0 md:mr-3">
+                                {{ currentSentence.number }}
+                            </span>
+                            <span class="text-xl md:text-4xl">
                                 {{ currentSentence.text }}
                             </span>
                         </p>
                     </transition>
                 </div>
-                <h2 class="text-zinc-100 md:text-md text-sm text-start mt-2 md:mt-4">
+                <h2 class="text-zinc-100 md:text-md text-sm text-start mt-0  md:mt-4">
                     Tawtheef Talent Insights
                 </h2>
             </div>

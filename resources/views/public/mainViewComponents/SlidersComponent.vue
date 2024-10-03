@@ -9,8 +9,7 @@
                                 {{ item.specialization === 'Other' ? 'Other Specialization' : item.specialization }}
                             </h1>
                             <div class="mt-6">
-                                <div class="-mt-4 h-2.5 mb-2 w-full rounded-full shadow-custom-3d bg-orange"></div>
-<!--                                <div class="-mt-3 ml-8 h-2.5 w-full rounded-br-2xl bg-dark"></div>-->
+                                <div class="-mt-4 h-2 mb-2 w-full rounded-full shadow-custom-3d bg-orange"></div>
                             </div>
                         </div>
                     </div>
@@ -29,8 +28,8 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import { getSelectables } from '../../../js/utils/storeHelpers.js';
+import {ref, onMounted} from 'vue';
+import {getSelectables} from '../../../js/utils/storeHelpers.js';
 import ApplicantCard from './ApplicantCard.vue';
 
 const applicants = ref([]);

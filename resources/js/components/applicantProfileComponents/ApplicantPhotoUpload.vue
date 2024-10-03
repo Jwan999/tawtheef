@@ -20,7 +20,7 @@
                        accept="image/*">
             </div>
         </div>
-        <div v-if="editMode" class="md:w-9/12 w-full mb-4 p-4 pt-0 rounded-md">
+        <div v-if="editMode" class="md:w-9/12 w-full mb-4 p-4 md:pt-0 rounded-md">
             <h2 class="text-lg font-semibold mb-2">Photo Upload Instructions:</h2>
             <ul class="list-disc list-inside text-sm">
                 <li>Ensure your face is centered.</li>

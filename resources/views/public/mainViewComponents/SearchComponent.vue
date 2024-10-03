@@ -37,34 +37,13 @@
                                 <div :class="isButtonFixed ? 'bottom-10 right-4': 'right-0 top-1'"
                                      class="absolute right-0 top-2 md:top-1" ref="buttonContainer">
                                     <button @click="toggleAdvanceSearch"
-                                            :class="{'bg-orange text-white': showAdvanceSearch, 'fixed-position': isButtonFixed}"
-                                            class="advanced-search-button shadow-custom-3d hover:shadow-none z-40 transition-all duration-300 flex items-center bg-orange hover:bg-dark text-white rounded-3xl
+                                            :class="{'bg-orange text-white': showAdvanceSearch, 'fixed-position shadow-lg': isButtonFixed, 'shadow-custom-3d hover:shadow-none':!isButtonFixed}"
+                                            class="advanced-search-button md:mt-0 -mt-1 z-40 transition-all duration-300 flex items-center bg-orange hover:bg-dark text-white rounded-3xl
                                          md:py-2 py-2 px-2 md:px-3">
-                                        <svg
-                                            class="md:w-6 w-5 md:h-6 h-5 md:mr-2 fill-white md:hidden block"
-                                            viewBox="0 0 189.524 189.524"
-                                            xmlns="http://www.w3.org/2000/svg">
-                                            <g>
-                                                <g>
-                                                    <path clip-rule="evenodd"
-                                                          d="m56.26 52.119c-2.104 8.174-9.524 14.214-18.355 14.214-10.467 0-18.952-8.485-18.952-18.952s8.485-18.952 18.952-18.952c8.831 0 16.251 6.04 18.355 14.214h128.526c2.616 0 4.738 2.121 4.738 4.738s-2.122 4.738-4.738 4.738zm-8.879-4.738c0 5.234-4.243 9.476-9.476 9.476s-9.476-4.243-9.476-9.476 4.243-9.476 9.476-9.476 9.476 4.242 9.476 9.476z"
-                                                          fill-rule="evenodd"></path>
-                                                </g>
-                                                <g>
-                                                    <path
-                                                        d="m4.738 52.119h14.811c-.39-1.514-.597-3.102-.597-4.738s.207-3.224.597-4.738h-14.811c-2.617 0-4.738 2.121-4.738 4.738s2.121 4.738 4.738 4.738z"></path>
-                                                </g>
-                                                <g>
-                                                    <path clip-rule="evenodd"
-                                                          d="m113.117 137.405c-2.104-8.174-9.525-14.214-18.355-14.214s-16.252 6.04-18.355 14.214h-71.669c-2.617 0-4.738 2.122-4.738 4.738s2.121 4.738 4.738 4.738h71.668c2.104 8.174 9.525 14.214 18.355 14.214s16.252-6.04 18.355-14.214h71.668c2.616 0 4.738-2.122 4.738-4.738s-2.122-4.738-4.738-4.738zm-18.355 14.214c5.234 0 9.476-4.242 9.476-9.476s-4.242-9.476-9.476-9.476-9.476 4.242-9.476 9.476 4.242 9.476 9.476 9.476z"
-                                                          fill-rule="evenodd"></path>
-                                                </g>
-                                                <g>
-                                                    <path clip-rule="evenodd"
-                                                          d="m169.974 90.024c-2.104-8.174-9.525-14.214-18.355-14.214s-16.252 6.04-18.355 14.214h-128.526c-2.617 0-4.738 2.122-4.738 4.738s2.121 4.738 4.738 4.738h128.526c2.104 8.174 9.525 14.214 18.355 14.214s16.252-6.04 18.355-14.214h14.811c2.616 0 4.738-2.122 4.738-4.738s-2.122-4.738-4.738-4.738zm-18.355 14.214c5.234 0 9.476-4.242 9.476-9.476s-4.243-9.476-9.476-9.476c-5.234 0-9.476 4.242-9.476 9.476s4.242 9.476 9.476 9.476z"
-                                                          fill-rule="evenodd"></path>
-                                                </g>
-                                            </g>
+                                        <svg id="icons" viewBox="0 0 64 64" class="w-6 h-6 md:mr-2 fill-white md:hidden block"
+                                             xmlns="http://www.w3.org/2000/svg">
+                                            <path
+                                                d="m53.39 8h-42.78a5.61 5.61 0 0 0 -4.15 9.38l18.54 20.39v19.23a2 2 0 0 0 1.13 1.8 1.94 1.94 0 0 0 .87.2 2 2 0 0 0 1.25-.44l3.75-3 6.25-5a2 2 0 0 0 .75-1.56v-11.23l18.54-20.39a5.61 5.61 0 0 0 -4.15-9.38z"/>
                                         </svg>
                                         <span
                                             class="whitespace-nowrap md:block hidden px-6 font-semibold tracking-wide">{{
