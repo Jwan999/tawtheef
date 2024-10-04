@@ -29,7 +29,7 @@ class ApplicantController extends Controller
 
         $isPostgres = $driver === 'pgsql';
 
-        $totalResumes = Applicant::where('published', true)->count();
+        $totalResumes = Applicant::count();
 
         $availableForWork = Applicant::where('published', true)
             ->when($isPostgres, function ($query) {
