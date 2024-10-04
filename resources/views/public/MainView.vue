@@ -54,7 +54,7 @@ onMounted(() => {
     height: 1.5rem; /* Equivalent to Tailwind's mt-10 */
 }
 .bg-pattern {
-    background-image: url("/svgs/background-pattern.svg");
+    background-image: url("svgs/background-pattern.svg");
     background-repeat: repeat;
     position: relative;
 }
