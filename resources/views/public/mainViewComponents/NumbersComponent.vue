@@ -1,12 +1,12 @@
 <template>
     <div ref="componentRef" class="flex flex-wrap justify-start items-center w-full">
         <div
-            class="rounded-full bg-orange flex justify-center items-center md:h-64 h-32 md:w-64 w-32 ml-0 md:-mb-10 -mb-6 z-40">
+            class="rounded-full bg-white text-orange flex justify-center items-center md:h-64 h-32 md:w-64 w-32 ml-0 md:-mb-10 -mb-6 z-40">
             <div class="mb-2">
-                <h1 class="text-white text-center font-semibold text-3xl md:text-6xl">
+                <h1 class="text-center font-semibold text-3xl md:text-6xl">
                     {{ displayedTotal }}
                 </h1>
-                <h1 class="text-zinc-100 text-sm font-semibold tracking-wider text-center mt-1 md:mt-3">
+                <h1 class="text-md font-semibold tracking-wider text-center mt-1 md:mt-3">
                     Total resumes
                 </h1>
             </div>
@@ -36,31 +36,15 @@
 </template>
 
 <script setup>
-import {ref, onMounted, onUnmounted, watch} from 'vue';
+import { ref, onMounted, onUnmounted, watch } from 'vue';
+import axios from 'axios';
 
-const sentences = [
-    {number: "305", text: "Total resumes in our database"},
-    {number: "189", text: "Candidates are available for immediate work"},
-    {number: "116", text: "Candidates have a Bachelor's degree or higher"},
-    {number: "93", text: "Undergraduates seeking opportunities"},
-    {number: "127", text: "Candidates specialize in Creative & Design"},
-    {number: "98", text: "Candidates have expertise in Engineering"},
-    {number: "76", text: "Candidates are proficient in Graphic Design"},
-    {number: "62", text: "Candidates are skilled in various Development fields"},
-    {number: "217", text: "Male candidates in our talent pool"},
-    {number: "88", text: "Female candidates ready for new opportunities"},
-    {number: "183", text: "Candidates are proficient in Microsoft Office tools"},
-    {number: "112", text: "Candidates have experience with Adobe Creative Suite"},
-    {number: "95", text: "Candidates are fluent in both Arabic and English"},
-    {number: "57", text: "Candidates have expertise in Business & Management"},
-    {number: "41", text: "Candidates have participated in relevant events or workshops"}
-];
-
+const sentences = ref([]);
 const componentRef = ref(null);
 const currentSentenceIndex = ref(0);
-const currentSentence = ref(sentences[0]);
+const currentSentence = ref({});
 
-const totalResumes = ref(305); // This is updated with the actual value from the data
+const totalResumes = ref(0);
 const displayedTotal = ref(0);
 const isNumberAnimationComplete = ref(false);
 const isComponentVisible = ref(false);
@@ -69,18 +53,45 @@ let intervalId;
 let animationFrameId;
 let observer;
 
+const fetchStatistics = async () => {
+    try {
+        const response = await axios.get('/api/statistics');
+        const data = response.data;
+        totalResumes.value = data.totalResumes;
+        sentences.value = [
+            {number: data.totalResumes.toString(), text: "Total resumes in our database"},
+            {number: data.availableForWork.toString(), text: "Candidates are available for immediate work"},
+            {number: data.bachelorOrHigher.toString(), text: "Candidates have a Bachelor's degree or higher"},
+            {number: data.undergraduates.toString(), text: "Undergraduates seeking opportunities"},
+            {number: data.creativeDesign.toString(), text: "Candidates specialize in Creative & Design"},
+            {number: data.engineering.toString(), text: "Candidates have expertise in Engineering"},
+            {number: data.graphicDesign.toString(), text: "Candidates are proficient in Graphic Design"},
+            {number: data.development.toString(), text: "Candidates are skilled in various Development fields"},
+            {number: data.maleCandidates.toString(), text: "Male candidates in our talent pool"},
+            {number: data.femaleCandidates.toString(), text: "Female candidates ready for new opportunities"},
+            {number: data.microsoftOffice.toString(), text: "Candidates are proficient in Microsoft Office tools"},
+            {number: data.adobeSuite.toString(), text: "Candidates have experience with Adobe Creative Suite"},
+            {number: data.bilingualCandidates.toString(), text: "Candidates are fluent in both Arabic and English"},
+            {number: data.businessManagement.toString(), text: "Candidates have expertise in Business & Management"},
+            {number: data.eventParticipants.toString(), text: "Candidates have participated in relevant events or workshops"}
+        ];
+        currentSentence.value = sentences.value[0];
+    } catch (error) {
+        console.error('Error fetching statistics:', error);
+    }
+};
+
 const rotateSentences = () => {
-    currentSentenceIndex.value = (currentSentenceIndex.value + 1) % sentences.length;
-    currentSentence.value = sentences[currentSentenceIndex.value];
+    currentSentenceIndex.value = (currentSentenceIndex.value + 1) % sentences.value.length;
+    currentSentence.value = sentences.value[currentSentenceIndex.value];
 };
 
 const animateTotal = (timestamp) => {
     if (!animateTotal.start) animateTotal.start = timestamp;
     const elapsed = timestamp - animateTotal.start;
 
-    // Use an easing function to slow down the animation near the end
-    const progress = Math.min(elapsed / 2000, 1); // 2000ms duration
-    const easedProgress = 1 - Math.pow(1 - progress, 4); // Ease out quart
+    const progress = Math.min(elapsed / 2000, 1);
+    const easedProgress = 1 - Math.pow(1 - progress, 4);
 
     displayedTotal.value = Math.floor(easedProgress * totalResumes.value);
 
@@ -93,7 +104,7 @@ const animateTotal = (timestamp) => {
 };
 
 const startSentenceRotation = () => {
-    intervalId = setInterval(rotateSentences, 4000); // Change sentence every 4 seconds
+    intervalId = setInterval(rotateSentences, 4000);
 };
 
 const startAnimation = () => {
@@ -103,13 +114,15 @@ const startAnimation = () => {
     }
 };
 
-onMounted(() => {
+onMounted(async () => {
+    await fetchStatistics();
+
     observer = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting) {
             startAnimation();
-            observer.disconnect(); // Stop observing once animation starts
+            observer.disconnect();
         }
-    }, {threshold: 0.5}); // Trigger when 50% of the component is visible
+    }, {threshold: 0.5});
 
     if (componentRef.value) {
         observer.observe(componentRef.value);
@@ -122,7 +135,6 @@ onUnmounted(() => {
     if (observer) observer.disconnect();
 });
 
-// Watch for changes in totalResumes and re-animate when it updates
 watch(totalResumes, () => {
     isNumberAnimationComplete.value = false;
     isComponentVisible.value = false;
@@ -139,7 +151,6 @@ watch(totalResumes, () => {
         observer.observe(componentRef.value);
     }
 });
-
 </script>
 
 <style scoped>

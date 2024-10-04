@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+Route::get('/api/statistics', [ApplicantController::class, 'getStatistics']);
 
 Route::get('/applicants/{id}/view-profile', [ApplicantController::class, 'viewApplicantProfile'])->name('applicant.view_profile');
 Route::get('/applicants/{id}/generate-profile', [ApplicantController::class, 'generateApplicantProfile'])->name('applicant.generate_profile');

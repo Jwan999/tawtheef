@@ -13,6 +13,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Dosis:wght@200..800&display=swap" rel="stylesheet">
     <title>Tawtheef</title>
+    <link rel="icon" type="image/x-icon" href="./svgs/tawtheefLogo.svg">
+
 </head>
 <body class="bg-light">
 

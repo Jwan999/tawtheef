@@ -2,7 +2,7 @@
     <div class="md:space-y-32 space-y-24">
         <div class="flex justify-center">
             <div class="w-11/12">
-                <div class="md:block hidden md:text-6xl text-start font-bold text-orange tracking-wider mt-6">
+                <div class="md:block hidden md:text-6xl text-start font-bold text-orange tracking-wider pt-16">
                     <span class="shadow-text">Nexus of </span>
                     <span class="bg-orange text-white md:text-5xl px-10 pt-1 pb-2 shadow-custom-3d rounded-full">talent</span>
                     <span class="shadow-text"> and </span>

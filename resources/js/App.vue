@@ -7,7 +7,7 @@
             <NavbarComponent></NavbarComponent>
         </template>
 
-        <div :class="isDashboard ? 'p-4 sm:ml-64 mt-16' : 'mt-10'">
+        <div :class="isDashboard ? 'p-4 sm:ml-64 mt-16' : ''">
             <router-view ></router-view>
         </div>
     </div>

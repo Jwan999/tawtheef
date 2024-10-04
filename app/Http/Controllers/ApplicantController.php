@@ -22,6 +22,176 @@ class ApplicantController extends Controller
         $this->filterService = $filterService;
     }
 
+    public function getStatistics()
+    {
+        $connection = config('database.default');
+        $driver = config("database.connections.{$connection}.driver");
+
+        $isPostgres = $driver === 'pgsql';
+
+        $totalResumes = Applicant::where('published', true)->count();
+
+        $availableForWork = Applicant::where('published', true)
+            ->when($isPostgres, function ($query) {
+                return $query->whereRaw("(contact->>'workAvailability')::boolean = true");
+            }, function ($query) {
+                return $query->whereJsonContains('contact->workAvailability', true);
+            })
+            ->count();
+
+        $bachelorOrHigher = Applicant::where('published', true)
+            ->where(function ($query) use ($isPostgres) {
+                if ($isPostgres) {
+                    $query->whereRaw("education::jsonb @> '[{\"degree\": \"Bachelor''s Degree\"}]'::jsonb")
+                        ->orWhereRaw("education::jsonb @> '[{\"degree\": \"Master''s Degree\"}]'::jsonb")
+                        ->orWhereRaw("education::jsonb @> '[{\"degree\": \"Doctorate (Ph.D.)\"}]'::jsonb");
+                } else {
+                    $query->whereJsonContains('education', ['degree' => "Bachelor's Degree"])
+                        ->orWhereJsonContains('education', ['degree' => "Master's Degree"])
+                        ->orWhereJsonContains('education', ['degree' => "Doctorate (Ph.D.)"]);
+                }
+            })
+            ->count();
+
+        $undergraduates = Applicant::where('published', true)
+            ->when($isPostgres, function ($query) {
+                return $query->whereRaw("education::jsonb @> '[{\"degree\": \"Undergraduate\"}]'::jsonb");
+            }, function ($query) {
+                return $query->whereJsonContains('education', ['degree' => "Undergraduate"]);
+            })
+            ->count();
+
+        $creativeDesign = Applicant::where('published', true)
+            ->when($isPostgres, function ($query) {
+                return $query->whereRaw("speciality::jsonb @> '{\"specializations\": [\"Creative & Design\"]}'::jsonb");
+            }, function ($query) {
+                return $query->whereJsonContains('speciality->specializations', 'Creative & Design');
+            })
+            ->count();
+
+        $engineering = Applicant::where('published', true)
+            ->when($isPostgres, function ($query) {
+                return $query->whereRaw("speciality::jsonb @> '{\"specializations\": [\"Science & Engineering\"]}'::jsonb");
+            }, function ($query) {
+                return $query->whereJsonContains('speciality->specializations', 'Science & Engineering');
+            })
+            ->count();
+
+        $graphicDesign = Applicant::where('published', true)
+            ->when($isPostgres, function ($query) {
+                return $query->whereRaw("speciality::jsonb @> '{\"children\": [\"Graphic Design\"]}'::jsonb");
+            }, function ($query) {
+                return $query->whereJsonContains('speciality->children', 'Graphic Design');
+            })
+            ->count();
+
+        $development = Applicant::where('published', true)
+            ->when($isPostgres, function ($query) {
+                return $query->whereRaw("speciality::jsonb @> '{\"specializations\": [\"Development\"]}'::jsonb");
+            }, function ($query) {
+                return $query->whereJsonContains('speciality->specializations', 'Development');
+            })
+            ->count();
+
+        $maleCandidates = Applicant::where('published', true)
+            ->when($isPostgres, function ($query) {
+                return $query->whereRaw("contact->>'gender' = 'Male'");
+            }, function ($query) {
+                return $query->whereJsonContains('contact->gender', 'Male');
+            })
+            ->count();
+
+        $femaleCandidates = Applicant::where('published', true)
+            ->when($isPostgres, function ($query) {
+                return $query->whereRaw("contact->>'gender' = 'Female'");
+            }, function ($query) {
+                return $query->whereJsonContains('contact->gender', 'Female');
+            })
+            ->count();
+
+        $microsoftOffice = Applicant::where('published', true)
+            ->where(function ($query) use ($isPostgres) {
+                if ($isPostgres) {
+                    $query->whereRaw("tools::jsonb @> '[{\"item\": \"Microsoft Office\"}]'::jsonb")
+                        ->orWhereRaw("tools::jsonb @> '[{\"item\": \"MS Office\"}]'::jsonb")
+                        ->orWhereRaw("tools::jsonb @> '[{\"item\": \"MS Word\"}]'::jsonb")
+                        ->orWhereRaw("tools::jsonb @> '[{\"item\": \"MS Excel\"}]'::jsonb")
+                        ->orWhereRaw("tools::jsonb @> '[{\"item\": \"MS PowerPoint\"}]'::jsonb");
+                } else {
+                    $query->whereJsonContains('tools', ['item' => 'Microsoft Office'])
+                        ->orWhereJsonContains('tools', ['item' => 'MS Office'])
+                        ->orWhereJsonContains('tools', ['item' => 'MS Word'])
+                        ->orWhereJsonContains('tools', ['item' => 'MS Excel'])
+                        ->orWhereJsonContains('tools', ['item' => 'MS PowerPoint']);
+                }
+            })
+            ->count();
+
+        $adobeSuite = Applicant::where('published', true)
+            ->where(function ($query) use ($isPostgres) {
+                if ($isPostgres) {
+                    $query->whereRaw("tools::jsonb @> '[{\"item\": \"Adobe\"}]'::jsonb")
+                        ->orWhereRaw("tools::jsonb @> '[{\"item\": \"Photoshop\"}]'::jsonb")
+                        ->orWhereRaw("tools::jsonb @> '[{\"item\": \"Illustrator\"}]'::jsonb")
+                        ->orWhereRaw("tools::jsonb @> '[{\"item\": \"InDesign\"}]'::jsonb")
+                        ->orWhereRaw("tools::jsonb @> '[{\"item\": \"Premiere Pro\"}]'::jsonb")
+                        ->orWhereRaw("tools::jsonb @> '[{\"item\": \"After Effects\"}]'::jsonb");
+                } else {
+                    $query->whereJsonContains('tools', ['item' => 'Adobe'])
+                        ->orWhereJsonContains('tools', ['item' => 'Photoshop'])
+                        ->orWhereJsonContains('tools', ['item' => 'Illustrator'])
+                        ->orWhereJsonContains('tools', ['item' => 'InDesign'])
+                        ->orWhereJsonContains('tools', ['item' => 'Premiere Pro'])
+                        ->orWhereJsonContains('tools', ['item' => 'After Effects']);
+                }
+            })
+            ->count();
+
+        $bilingualCandidates = Applicant::where('published', true)
+            ->when($isPostgres, function ($query) {
+                return $query->whereRaw("languages::jsonb @> '[{\"item\": \"Arabic\"}]'::jsonb")
+                    ->whereRaw("languages::jsonb @> '[{\"item\": \"English\"}]'::jsonb");
+            }, function ($query) {
+                return $query->whereJsonContains('languages', ['item' => 'Arabic'])
+                    ->whereJsonContains('languages', ['item' => 'English']);
+            })
+            ->count();
+
+        $businessManagement = Applicant::where('published', true)
+            ->when($isPostgres, function ($query) {
+                return $query->whereRaw("speciality::jsonb @> '{\"specializations\": [\"Business & Management\"]}'::jsonb");
+            }, function ($query) {
+                return $query->whereJsonContains('speciality->specializations', 'Business & Management');
+            })
+            ->count();
+
+        $eventParticipants = Applicant::where('published', true)
+            ->whereNotNull('activities')
+            ->when($isPostgres, function ($query) {
+                return $query->whereRaw("jsonb_array_length(activities::jsonb) > 0");
+            }, function ($query) {
+                return $query->whereRaw("JSON_LENGTH(activities) > 0");
+            })
+            ->count();
+
+        return response()->json([
+            'totalResumes' => $totalResumes,
+            'availableForWork' => $availableForWork,
+            'bachelorOrHigher' => $bachelorOrHigher,
+            'undergraduates' => $undergraduates,
+            'creativeDesign' => $creativeDesign,
+            'engineering' => $engineering,
+            'graphicDesign' => $graphicDesign,
+            'development' => $development,
+            'maleCandidates' => $maleCandidates,
+            'femaleCandidates' => $femaleCandidates,
+            'microsoftOffice' => $microsoftOffice,
+            'adobeSuite' => $adobeSuite,
+            'bilingualCandidates' => $bilingualCandidates,
+            'businessManagement' => $businessManagement,
+            'eventParticipants' => $eventParticipants,
+        ]);
+    }
     public function generateApplicantProfile($id)
     {
         try {
@@ -327,8 +497,19 @@ class ApplicantController extends Controller
     }
 
     // Placeholder methods
-    public function create() {}
-    public function edit(Applicant $applicant) {}
-    public function update(Request $request, Applicant $applicant) {}
-    public function destroy(Applicant $applicant) {}
+    public function create()
+    {
+    }
+
+    public function edit(Applicant $applicant)
+    {
+    }
+
+    public function update(Request $request, Applicant $applicant)
+    {
+    }
+
+    public function destroy(Applicant $applicant)
+    {
+    }
 }

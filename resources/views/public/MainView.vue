@@ -1,10 +1,11 @@
 <template>
-    <div>
-        <div class="bg-pattern">
-            <HeroComponent class="mb-10"></HeroComponent>
-            <NumbersComponent class="md:mb-44 mb-32"></NumbersComponent>
-            <div class="mt-10" id="search-area-spacer"></div>
-            <SearchComponent id="search-area"></SearchComponent>
+    <div class="relative">
+        <div class="bg-pattern relative">
+            <div class="fade-overlay"></div>
+            <HeroComponent class="mb-10 relative z-10"></HeroComponent>
+            <NumbersComponent class="md:mb-44 mb-32 relative z-10"></NumbersComponent>
+            <div class="mt-10 relative z-10" id="search-area-spacer"></div>
+            <SearchComponent class="pb-24 relative z-10" id="search-area"></SearchComponent>
         </div>
         <SlidersComponent v-if="(!searchMode) && (!isAdvanceSearchInUse)"></SlidersComponent>
         <PreviewAllComponent v-if="(searchMode) || (isAdvanceSearchInUse)"></PreviewAllComponent>
@@ -13,7 +14,7 @@
 </template>
 
 <script setup>
-import {computed, onMounted, ref, watch, nextTick} from "vue";
+import {computed, onMounted, nextTick} from "vue";
 import {useRouter} from 'vue-router';
 import {useStore} from 'vuex';
 import SearchComponent from "./mainViewComponents/SearchComponent.vue";
@@ -52,8 +53,22 @@ onMounted(() => {
 #search-area-spacer {
     height: 1.5rem; /* Equivalent to Tailwind's mt-10 */
 }
-.bg-pattern{
-    background-image: url("/../../../public/svgs/pattern.svg");
+.bg-pattern {
+    background-image: url("./svgs/background-pattern.svg");
     background-repeat: repeat;
+    position: relative;
+}
+.fade-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to bottom,
+    rgba(255,255,255,0) 0%,
+    rgba(255,255,255,0) 70%,
+    #F4F4F5 100%);
+    pointer-events: none;
+    z-index: 1;
 }
 </style>
