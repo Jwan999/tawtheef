@@ -325,7 +325,7 @@ class ApplicantController extends Controller
 
     public function index()
     {
-        $applicants = Applicant::where('published', true)->get();
+        $applicants = Applicant::where('published', true)->orderBy('created_at', 'desc')->get();
         return response()->json($this->processApplicantsData($applicants));
     }
 
@@ -357,7 +357,7 @@ class ApplicantController extends Controller
             $applicants = $query->skip(($page - 1) * $perPage)->take($perPage)->get();
 
             $processedApplicants = $this->processApplicantsData($applicants);
-
+            $query->orderBy('created_at', 'desc');
             $results = [
                 'data' => $processedApplicants,
                 'current_page' => $page,
@@ -379,6 +379,7 @@ class ApplicantController extends Controller
             $query = Applicant::query()->where('published', true);
 
             $this->filterService->applyFilters($query, $request);
+            $query->orderBy('created_at', 'desc');
             $results = $query->paginate($perPage);
 
             $results->setCollection($this->processApplicantsData($results->getCollection()));
