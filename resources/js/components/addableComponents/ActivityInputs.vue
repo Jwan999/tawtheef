@@ -1,8 +1,6 @@
 <template>
 
     <div class="w-full py-6 pr-0">
-        <label for="message" class="block mb-3 text-zinc-500 mt-2">* These fields are optional, and their
-            purpose is to show if the individual has other related activities.</label>
 
         <div class="md:flex flex-none md:space-x-3 space-x-0 space-y-5 md:space-y-0 items-center w-full mt-4">
 

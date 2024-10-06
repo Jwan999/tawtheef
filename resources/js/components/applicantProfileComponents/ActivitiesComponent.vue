@@ -32,6 +32,8 @@
 
         <div v-else class="rounded-md bg-white pb-6">
             <div class="space-y-6">
+                <label for="message" class="block mb-3 text-zinc-500 mt-2">* These fields are optional, and their
+                    purpose is to show if the individual has other related activities.</label>
                 <div v-for="(item,index) in value" :key="index">
                     <div class="w-full">
                         <div class="flex justify-end">

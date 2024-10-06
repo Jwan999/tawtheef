@@ -1,54 +1,56 @@
 <template>
-    <div class="md:space-y-32 space-y-24">
-        <div class="flex justify-center">
-            <div class="w-11/12">
-                <div class="md:block hidden md:text-6xl text-start font-bold text-orange tracking-wider pt-16">
-                    <span class="shadow-text">Nexus of </span>
-                    <span class="bg-orange text-white md:text-5xl px-10 pt-1 pb-2 shadow-custom-3d rounded-full">talent</span>
-                    <span class="shadow-text"> and </span>
-                    <span class="bg-zinc-800 rounded-full text-white md:text-5xl  px-10 pt-0.5 pb-3 shadow-custom-3d-orange">opportunity</span>
-                </div>
-                <h1 class="block md:hidden text-6xl text-start font-bold text-orange tracking-wider shadow-text mt-6">
-                    Nexus of talent and opportunity</h1>
-            </div>
-        </div>
-        <div class="lg:flex lg:space-y-0 space-y-16 md:flex-nowrap flex-wrap justify-center justify-around">
-            <div class="w-full lg:w-5/12 relative overflow-visible">
-                <div
-                    @click="scrollToSearch"
-                    class="bubble-container hover:bg-white shadow-custom-3d hover:shadow-none hover:border-[1px] cursor-pointer hover:border-orange group bg-orange rounded-full w-full relative flex justify-center py-6 animated-bubble orange transition-all duration-300 ease-in-out transform hover:scale-105">
-                    <div class="ring"></div>
-                    <img class="h-16 absolute -top-8 z-10 pointer-events-none" src="../../../../public/svgs/search.svg" alt="Search">
-                    <div class="md:m-6 mx-4 my-2">
-                        <div class="flex flex-col items-start">
-                            <div class="flex items-center space-x-3">
-                                <h1 class="text-white text-2xl md:text-4xl font-semibold tracking-wider group-hover:text-orange transition-colors duration-300">
-                                    Discover exceptional talent</h1>
-                                <img class="md:h-6 h-5 md:w-6 w-5 md:mt-4 mt-1 transition-transform duration-300 group-hover:translate-x-1 pointer-events-none"
-                                     src="../../../../public/svgs/down-arrow-3.svg" alt="">
-                            </div>
-                        </div>
+    <div class="container mx-auto overflow-visible px-4">
+        <div class="md:space-y-32 space-y-24">
+            <div class="flex justify-center">
+                <div class="w-11/12">
+                    <div class="md:block hidden md:text-6xl text-start font-bold text-orange tracking-wider pt-16">
+                        <span class="shadow-text">Nexus of </span>
+                        <span class="bg-orange text-white md:text-5xl px-6 pt-1 pb-2 shadow-custom-3d rounded-full">talent</span>
+                        <span class="shadow-text"> and </span>
+                        <span class="bg-zinc-800 rounded-full text-white md:text-5xl px-6 pt-0.5 pb-3 shadow-custom-3d-orange">opportunity</span>
                     </div>
+                    <h1 class="block md:hidden text-6xl text-start font-bold text-orange tracking-wider shadow-text mt-6">
+                        Nexus of talent and opportunity</h1>
                 </div>
             </div>
-
-            <div class="lg:w-5/12 w-full relative overflow-visible">
-                <router-link :to="user ? `/profile/${user?.applicant?.id}` : '/login'" custom v-slot="{ navigate }">
+            <div class="lg:flex lg:space-y-0 space-y-16 md:flex-nowrap flex-wrap justify-around">
+                <div class="w-full lg:w-5/12 relative overflow-visible mb-8 lg:mb-0 p-4">
                     <div
-                        @click="navigate"
-                        class="bubble-container hover:bg-white shadow-custom-3d-orange hover:shadow-none hover:border-[1px] cursor-pointer hover:border-zinc-800 group bg-zinc-800 rounded-full w-full relative flex justify-center py-6 animated-bubble dark transition-all duration-300 ease-in-out transform hover:scale-105">
+                        @click="scrollToSearch"
+                        class="bubble-container hover:bg-white shadow-custom-3d hover:shadow-none hover:border-[1px] cursor-pointer hover:border-orange group bg-orange rounded-full w-full relative flex justify-center md:py-3 py-6 animated-bubble orange transition-all duration-300 ease-in-out transform hover:scale-105">
                         <div class="ring"></div>
-                        <img class="h-16 absolute -top-8 z-10 pointer-events-none" src="../../../../public/svgs/cv.svg" alt="Resume">
-                        <div class="md:m-6 mx-4 my-2 flex flex-col items-start">
-                            <div class="flex items-center space-x-3">
-                                <h1 class="text-white text-2xl md:text-4xl font-semibold tracking-wider group-hover:text-zinc-800 transition-colors duration-300">
-                                    {{ buttonText }} resume</h1>
-                                <img class="md:h-6 h-5 md:w-6 w-5 md:mt-4 mt-1 transition-transform duration-300 group-hover:translate-x-1 pointer-events-none"
-                                     src="../../../../public/svgs/down-arrow-2.svg" alt="Arrow">
+                        <img class="h-16 absolute -top-8 z-10 pointer-events-none" src="../../../../public/svgs/search.svg" alt="Search">
+                        <div class="md:m-6 mx-4 my-2 px-4 md:px-8">
+                            <div class="flex flex-col items-start">
+                                <div class="flex items-center space-x-3">
+                                    <h1 class="text-white text-2xl md:text-3xl font-semibold tracking-wider group-hover:text-orange transition-colors duration-300 break-words">
+                                        Discover new talent</h1>
+                                    <img class="md:h-6 h-5 md:w-6 w-5 md:mt-4 mt-1 transition-transform duration-300 group-hover:translate-x-1 pointer-events-none"
+                                         src="../../../../public/svgs/down-arrow-3.svg" alt="">
+                                </div>
                             </div>
                         </div>
                     </div>
-                </router-link>
+                </div>
+
+                <div class="w-full lg:w-5/12 relative overflow-visible p-4">
+                    <router-link :to="user ? `/profile/${user?.applicant?.id}` : '/login'" custom v-slot="{ navigate }">
+                        <div
+                            @click="navigate"
+                            class="bubble-container hover:bg-white shadow-custom-3d-orange hover:shadow-none hover:border-[1px] cursor-pointer hover:border-zinc-800 group bg-zinc-800 rounded-full w-full relative flex justify-center md:py-3 py-6 animated-bubble dark transition-all duration-300 ease-in-out transform hover:scale-105">
+                            <div class="ring"></div>
+                            <img class="h-16 absolute -top-8 z-10 pointer-events-none" src="../../../../public/svgs/cv.svg" alt="Resume">
+                            <div class="md:m-6 mx-4 my-2 px-4 md:px-8 flex flex-col items-start">
+                                <div class="flex items-center space-x-3">
+                                    <h1 class="text-white text-2xl md:text-3xl font-semibold tracking-wider group-hover:text-zinc-800 transition-colors duration-300 break-words">
+                                        {{ buttonText }} resume</h1>
+                                    <img class="md:h-6 h-5 md:w-6 w-5 md:mt-4 mt-1 transition-transform duration-300 group-hover:translate-x-1 pointer-events-none"
+                                         src="../../../../public/svgs/down-arrow-2.svg" alt="Arrow">
+                                </div>
+                            </div>
+                        </div>
+                    </router-link>
+                </div>
             </div>
         </div>
     </div>
@@ -101,7 +103,7 @@ const scrollToSearch = () => {
 
 @keyframes bubble-grow {
     0% {
-        transform: scale(0);
+        transform: scale(0.95);
         opacity: 0;
     }
     70% {
@@ -116,11 +118,11 @@ const scrollToSearch = () => {
 
 @keyframes ring-pulse {
     0% {
-        transform: scale(0);
+        transform: scale(0.95);
         opacity: 0.5;
     }
     100% {
-        transform: scale(2);
+        transform: scale(1.1);
         opacity: 0;
     }
 }
@@ -145,11 +147,11 @@ const scrollToSearch = () => {
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 100%;
-    height: 100%;
+    width: 110%;
+    height: 110%;
     border: 2px solid rgba(255, 255, 255, 0.5);
     border-radius: 50%;
-    transform: translate(-50%, -50%) scale(0);
+    transform: translate(-50%, -50%) scale(0.95);
     pointer-events: none;
 }
 
@@ -165,13 +167,14 @@ const scrollToSearch = () => {
 .animated-bubble::after {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    top: -5%;
+    left: -5%;
+    right: -5%;
+    bottom: -5%;
     background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 70%);
     opacity: 0;
     pointer-events: none;
+    border-radius: 50%;
 }
 
 .animated-bubble.orange::after {
@@ -186,14 +189,14 @@ const scrollToSearch = () => {
 @keyframes shine {
     0% {
         opacity: 0;
-        transform: scale(0);
+        transform: scale(0.95);
     }
     50% {
         opacity: 1;
     }
     100% {
         opacity: 0;
-        transform: scale(2);
+        transform: scale(1.05);
     }
 }
 
@@ -214,7 +217,6 @@ html {
     animation: smoothScroll 0.8s cubic-bezier(0.65, 0, 0.35, 1) forwards;
 }
 
-/* Animation for SVG */
 @keyframes slide-in {
     0% {
         transform: translateY(-100%);
@@ -228,7 +230,7 @@ html {
 
 .animated-svg {
     animation: slide-in 1s ease-out forwards;
-    animation-delay: 0.5s; /* Delay to sync with the bubble animation */
+    animation-delay: 0.5s;
 }
 
 .bubble-container {
