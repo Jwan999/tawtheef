@@ -2,6 +2,7 @@
     <div v-if="!dataFetched" class="flex justify-center items-center h-screen">
         <LottieLoader/>
     </div>
+
     <div v-else :class="!isDashboard ? 'px-4 md:px-8 mt-6 mb-10' : ''">
         <div class="flex w-full relative space-x-0 md:space-x-6">
             <!-- Overlay to close menu when clicking outside -->
@@ -84,17 +85,17 @@
                 </div>
 
             </div>
-
-            <!-- Content area -->
+            <!--content area-->
             <div class="w-full md:w-10/12 md:ml-4">
                 <!--personal information-->
-                <div v-if="personalInformation || !isAnyOtherTabActive"
+                <div :class="{ 'hidden': !personalInformation && isAnyOtherTabActive }"
                      class="w-full space-y-6 bg-white p-4 md:p-6 rounded-lg">
                     <ApplicantPhotoUpload v-model="image"></ApplicantPhotoUpload>
                     <ContactComponent v-model="contact" ref="contactComponent"></ContactComponent>
                 </div>
                 <!--educational background-->
-                <div v-if="educationalInformation" class="w-full space-y-8 bg-white p-4 md:p-6 rounded-lg">
+                <div :class="{ 'hidden': !educationalInformation }"
+                     class="w-full space-y-8 bg-white p-4 md:p-6 rounded-lg">
                     <FieldOfInterestComponent class="w-full" v-model="speciality"
                                               ref="fieldOfInterestComponent"></FieldOfInterestComponent>
                     <div class="w-full">
@@ -103,13 +104,15 @@
                     <CoursesComponent v-model="courses" ref="coursesComponent"></CoursesComponent>
                 </div>
                 <!--professional information-->
-                <div v-if="professionalInformation" class="w-full space-y-8 bg-white p-4 md:p-6 rounded-lg">
+                <div :class="{ 'hidden': !professionalInformation }"
+                     class="w-full space-y-8 bg-white p-4 md:p-6 rounded-lg">
                     <SummaryComponent v-model="summary" ref="summaryComponent"></SummaryComponent>
                     <ToolsComponent v-model="tools" ref="toolsComponent"></ToolsComponent>
                     <EmploymentComponent v-model="employment" ref="employmentComponent"></EmploymentComponent>
                 </div>
                 <!--skills and activities-->
-                <div v-if="skillsAndActivities" class="w-full space-y-8 bg-white p-4 md:p-6 rounded-lg">
+                <div :class="{ 'hidden': !skillsAndActivities }"
+                     class="w-full space-y-8 bg-white p-4 md:p-6 rounded-lg">
                     <SkillsComponent v-model="skills" ref="skillsComponent"></SkillsComponent>
                     <LanguagesComponent v-model="languages" ref="languagesComponent"></LanguagesComponent>
                     <ActivitiesComponent v-model="activities" ref="activitiesComponent"></ActivitiesComponent>

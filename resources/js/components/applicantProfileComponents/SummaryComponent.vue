@@ -16,18 +16,29 @@
         <div v-else class="rounded-md bg-white">
 
             <div class="w-full">
-                <label for="message" class="block mb-3 text-zinc-500 mt-2">* Your professional summary is a
+                <label for="message" class="block mb-3 mt-2">Your professional summary is a
                     brief overview of your skills, experiences, and career goals. It's the first section employers will
                     read, so it's important to make it impactful and concise.</label>
                 <div class="relative w-full mt-3">
-                    <span class="text-orange absolute top-0 right-0 ml-24 -mt-3">*</span>
                     <textarea @input="countWords(summary)" v-model="summary" id="message" rows="4"
+                              :class="{'border-red-500': v$.summary.$error}"
+                              @blur="v$.summary.$touch"
                               class="w-full capitalize focus:border-orange focus:ring-0 block p-2.5 w-full text-sm bg-zinc-50 rounded-md md:text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none"
                               placeholder="Write your professional summary..."></textarea>
-                    <p class="text-sm text-zinc-500 mt-2 text-end capitalize">Word count: {{ countWords(summary) }}/300</p>
+
+             <div class="flex justify-between">
+                 <div>
+                      <span v-show="showErrors && v$.summary.$error"
+                            class="text-red-500 text-xs">Summary is required</span>
+                 </div>
+
+                 <p class="text-sm text-zinc-500 mt-2 text-end capitalize order-last">Word count: {{ countWords(summary) }}/300</p>
+
+             </div>
 
                     <!--                    <h1 class="text-red-500 text-sm mt-1 font-semibold">This field is required.</h1>-->
                 </div>
+
 
             </div>
 
@@ -37,9 +48,11 @@
 </template>
 
 <script setup>
-import {onMounted, onUpdated, ref, watch} from 'vue'; // Import ref for reactive variables
+import {computed, onMounted, onUpdated, ref, watch} from 'vue'; // Import ref for reactive variables
 import {editMode} from "../../utils/storeHelpers.js";
 import {countWords} from "../../utils/storeHelpers.js";
+import {email as emailValidator, helpers, maxLength, required} from "@vuelidate/validators";
+import {useVuelidate} from "@vuelidate/core";
 
 const props = defineProps(["modelValue"])
 const summary = ref('');
@@ -58,6 +71,42 @@ watch([summary], () => {
         summary.value
     )
 }, {deep: true})
+
+
+const showErrors = ref(false);
+const rules = computed(() => ({
+    summary: {
+        required,
+        maxLength: maxLength(300),
+        minWords: (value) => countWords(value) >= 50 || 'Summary should be at least 50 words',
+        maxWords: (value) => countWords(value) <= 300 || 'Summary should not exceed 300 words'
+    }
+}));
+// Updated validation rules
+
+const v$ = useVuelidate(rules, {summary});
+
+// Updated watch function
+watch([summary], () => {
+    v$.value.$touch();
+    let isValid = !v$.value.$invalid;
+}, {deep: true});
+
+// Updated validateFields method
+const validateFields = () => {
+    v$.value.$touch();
+    showErrors.value = true;
+
+    setTimeout(() => {
+        showErrors.value = false;
+    }, 30000); // Hide errors after 30 seconds
+
+    return !v$.value.$invalid;
+};
+
+// Expose the validateFields method to the parent component
+defineExpose({validateFields});
+
 
 </script>
 

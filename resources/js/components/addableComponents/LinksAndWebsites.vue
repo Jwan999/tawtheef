@@ -2,8 +2,10 @@
     <div class="mt-8 space-y-4">
         <div v-if="!editMode" class="w-full md:w-6/12 mt-6">
             <h2 class="text-lg font-semibold text-zinc-700 mb-4 flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-orange" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-orange" fill="none" viewBox="0 0 24 24"
+                     stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
                 </svg>
                 Links & Websites
             </h2>
@@ -11,9 +13,12 @@
             <div class="space-y-3">
                 <div v-for="(linkItem, index) in localLinks" :key="index"
                      class="flex items-center p-2 rounded-md transition-colors duration-200 hover:bg-orange hover:bg-opacity-10">
-                    <div class="flex-shrink-0 w-8 h-8 rounded-full bg-orange bg-opacity-20 flex items-center justify-center mr-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-orange" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    <div
+                        class="flex-shrink-0 w-8 h-8 rounded-full bg-orange bg-opacity-20 flex items-center justify-center mr-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-orange" fill="none"
+                             viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
                         </svg>
                     </div>
                     <a :href="linkItem.link" target="_blank" rel="noopener noreferrer"
@@ -29,8 +34,9 @@
         </div>
 
         <div v-else>
-            <label for="link" class="text-zinc-500 mt-2 text-base">
-                * Add links to websites you want hiring managers to see (e.g., LinkedIn profile, portfolio, personal website).
+            <label for="link" class="mt-2 text-base">
+                Add links to websites you want hiring managers to see (e.g., LinkedIn profile, portfolio, personal
+                website).
             </label>
 
             <div class="relative flex mt-2">
@@ -52,11 +58,8 @@
                 <button
                     @click="addLink"
                     :disabled="!isValid"
-                    :class="[
-                        'px-4 py-2 text-sm font-semibold text-white rounded-r-md transition-colors duration-200 ease-in-out focus:outline-none',
-                        isValid ? 'bg-orange hover:bg-dark' : 'bg-zinc-300 cursor-not-allowed'
-                    ]"
-                >
+                    :class="['px-4 py-2 text-sm font-semibold text-white rounded-r-md transition-colors duration-200 ease-in-out focus:outline-none',
+                        isValid ? 'bg-orange hover:bg-dark' : 'bg-zinc-300 cursor-not-allowed']">
                     ADD MORE
                 </button>
             </div>
@@ -65,14 +68,12 @@
                 <li
                     v-for="(linkItem, index) in localLinks"
                     :key="linkItem.link"
-                    class="flex bg-zinc-100 p-2 justify-between items-center text-orange font-semibold rounded"
-                >
+                    class="flex bg-zinc-100 p-2 justify-between items-center text-orange font-semibold rounded">
                     <a
                         :href="linkItem.link"
                         target="_blank"
                         rel="noopener noreferrer"
-                        class="hover:underline truncate mr-2"
-                    >
+                        class="hover:underline truncate mr-2">
                         {{ linkItem.label }}
                     </a>
                     <button
@@ -81,7 +82,9 @@
                         aria-label="Delete link"
                     >
                         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                            <path fill-rule="evenodd"
+                                  d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                  clip-rule="evenodd"></path>
                         </svg>
                     </button>
                 </li>
@@ -92,8 +95,8 @@
 </template>
 
 <script setup>
-import { ref, watch, computed } from 'vue';
-import { useStore } from 'vuex';
+import {ref, watch, computed} from 'vue';
+import {useStore} from 'vuex';
 
 const store = useStore();
 const editMode = computed(() => store.getters.editMode);
@@ -135,7 +138,7 @@ const addLink = () => {
         if (!/^https?:\/\//i.test(finalLink)) {
             finalLink = 'https://' + finalLink;
         }
-        localLinks.value.push({ link: finalLink, label: label.value.trim() });
+        localLinks.value.push({link: finalLink, label: label.value.trim()});
         emit('update:links', localLinks.value);
         link.value = '';
         label.value = '';
@@ -150,7 +153,7 @@ const deleteLink = (index) => {
 
 watch(() => props.links, (newLinks) => {
     localLinks.value = newLinks || [];
-}, { deep: true });
+}, {deep: true});
 </script>
 
 <style scoped>
@@ -158,6 +161,7 @@ watch(() => props.links, (newLinks) => {
 .list-leave-active {
     transition: all 0.5s ease;
 }
+
 .list-enter-from,
 .list-leave-to {
     opacity: 0;

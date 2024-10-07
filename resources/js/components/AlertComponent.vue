@@ -4,7 +4,7 @@
         <div v-if="show" class="fixed top-4 right-4 max-w-sm w-full bg-white border-l-4 rounded-md shadow-md"
              :class="typeClasses">
             <div class="flex items-center justify-between p-3">
-                <div class="flex items-center">
+                <div class="flex items-start">
                     <svg class="w-5 h-5 mr-2" :class="iconColor" xmlns="http://www.w3.org/2000/svg" fill="none"
                          viewBox="0 0 24 24" stroke="currentColor">
                         <path v-if="type === 'success'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -14,7 +14,7 @@
                         <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                               d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
-                    <p class="text-base font-medium" :class="textColor">{{ message }}</p>
+                    <p class="text-base font-medium whitespace-pre-line" :class="textColor">{{ message }}</p>
                 </div>
                 <button @click="closeAlert" class="text-gray-400 hover:text-gray-500 focus:outline-none">
                     <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"

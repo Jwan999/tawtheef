@@ -5,26 +5,31 @@
                 v-if="placeholderLabel === 'Language'"
                 v-model="item"
                 :value="item"
-                class="capitalize text-sm focus:border-orange rounded focus:ring-0 bg-zinc-50 w-full border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none py-2 px-3"
-            >
+                @blur="v$.item.$touch"
+                :class="{'border-red-500': v$.item.$error}"
+                class="capitalize text-sm focus:border-orange rounded focus:ring-0 bg-zinc-50 w-full border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none py-2 px-3">
                 <option value="" class="hidden" selected>Languages</option>
                 <option class="notranslate" v-for="language in languages" :key="language">{{ language }}</option>
             </select>
 
             <div v-else class="relative">
-                <span class="text-orange absolute top-0 right-0 ml-24 -mt-4">*</span>
                 <input
                     type="text"
                     v-model="item"
                     :placeholder="placeholderLabel"
+                    @blur="v$.item.$touch"
+                    :class="{'border-red-500': v$.item.$error}"
                     class="capitalize focus:border-orange focus:ring-0 bg-zinc-50 w-full rounded-md text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none py-2 px-3"
                 />
             </div>
         </div>
+        <div v-if="v$.item.$error && showErrors" class="text-red-500 text-xs mt-1">
+            Item is required
+        </div>
 
         <div class="space-y-2">
-            <h2 class="font-semibold text-zinc-500 text-sm">Competency Level:</h2>
-            <div class="flex flex-wrap gap-2">
+            <h2 class="font-semibold text-zinc-500 text-sm ">Competency Level:</h2>
+            <div class="flex flex-wrap gap-2 mt-2">
                 <button
                     v-for="(level, value) in competencyLevels"
                     :key="value"
@@ -40,17 +45,22 @@
                 </button>
             </div>
         </div>
+        <div v-if="v$.rating.$error && showErrors" class="text-red-500 text-xs mt-1">
+            Competency level is required
+        </div>
     </div>
 </template>
 
 <script setup>
-import { ref, watchEffect, onMounted } from 'vue';
+import { ref, watchEffect, onMounted, computed, watch } from 'vue';
 import { getSelectables } from "../../utils/storeHelpers.js";
+import { required } from "@vuelidate/validators";
+import { useVuelidate } from "@vuelidate/core";
 
 const props = defineProps({
     modelValue: {
         type: Object,
-        default: () => ({ item: '', rating: null })
+        default: () => ({item: '', rating: null})
     },
     placeholderLabel: {
         type: String,
@@ -94,8 +104,29 @@ const setRatingValue = (value) => {
 const isSelectedRating = (value) => {
     return rating.value === value || rating.value === String(value);
 };
-</script>
 
-<style scoped>
-/* Add any additional styles here if needed */
-</style>
+const showErrors = ref(false);
+const rules = computed(() => ({
+    item: { required },
+    rating: { required }
+}));
+
+const v$ = useVuelidate(rules, { item, rating });
+
+watch([item, rating], () => {
+    v$.value.$touch();
+}, { deep: true });
+
+const validateFields = () => {
+    v$.value.$touch();
+    showErrors.value = true;
+
+    setTimeout(() => {
+        showErrors.value = false;
+    }, 30000); // Hide errors after 30 seconds
+
+    return !v$.value.$invalid;
+};
+
+defineExpose({ validateFields });
+</script>

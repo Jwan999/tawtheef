@@ -7,7 +7,7 @@
 
         <div v-if="!editMode" class="bg-white rounded-md shadow-sm">
             <div :class="specializations.length ? 'rounded-t-md' : 'rounded-b-md rounded-t-md'"
-                class="bg-orange text-lg text-white py-3 px-4 font-semibold rounded-t-md">
+                 class="bg-orange text-lg text-white py-3 px-4 font-semibold rounded-t-md">
                 <h2 v-if="specializations.length">Selected Specializations:</h2>
                 <p v-else class="text-sm">No specializations selected yet.</p>
             </div>
@@ -29,11 +29,8 @@
         </div>
 
         <div v-else class="bg-white rounded-md">
-<!--            <div class="bg-dark text-lg text-white py-3 px-4 font-semibold rounded-t-md">-->
-<!--                <h2>Select Your Specializations (Maximum 2)</h2>-->
-<!--            </div>-->
             <div class="">
-                <p class="text-zinc-500 mb-4">Select Your Specializations (Maximum 2)</p>
+                <p class="mb-4">Select Your Specializations (Minimum 1, Maximum 2)</p>
                 <div class="space-y-4">
                     <div v-for="(item, index) in specialities" :key="index" class="border-b border-orange-200 pb-4 last:border-b-0">
                         <div class="flex items-center space-x-2 mb-2">
@@ -69,12 +66,17 @@
                 </div>
             </div>
         </div>
+        <div v-if="showErrors && v$.specializations.$error" class="text-red-500 text-xs mt-1">
+             Specializations is required.
+        </div>
     </div>
 </template>
 
 <script setup>
 import { ref, watch, computed } from 'vue';
 import { editMode, getSelectables } from "../../utils/storeHelpers.js";
+import { useVuelidate } from "@vuelidate/core";
+import { required, minLength, maxLength } from "@vuelidate/validators";
 
 const props = defineProps(["modelValue"]);
 const emit = defineEmits(["update:modelValue"]);
@@ -82,6 +84,17 @@ const emit = defineEmits(["update:modelValue"]);
 const specializations = ref([]);
 const children = ref([]);
 const specialities = ref([]);
+const showErrors = ref(false);
+
+const rules = computed(() => ({
+    specializations: {
+        required,
+        minLength: minLength(1),
+        maxLength: maxLength(2)
+    }
+}));
+
+const v$ = useVuelidate(rules, { specializations });
 
 watch(() => props.modelValue, (newValue) => {
     specializations.value = newValue?.specializations || [];
@@ -124,9 +137,22 @@ const getSubSpecializations = (specialization) => {
     return specItem ? children.value.filter(child => specItem.children.includes(child)) : [];
 };
 
+const validateFields = () => {
+    v$.value.$touch();
+    showErrors.value = true;
+
+    setTimeout(() => {
+        showErrors.value = false;
+    }, 30000); // Hide errors after 30 seconds
+
+    return !v$.value.$invalid;
+};
+
 (async () => {
     specialities.value = await getSelectables('specialities');
 })();
+
+defineExpose({ validateFields });
 </script>
 
 <style scoped>

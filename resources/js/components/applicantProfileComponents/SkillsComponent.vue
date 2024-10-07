@@ -19,16 +19,14 @@
                     </span>
                 </div>
             </div>
-
         </div>
     </div>
     <div v-else>
         <div class="rounded-md py-2 pb-0 bg-white text-sm md:text-base">
             <div class="">
-                <h1 class="block mb-3 text-zinc-600">* You can pick maximum 5 personal-skills.</h1>
+                <h1 class="block mb-3">You can pick maximum 5 personal-skills.</h1>
 
                 <div class="space-y-3">
-
                     <div class="">
                         <div v-for="(item,index) in skills" class="me-4 mt-2">
                             <input
@@ -44,30 +42,36 @@
                             </label>
                         </div>
                     </div>
-
-                    <!--<h1 class="text-red-500 text-sm font-semibold">This field is required.</h1>-->
-
                 </div>
-
-
             </div>
-
         </div>
-
-
     </div>
-
-
+    <div v-if="showErrors && v$.selectedSkills.$error" class="text-red-500 text-xs mt-1">
+       Personal skills is required.
+    </div>
 </template>
 
 <script setup>
-import {computed, onMounted, onUpdated, ref, watch} from 'vue';
-import {editMode, getSelectables} from "../../utils/storeHelpers.js";
-
+import { computed, onMounted, onUpdated, ref, watch } from 'vue';
+import { editMode, getSelectables } from "../../utils/storeHelpers.js";
+import { useVuelidate } from "@vuelidate/core";
+import { required, minLength, maxLength } from "@vuelidate/validators";
+import axios from 'axios';
 
 const skills = ref([''])
 const props = defineProps(["modelValue"]);
 const selectedSkills = ref([])
+const showErrors = ref(false);
+
+const rules = computed(() => ({
+    selectedSkills: {
+        required,
+        minLength: minLength(1),
+        maxLength: maxLength(5)
+    }
+}));
+
+const v$ = useVuelidate(rules, { selectedSkills });
 
 const selectSkill = (event) => {
     const skill = event.target.value;
@@ -86,12 +90,12 @@ const selectSkill = (event) => {
 onMounted(async () => {
     selectedSkills.value = props?.modelValue;
 
-    axios.get('/api/selectables/skills').then(async res => {
+    try {
+        const response = await axios.get('/api/selectables/skills');
         skills.value = await getSelectables('skills');
-
-    }).catch(error => {
+    } catch (error) {
         console.error('Failed to fetch select options:', error);
-    });
+    }
 });
 
 onUpdated(() => {
@@ -100,13 +104,23 @@ onUpdated(() => {
 
 watch(selectedSkills, (newValue) => {
     emit('update:modelValue', newValue);
-}, {deep: true})
+}, { deep: true })
 
 const emit = defineEmits(["update:modelValue"])
 
+const validateFields = () => {
+    v$.value.$touch();
+    showErrors.value = true;
+
+    setTimeout(() => {
+        showErrors.value = false;
+    }, 30000); // Hide errors after 30 seconds
+
+    return !v$.value.$invalid;
+};
+
+defineExpose({ validateFields });
 </script>
 
-
 <style scoped>
-
 </style>

@@ -25,6 +25,66 @@ export function useResumeLogic() {
 
     const mobileMenuOpen = ref(false);
 
+    const validateAndPublish = () => {
+        const components = [
+            { ref: contactComponent, name: 'Contact', tab: 'Personal Information' },
+            { ref: summaryComponent, name: 'Summary', tab: 'Professional Information' },
+            { ref: fieldOfInterestComponent, name: 'Specializations', tab: 'Educational Information' },
+            { ref: educationComponent, name: 'Education', tab: 'Educational Information' },
+            { ref: languagesComponent, name: 'Languages', tab: 'Skills And Activities' },
+            { ref: skillsComponent, name: 'Skills', tab: 'Skills And Activities' },
+            { ref: toolsComponent, name: 'Tools', tab: 'Professional Information' },
+            { ref: employmentComponent, name: 'Employment', tab: 'Professional Information' },
+            { ref: coursesComponent, name: 'Courses', tab: 'Educational Information' },
+            { ref: activitiesComponent, name: 'Activities', tab: 'Skills And Activities' }
+        ];
+
+        let isValid = true;
+        const invalidComponents = [];
+
+        components.forEach(({ ref, name, tab }) => {
+            if (ref.value && typeof ref.value.validateFields === 'function') {
+                const componentValid = ref.value.validateFields();
+                if (!componentValid) {
+                    invalidComponents.push({ name, tab });
+                    isValid = false;
+                }
+            } else {
+                console.warn(`Component ${name} does not have a validateFields method`);
+            }
+        });
+
+        if (isValid) {
+            publishResume({ value: !published.value });
+        } else {
+            // Group invalid components by tab
+            const groupedInvalidComponents = invalidComponents.reduce((acc, { name, tab }) => {
+                if (!acc[tab]) acc[tab] = [];
+                acc[tab].push(name);
+                return acc;
+            }, {});
+
+            // Create error message
+            let errorMessage = "Please fill in all required fields in the following sections:\n";
+            for (const [tab, components] of Object.entries(groupedInvalidComponents)) {
+                errorMessage += `\n${tab.charAt(0).toUpperCase() + tab.slice(1)}:\n- ${components.join('\n- ')}`;
+            }
+
+            showAlert(errorMessage, 'error');
+
+            // Open the tab containing the first invalid component
+            const firstInvalidTab = invalidComponents[0].tab;
+            openTab(firstInvalidTab);
+
+            // Scroll to the first invalid component
+            nextTick(() => {
+                const firstInvalidComponent = components.find(comp => comp.name === invalidComponents[0].name);
+                if (firstInvalidComponent.ref.value && typeof firstInvalidComponent.ref.value.$el.scrollIntoView === 'function') {
+                    firstInvalidComponent.ref.value.$el.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        }
+    };
     const toggleMobileMenu = () => {
         mobileMenuOpen.value = !mobileMenuOpen.value;
     };
@@ -134,42 +194,6 @@ export function useResumeLogic() {
         saveResume();
     };
 
-    const validateAndPublish = () => {
-        const components = [
-            {ref: contactComponent, name: 'Contact'},
-            {ref: summaryComponent, name: 'Summary'},
-            {ref: fieldOfInterestComponent, name: 'Field of Interest'},
-            {ref: educationComponent, name: 'Education'},
-            {ref: languagesComponent, name: 'Languages'},
-            {ref: skillsComponent, name: 'Skills'},
-            {ref: toolsComponent, name: 'Tools'},
-            {ref: employmentComponent, name: 'Employment'},
-            {ref: coursesComponent, name: 'Courses'},
-            {ref: activitiesComponent, name: 'Activities'}
-        ];
-
-        let isValid = true;
-        let firstInvalidComponent = null;
-
-        components.forEach(({ref, name}) => {
-            if (ref.value && typeof ref.value.validateFields === 'function') {
-                const componentValid = ref.value.validateFields();
-                if (!componentValid && !firstInvalidComponent) {
-                    firstInvalidComponent = {ref, name};
-                }
-                isValid = isValid && componentValid;
-            }
-        });
-
-        if (isValid) {
-            publishResume({value: !published.value});
-        } else {
-            showAlert(`Please fill in all required fields in ${firstInvalidComponent.name} before publishing.`, 'error');
-            if (firstInvalidComponent.ref.value && typeof firstInvalidComponent.ref.value.$el.scrollIntoView === 'function') {
-                firstInvalidComponent.ref.value.$el.scrollIntoView({behavior: 'smooth'});
-            }
-        }
-    };
 
     const route = useRoute();
     const routeName = computed(() => route.name);
@@ -178,7 +202,7 @@ export function useResumeLogic() {
     const checkRouteAndFetchData = async () => {
         if (routeName.value === 'preview-view') {
             await fetchApplicantData(`/api/applicants/${routeParams.value.id}`);
-            store.dispatch('setEditMode', false);
+            await store.dispatch('setEditMode', false);
         }
         if (routeName.value === 'profile-view') {
             await fetchApplicantData(`/api/profile`);

@@ -108,7 +108,7 @@
 
                 <!-- Full Name -->
                 <div class="w-full">
-                    <span class="mb-2 text-zinc-500 text-base">* Add your Firstname and Lastname.</span>
+                    <span class="mb-2 text-base">Write your Firstname and Lastname.</span>
                     <div class="relative mt-1">
                         <input v-model="fullName"
                                placeholder="Full name"
@@ -116,7 +116,6 @@
                                class="text-sm block w-full p-2.5 bg-zinc-50 rounded-md border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none focus:border-orange focus:ring-0"
                                type="text"
                                @blur="v$.fullName.$touch">
-                        <span class="text-orange absolute top-0 right-0 ml-24 -mt-4">*</span>
                     </div>
                     <span v-if="showErrors && v$.fullName.$error"
                           class="text-red-500 text-xs">Full name is required</span>
@@ -128,7 +127,6 @@
                         v-model="phone"
                     />
                     <div class="relative w-full">
-                        <span class="text-orange absolute top-0 right-0 ml-24 -mt-3">*</span>
                         <input type="email" v-model="emailValue"
                                :class="{'border-red-500': v$.emailValue.$error}"
                                class="text-sm block w-full p-2.5 bg-zinc-50 rounded-md border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none focus:border-orange focus:ring-0"
@@ -140,14 +138,16 @@
 
                 <!-- Residence -->
                 <div class="relative w-full">
-                    <span class="text-orange absolute top-0 right-0 ml-24 -mt-3">*</span>
                     <div class="flex">
                         <select v-model="city"
                                 :class="[city == 'Baghdad' ? 'rounded-l-md' : 'rounded', {'border-red-500': v$.city.$error}]"
                                 class="h-10 text-sm focus:border-orange focus:ring-0 bg-zinc-50 w-full border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none"
                                 @blur="v$.city.$touch">
                             <option value="Choose your city..." class="hidden" selected>Choose your city...</option>
-                            <option class="notranslate" v-for="cityOption in cities" :key="cityOption">{{ cityOption }}</option>
+                            <option class="notranslate" v-for="cityOption in cities" :key="cityOption">{{
+                                    cityOption
+                                }}
+                            </option>
                         </select>
 
                         <select v-if="city == 'Baghdad'" v-model="zone"
@@ -166,7 +166,6 @@
                 <!-- Date of Birth and Gender -->
                 <div class="flex md:flex-nowrap flex-wrap md:space-x-3 space-x-0 md:space-y-0 space-y-8 items-center">
                     <div class="relative w-full">
-                        <span class="text-orange absolute top-0 right-0 ml-24 -mt-3">*</span>
                         <input v-model="birthdate" type="date"
                                :class="{'border-red-500': v$.birthdate.$error}"
                                class="date-picker block w-full h-10 p-2.5 bg-zinc-50 rounded-md md:text-sm text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none focus:border-orange focus:ring-0"
@@ -176,11 +175,10 @@
                     </div>
 
                     <div class="relative w-full">
-                        <span class="text-orange absolute top-0 right-0 ml-24 -mt-3">*</span>
                         <select v-model="gender"
                                 :class="{'border-red-500': v$.gender.$error}"
-                                class="h-10 focus:border-orange focus:ring-0 bg-zinc-50 w-full rounded-md md:text-sm text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none"
-                                @blur="v$.gender.$touch">
+                                @blur="v$.gender.$touch"
+                                class="h-10 focus:border-orange focus:ring-0 bg-zinc-50 w-full rounded-md md:text-sm text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none">
                             <option value="Gender" class="hidden" selected>Gender</option>
                             <option class="notranslate">Female</option>
                             <option class="notranslate">Male</option>
@@ -201,10 +199,10 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref, watch } from 'vue';
-import { useVuelidate } from '@vuelidate/core'
-import { required, email as emailValidator, helpers } from '@vuelidate/validators'
-import { getSelectables } from "../../utils/storeHelpers.js";
+import {computed, onMounted, ref, watch} from 'vue';
+import {useVuelidate} from '@vuelidate/core'
+import {required, email as emailValidator, helpers} from '@vuelidate/validators'
+import {getSelectables} from "../../utils/storeHelpers.js";
 import store from "../../store/index.js";
 import LinksAndWebsites from "../addableComponents/LinksAndWebsites.vue";
 import PhoneInput from "./PhoneInput.vue";
@@ -222,12 +220,30 @@ const workAvailability = ref(false);
 const fullName = ref('');
 const birthdate = ref('');
 const links = ref([]);
-const showErrors = ref(false);
+onMounted(async () => {
+    try {
+        cities.value = await getSelectables('cities');
+    } catch (error) {
+        console.error('Failed to fetch select options:', error);
+    }
 
+    fullName.value = props.modelValue?.fullName || '';
+    workAvailability.value = props.modelValue?.workAvailability || false;
+    emailValue.value = props.modelValue?.email || '';
+    phone.value = props.modelValue?.phone || '';
+    city.value = props.modelValue?.city || '';
+    zone.value = props.modelValue?.zone || '';
+    gender.value = props.modelValue?.gender || '';
+    birthdate.value = props.modelValue?.birthdate || '';
+    links.value = props.modelValue?.links || [];
+});
+
+
+const showErrors = ref(false);
 // Updated validation rules
 const rules = computed(() => ({
-    fullName: { required },
-    emailValue: { required, email: emailValidator },
+    fullName: {required},
+    emailValue: {required, email: emailValidator},
     city: {
         required,
         notDefault: (value) => value !== 'Choose your city...'
@@ -249,51 +265,13 @@ const rules = computed(() => ({
     }
 }));
 
-const v$ = useVuelidate(rules, { fullName, emailValue, city, zone, gender, birthdate });
-
-onMounted(async () => {
-    try {
-        cities.value = await getSelectables('cities');
-    } catch (error) {
-        console.error('Failed to fetch select options:', error);
-    }
-
-    fullName.value = props.modelValue?.fullName || '';
-    workAvailability.value = props.modelValue?.workAvailability || false;
-    emailValue.value = props.modelValue?.email || '';
-    phone.value = props.modelValue?.phone || '';
-    city.value = props.modelValue?.city || '';
-    zone.value = props.modelValue?.zone || '';
-    gender.value = props.modelValue?.gender || '';
-    birthdate.value = props.modelValue?.birthdate || '';
-    links.value = props.modelValue?.links || [];
-});
-
-const updateLinks = (newLinks) => {
-    links.value = newLinks;
-};
-
-const emit = defineEmits(["update:modelValue"]);
-
-watch([phone, emailValue, city, zone, gender, links, birthdate, fullName, workAvailability], () => {
-    emit('update:modelValue', {
-        fullName: fullName.value,
-        workAvailability: workAvailability.value,
-        phone: phone.value,
-        gender: gender.value,
-        email: emailValue.value,
-        links: links.value,
-        birthdate: birthdate.value,
-        city: city.value,
-        zone: zone.value,
-    });
-}, { deep: true });
+const v$ = useVuelidate(rules, {fullName, emailValue, city, zone, gender, birthdate});
 
 // Updated watch function
 watch([fullName, emailValue, city, zone, gender, birthdate], () => {
     v$.value.$touch();
     let isValid = !v$.value.$invalid;
-}, { deep: true });
+}, {deep: true});
 
 // Updated validateFields method
 const validateFields = () => {
@@ -314,5 +292,27 @@ const validateFields = () => {
 };
 
 // Expose the validateFields method to the parent component
-defineExpose({ validateFields });
+defineExpose({validateFields});
+
+const updateLinks = (newLinks) => {
+    links.value = newLinks;
+};
+
+const emit = defineEmits(["update:modelValue"]);
+
+watch([phone, emailValue, city, zone, gender, links, birthdate, fullName, workAvailability], () => {
+    emit('update:modelValue', {
+        fullName: fullName.value,
+        workAvailability: workAvailability.value,
+        phone: phone.value,
+        gender: gender.value,
+        email: emailValue.value,
+        links: links.value,
+        birthdate: birthdate.value,
+        city: city.value,
+        zone: zone.value,
+    });
+}, {deep: true});
+
+
 </script>

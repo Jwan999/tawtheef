@@ -2,21 +2,18 @@
     <div class="py-8 w-full">
         <div class="flex md:flex-nowrap flex-wrap md:space-x-3 space-x-0 md:space-y-0 space-y-6 items-center">
             <div class="relative w-full">
-                <span class="text-orange absolute top-0 right-0 ml-24 -mt-3">*</span>
                 <input v-model="modelValue.title" placeholder="Job title"
                        class="w-full capitalize focus:border-orange focus:ring-0 bg-zinc-50 w-4/12 rounded-md md:text-sm text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none"
                        type="text">
             </div>
 
             <div class="relative w-full">
-                <span class="text-orange absolute top-0 right-0 ml-24 -mt-3">*</span>
                 <input v-model="modelValue.employer" placeholder="Employer"
                        class="w-full capitalize focus:border-orange focus:ring-0 bg-zinc-50 w-4/12 rounded-md md:text-sm text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none"
                        type="text">
             </div>
 
             <div class="relative w-full">
-                <span class="text-orange absolute top-0 right-0 ml-24 -mt-3">*</span>
                 <div class="flex">
                     <div class="w-full">
                         <select v-model="modelValue.duration[0]" @change="updateDuration" name="startYear"
@@ -42,7 +39,7 @@
         </div>
 
         <div class="w-full mt-6">
-            <label for="message" class="block mb-3 text-zinc-500 mt-2">* List all of your responsibilities
+            <label for="message" class="block mb-3 mt-2">List all of your responsibilities
                 within this period of employment.</label>
 
             <div class="relative flex mt-2">
