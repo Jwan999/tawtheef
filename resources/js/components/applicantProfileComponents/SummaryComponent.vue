@@ -11,105 +11,101 @@
                     Data not filled yet.
                 </p>
             </div>
-            <p class="capitalize">{{ summary }}</p>
+            <p class="whitespace-pre-wrap">{{ summary }}</p>
         </div>
         <div v-else class="rounded-md bg-white">
-
             <div class="w-full">
                 <label for="message" class="block mb-3 mt-2">Your professional summary is a
                     brief overview of your skills, experiences, and career goals. It's the first section employers will
                     read, so it's important to make it impactful and concise.</label>
                 <div class="relative w-full mt-3">
-                    <textarea @input="countWords(summary)" v-model="summary" id="message" rows="4"
+                    <textarea @input="v$.summary.$touch()" v-model="summary" id="message" rows="4"
                               :class="{'border-red-500': v$.summary.$error}"
-                              @blur="v$.summary.$touch"
-                              class="w-full capitalize focus:border-orange focus:ring-0 block p-2.5 w-full text-sm bg-zinc-50 rounded-md md:text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none"
+                              class="w-full focus:border-orange focus:ring-0 block p-2.5 w-full text-sm bg-zinc-50 rounded-md md:text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none"
                               placeholder="Write your professional summary..."></textarea>
 
-             <div class="flex justify-between">
-                 <div>
-                      <span v-show="showErrors && v$.summary.$error"
-                            class="text-red-500 text-xs">Summary is required</span>
-                 </div>
-
-                 <p class="text-sm text-zinc-500 mt-2 text-end capitalize order-last">Word count: {{ countWords(summary) }}/300</p>
-
-             </div>
-
-                    <!--                    <h1 class="text-red-500 text-sm mt-1 font-semibold">This field is required.</h1>-->
+                    <div class="flex justify-between">
+                        <div>
+                            <span v-if="v$.summary.$error" class="text-red-500 text-xs">
+                                {{ v$.summary.$errors[0]?.$message }}
+                            </span>
+                        </div>
+                        <p class="text-sm text-zinc-500 mt-2 text-end order-last">
+                            Word count: {{ wordCount }}/300
+                        </p>
+                    </div>
                 </div>
-
-
             </div>
-
         </div>
     </div>
-
 </template>
 
 <script setup>
-import {computed, onMounted, onUpdated, ref, watch} from 'vue'; // Import ref for reactive variables
-import {editMode} from "../../utils/storeHelpers.js";
-import {countWords} from "../../utils/storeHelpers.js";
-import {email as emailValidator, helpers, maxLength, required} from "@vuelidate/validators";
+import {computed, onMounted, onUpdated, ref, watch} from 'vue';
+import {countWords, editMode} from "../../utils/storeHelpers.js";
+import {helpers, maxLength, minLength} from "@vuelidate/validators";
 import {useVuelidate} from "@vuelidate/core";
 
 const props = defineProps(["modelValue"])
 const summary = ref('');
 
 onUpdated(() => {
-    summary.value = props.modelValue
-});
+    if (props.modelValue !== summary.value) {
+        summary.value = props.modelValue;
+    }
+})
+
 onMounted(() => {
-    summary.value = props.modelValue
-});
+    summary.value = props.modelValue;
+})
 
 const emit = defineEmits(["update:modelValue"])
 
-watch([summary], () => {
-    emit('update:modelValue',
-        summary.value
-    )
-}, {deep: true})
+watch(summary, (newValue) => {
+    emit('update:modelValue', newValue);
+}, { deep: true })
 
+const wordCount = computed(() => countWords(summary.value));
 
-const showErrors = ref(false);
+const customRequired = (value) => {
+    return !!value && value.trim().length > 0;
+};
+
 const rules = computed(() => ({
     summary: {
-        required,
-        maxLength: maxLength(300),
-        minWords: (value) => countWords(value) >= 50 || 'Summary should be at least 50 words',
-        maxWords: (value) => countWords(value) <= 300 || 'Summary should not exceed 300 words'
+        required: helpers.withMessage('Summary is required', customRequired),
+        minLength: helpers.withMessage(
+            () => `Summary should be at least 50 words (currently ${wordCount.value} words)`,
+            minLength(50)
+        ),
+        maxLength: helpers.withMessage(
+            () => `Summary should not exceed 300 words (currently ${wordCount.value} words)`,
+            maxLength(1500)
+        ),
+        wordLimit: helpers.withMessage(
+            () => `Summary should be between 50 and 300 words (currently ${wordCount.value} words)`,
+            (value) => {
+                const count = countWords(value);
+                return count >= 50 && count <= 300;
+            }
+        )
     }
 }));
-// Updated validation rules
 
-const v$ = useVuelidate(rules, {summary});
+const v$ = useVuelidate(rules, { summary });
 
-// Updated watch function
-watch([summary], () => {
+watch(summary, () => {
     v$.value.$touch();
-    let isValid = !v$.value.$invalid;
-}, {deep: true});
+}, { deep: true });
 
-// Updated validateFields method
 const validateFields = () => {
     v$.value.$touch();
-    showErrors.value = true;
-
-    setTimeout(() => {
-        showErrors.value = false;
-    }, 30000); // Hide errors after 30 seconds
-
     return !v$.value.$invalid;
 };
 
-// Expose the validateFields method to the parent component
-defineExpose({validateFields});
-
-
+defineExpose({ validateFields });
 </script>
 
 <style scoped>
-
+/* Add any component-specific styles here */
 </style>

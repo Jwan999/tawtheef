@@ -11,6 +11,14 @@ export const getAuthUser = async () => {
         console.error('Error fetching data:', error);
     }
 }
+
+export function countWords(str) {
+    if (!str) {
+        return 0;
+    }
+    const words = str.trim().split(/\s+/).filter(word => word.length > 0);
+    return words.length;
+}
 export const editMode = computed({
     get() {
         return store.getters.editMode;
@@ -21,13 +29,7 @@ export const editMode = computed({
 })
 
 
-export const countWords = (summary) => {
-    return computed(() => {
-        const words = summary?.trim().split(/\s+/);
-        const filteredWords = words?.filter(word => word !== '');
-        return filteredWords?.length;
-    });
-};
+
 
 export const getSelectables = async (key) => {
     const response = await axios.get(`/api/selectables/${key}`)
