@@ -1,5 +1,5 @@
-import {useRoute} from "vue-router";
-import {computed, nextTick, onMounted, ref} from "vue";
+import { useRoute } from "vue-router";
+import { computed, nextTick, onMounted, ref } from "vue";
 import store from '../../../js/store/index.js';
 import router from "../../../js/router/index.js";
 import axios from 'axios';
@@ -34,9 +34,6 @@ export function useResumeLogic() {
             { ref: languagesComponent, name: 'Languages', tab: 'Skills And Activities' },
             { ref: skillsComponent, name: 'Skills', tab: 'Skills And Activities' },
             { ref: toolsComponent, name: 'Tools', tab: 'Professional Information' },
-            { ref: employmentComponent, name: 'Employment', tab: 'Professional Information' },
-            { ref: coursesComponent, name: 'Courses', tab: 'Educational Information' },
-            { ref: activitiesComponent, name: 'Activities', tab: 'Skills And Activities' }
         ];
 
         let isValid = true;
@@ -57,14 +54,12 @@ export function useResumeLogic() {
         if (isValid) {
             publishResume({ value: !published.value });
         } else {
-            // Group invalid components by tab
             const groupedInvalidComponents = invalidComponents.reduce((acc, { name, tab }) => {
                 if (!acc[tab]) acc[tab] = [];
                 acc[tab].push(name);
                 return acc;
             }, {});
 
-            // Create error message
             let errorMessage = "Please fill in all required fields in the following sections:\n";
             for (const [tab, components] of Object.entries(groupedInvalidComponents)) {
                 errorMessage += `\n${tab.charAt(0).toUpperCase() + tab.slice(1)}:\n- ${components.join('\n- ')}`;
@@ -72,11 +67,9 @@ export function useResumeLogic() {
 
             showAlert(errorMessage, 'error');
 
-            // Open the tab containing the first invalid component
             const firstInvalidTab = invalidComponents[0].tab;
             openTab(firstInvalidTab);
 
-            // Scroll to the first invalid component
             nextTick(() => {
                 const firstInvalidComponent = components.find(comp => comp.name === invalidComponents[0].name);
                 if (firstInvalidComponent.ref.value && typeof firstInvalidComponent.ref.value.$el.scrollIntoView === 'function') {
@@ -85,6 +78,7 @@ export function useResumeLogic() {
             });
         }
     };
+
     const toggleMobileMenu = () => {
         mobileMenuOpen.value = !mobileMenuOpen.value;
     };
@@ -99,13 +93,11 @@ export function useResumeLogic() {
     });
 
     const openTab = (tabTitle) => {
-        // Reset all tabs to false
         personalInformation.value = false;
         educationalInformation.value = false;
         professionalInformation.value = false;
         skillsAndActivities.value = false;
 
-        // Set the appropriate tab to true based on tabTitle
         if (tabTitle === 'personalInformation') {
             personalInformation.value = true;
         } else if (tabTitle === 'educationalInformation') {
@@ -116,13 +108,11 @@ export function useResumeLogic() {
             skillsAndActivities.value = true;
         }
 
-        // If no tab is active, set personalInformation to true
         if (!isAnyOtherTabActive.value) {
             personalInformation.value = true;
         }
     };
 
-    // Component refs
     const contactComponent = ref(null);
     const summaryComponent = ref(null);
     const fieldOfInterestComponent = ref(null);
@@ -130,9 +120,6 @@ export function useResumeLogic() {
     const languagesComponent = ref(null);
     const skillsComponent = ref(null);
     const toolsComponent = ref(null);
-    const employmentComponent = ref(null);
-    const coursesComponent = ref(null);
-    const activitiesComponent = ref(null);
 
     const user = computed(() => store.getters.user);
 
@@ -194,7 +181,6 @@ export function useResumeLogic() {
         saveResume();
     };
 
-
     const route = useRoute();
     const routeName = computed(() => route.name);
     const routeParams = computed(() => route.params);
@@ -228,7 +214,6 @@ export function useResumeLogic() {
             published.value = response.data.published;
             dataFetched.value = true;
 
-            // Check if the current user is the owner of this applicant data
             const isOwner = store.getters.user?.id === response.data.user_id;
             store.dispatch('setCanEdit', isOwner && !store.getters.isPreviewMode);
         } catch (error) {
@@ -251,11 +236,10 @@ export function useResumeLogic() {
         store.dispatch('setPreviewMode', routeName.value === 'preview-view');
         checkRouteAndFetchData().then(r => {});
     });
+
     const handleBackButton = () => {
-        // Go back to the previous page
         router.back();
 
-        // Use nextTick to ensure the navigation has completed before attempting to access DOM elements
         nextTick(() => {
             const searchMode = store.state.searchMode;
             if (searchMode) {
@@ -264,7 +248,6 @@ export function useResumeLogic() {
                     searchArea.scrollIntoView({ behavior: 'smooth' });
                 }
             } else {
-                // If not in search mode, restore the last known scroll position
                 const lastScrollPosition = store.state.lastScrollPosition || 0;
                 window.scrollTo(0, lastScrollPosition);
             }
@@ -275,7 +258,6 @@ export function useResumeLogic() {
         store.commit('setPreviewMode', route.name === 'preview-view');
         checkRouteAndFetchData().then(r => {});
 
-        // Save scroll position before leaving the page
         window.addEventListener('beforeunload', () => {
             store.commit('setLastScrollPosition', window.pageYOffset);
         });
@@ -305,9 +287,6 @@ export function useResumeLogic() {
         languagesComponent,
         skillsComponent,
         toolsComponent,
-        employmentComponent,
-        coursesComponent,
-        activitiesComponent,
         saveResume,
         publishResume,
         validateAndPublish,
@@ -323,6 +302,5 @@ export function useResumeLogic() {
         isEditable,
         isPreviewMode,
         handleBackButton,
-
     };
 }
