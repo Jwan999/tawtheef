@@ -271,7 +271,20 @@ class ApplicantController extends Controller
 
     private function generateAndSavePDF($pdf, $html, $id)
     {
-        $tempPdfPath = storage_path("app/temp_pdf_{$id}.pdf");
+        $uniqueId = uniqid();
+        $tempPdfPath = storage_path("app/temp_pdf_{$id}_{$uniqueId}.pdf");
+
+        // Ensure the directory exists
+        $directory = dirname($tempPdfPath);
+        if (!file_exists($directory)) {
+            mkdir($directory, 0755, true);
+        }
+
+        // Remove the file if it already exists
+        if (file_exists($tempPdfPath)) {
+            unlink($tempPdfPath);
+        }
+
         $pdf->generateFromHtml($html, $tempPdfPath);
 
         if (!file_exists($tempPdfPath) || filesize($tempPdfPath) == 0) {
