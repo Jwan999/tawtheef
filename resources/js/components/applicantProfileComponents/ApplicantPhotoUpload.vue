@@ -3,7 +3,8 @@
         <div :class="editMode ? 'md:w-3/12 w-full' : 'w-full'" class="flex space-x-3 items-center relative">
             <div class="flex justify-center w-full items-center rounded-md dark:bg-zinc-600">
                 <div class="rounded-md w-full" v-if="displayImage">
-                    <img class="md:h-[14rem] h-[24rem] md:w-[18rem] w-full object-cover rounded-lg"
+                    <img class="object-cover rounded-lg"
+                         :class="!editMode ? 'w-full h-[20rem]' : 'md:w-[18rem] w-full md:h-[14rem] h-[24rem]'"
                          :src="displayImage" alt="Uploaded image">
                 </div>
                 <svg v-else class="h-32 p-4 fill-dark" viewBox="-42 0 512 512.002" xmlns="http://www.w3.org/2000/svg">
