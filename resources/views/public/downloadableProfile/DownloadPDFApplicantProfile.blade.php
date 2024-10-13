@@ -143,7 +143,7 @@
             <td style="width: 62.5%; vertical-align: top;">
                 <!-- Summary -->
                 <div style="margin-bottom: 2rem;">
-                    <h2 style="font-family: 'Dosis', sans-serif; font-size: 1.3rem; font-weight: 300; color: #3F3F46; border-bottom: 1px solid #3F3F46; padding-bottom: 0.5rem; margin-bottom: 1rem;">
+                    <h2 style="font-family: 'Dosis', sans-serif; font-size: 1.3rem; font-weight: 500; color: #3F3F46; border-bottom: 1px solid #3F3F46; padding-bottom: 0.5rem; margin-bottom: 1rem;">
                         Summary</h2>
                     <p style="text-align: justify;line-height: 1.5rem;; font-size: 1rem;">{{ $applicant->summary }}</p>
                 </div>

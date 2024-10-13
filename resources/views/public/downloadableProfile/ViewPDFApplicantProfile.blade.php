@@ -18,7 +18,7 @@
                     @if($applicant->image)
                         <div style="border-radius: 1rem;">
                             <img src="{{$applicant->image}}" id="profilePicture" alt="Profile Picture"
-                                 style="object-fit: cover; border-radius: 1rem; object-position: center; width: 16rem;">
+                                 style="object-fit: cover; border-radius: 1rem; object-position: center;  width: 16rem;">
                         </div>
                     @else
                         <div
@@ -143,15 +143,14 @@
             <td style="width: 62.5%; vertical-align: top;">
                 <!-- Summary -->
                 <div style="margin-bottom: 2rem;">
-                    <h2 style="font-family: 'Dosis', sans-serif; font-size: 1.3rem; font-weight: 300; color: #3F3F46; border-bottom: 1px solid #3F3F46; padding-bottom: 0.5rem; margin-bottom: 1rem;">
+                    <h2 style="font-family: 'Dosis', sans-serif; font-size: 1.3rem; font-weight: 500; color: #3F3F46; border-bottom: 1px solid #3F3F46; padding-bottom: 0.5rem; margin-bottom: 1rem;">
                         Summary</h2>
                     <p style="text-align: justify;line-height: 1.5rem;; font-size: 1rem;">{{ $applicant->summary }}</p>
                 </div>
 
                 <!-- Specializations -->
                 <div style="margin-bottom: 2rem;">
-                    <h2 style="font-family: 'Dosis', sans-serif; font-size: 1.3rem; font-weight: 500; color: #3F3F46; border-bottom: 1px solid #3F3F46; padding-bottom: 0.5rem; margin-bottom: 1rem;">
-                        Specializations</h2>
+                    <h2 style="font-family: 'Dosis', sans-serif; font-size: 1.3rem; font-weight: 500; color: #3F3F46; border-bottom: 1px solid #3F3F46; padding-bottom: 0.5rem; margin-bottom: 1rem;">Specializations</h2>
                     <div style="font-family: 'Dosis', sans-serif; font-size: 1rem;">
                         @php
                             $specialities = [
@@ -192,7 +191,7 @@
                                         @foreach($applicant->speciality['children'] as $subSpecialization)
                                             @foreach($specialities as $speciality)
                                                 @if($speciality['title'] === $specialization && in_array($subSpecialization, $speciality['children']))
-                                                    <li style="font-weight: normal; margin-bottom: 0.4rem;">{{ $subSpecialization }}</li>
+                                                    <li style="font-weight: normal; color: #4B5563; margin-bottom: 0.4rem;">{{ $subSpecialization }}</li>
                                                 @endif
                                             @endforeach
                                         @endforeach
@@ -272,8 +271,8 @@
                         @if(!empty($activity['title']))
                             <div style="margin-bottom: 1rem; font-size: 1rem;">
                                 <div style="display: flex; align-items: center;">
-                                    <span style="font-weight: 600;">{{ $activity['title'] ?? '' }},</span>
-                                    <span style="margin-left: 0.5rem;">{{ $activity['participatedAs'] ?? '' }}</span>
+                                    <p style="font-weight: 600; margin: 0;">{{ $activity['title'] ?? '' }}, </p>
+                                    <p style="margin: 0 0 0 0.5rem;">{{ $activity['participatedAs'] ?? '' }}</p>
                                 </div>
                                 <p style="margin-top: 0.25rem; font-size: 0.9rem; color: #666;">{{ $activity['year'] ?? '' }}</p>
                             </div>
