@@ -18,7 +18,7 @@
                     @if($applicant->image)
                         <div style="border-radius: 1rem;">
                             <img src="{{$applicant->image}}" id="profilePicture" alt="Profile Picture"
-                                 style="object-fit: cover; border-radius: 1rem; object-position: center; height: 16rem; width: 100%;">
+                                 style="object-fit: cover; border-radius: 1rem; object-position: center; width: 16rem;">
                         </div>
                     @else
                         <div
