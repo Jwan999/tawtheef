@@ -4,10 +4,9 @@
         :class="{ 'translate-x-0': showAdvanceSearch, 'translate-x-full': !showAdvanceSearch }">
         <div class="p-2 px-8">
             <div class="sticky z-40 w-full top-0 bg-zinc-800 py-2">
-
                 <div class="flex justify-between items-center mb-3">
                     <h2 class="text-xl text-zinc-100 font-semibold">Advanced Search</h2>
-                    <button @click="$emit('close')" class="text-white hover:text-orange">
+                    <button @click="handleClose" class="text-white hover:text-orange">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                              stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -29,7 +28,7 @@
                     <button
                         v-for="gender in ['Female', 'Male']"
                         :key="gender"
-                        @click="updateFilter('gender', gender)"
+                        @click="updateFilter('gender', filters.gender === gender ? null : gender)"
                         :class="{ 'bg-orange text-white': filters.gender === gender }"
                         class="px-4 py-2 rounded w-6/12 bg-zinc-50 hover:bg-zinc-700 hover:text-white text-zinc-700 hover:bg-orange hover:text-white transition-colors duration-300"
                     >
@@ -53,7 +52,7 @@
                     v-if="filters.city === 'Baghdad'"
                     v-model="filters.zone"
                     @change="updateFilter('zone', $event.target.value)"
-                    class="w-full p-2 rounded text-zinc-700 border border-zinc-600 focus:border-orange focus:ring focus:ring-orange focus:ring-opacity-50"
+                    class="w-full p-2 mt-2 rounded text-zinc-700 border border-zinc-600 focus:border-orange focus:ring focus:ring-orange focus:ring-opacity-50"
                 >
                     <option value="" disabled selected>Choose a zone...</option>
                     <option class="notranslate">Karkh</option>
@@ -90,7 +89,8 @@
                 <label class="flex items-center cursor-pointer">
                     <div class="relative mr-2">
                         <input type="checkbox" v-model="filters.freshGraduate"
-                               @change="updateFilter('freshGraduate', $event.target.checked ? $event.target.checked : null)" class="sr-only">
+                               @change="updateFilter('freshGraduate', $event.target.checked ? $event.target.checked : null)"
+                               class="sr-only">
                         <div
                             class="w-10 h-6 rounded-full shadow-inner transition-colors duration-300 ease-in-out"
                             :class="filters.freshGraduate ? 'bg-orange' : 'bg-zinc-50'"
@@ -115,7 +115,7 @@
                     <button
                         v-for="option in [{ label: 'Available', value: true }, { label: 'Not Available', value: false }]"
                         :key="option.label"
-                        @click="updateFilter('workAvailability', option.value)"
+                        @click="updateFilter('workAvailability', filters.workAvailability === option.value ? null : option.value)"
                         :class="{ 'bg-orange text-white': filters.workAvailability === option.value }"
                         class="px-4 py-2 rounded w-6/12 bg-zinc-50 hover:bg-zinc-700 hover:text-white text-zinc-700 hover:bg-orange hover:text-white transition-colors duration-300"
                     >
@@ -141,7 +141,8 @@
                 @update:mainSpecializations="(value) => updateFilter('mainSpecializations', value)"
                 @update:subSpecialities="(value) => updateFilter('subSpecialities', value)"
             />
-            <div class="sticky z-40 w-full bottom-0 bg-zinc-800 py-2 ">
+
+            <div class="sticky z-40 w-full bottom-0 bg-zinc-800 py-2">
                 <!-- Apply Search Button -->
                 <button
                     @click="handleAdvancedSearch"
@@ -154,7 +155,7 @@
 </template>
 
 <script setup>
-import {ref, computed, onMounted} from 'vue';
+import {ref, computed, onMounted, watch} from 'vue';
 import {useStore} from 'vuex';
 import {getSelectables} from "../../../js/utils/storeHelpers.js";
 import RangeInput from "./RangeInput.vue";
@@ -170,31 +171,52 @@ const props = defineProps({
 const emit = defineEmits(['update:showAdvanceSearch', 'advancedSearch', 'close']);
 
 const filters = computed(() => store.state.filters);
-
-const updateFilter = (key, value) => {
-    store.dispatch('updateFilter', {key, value});
-};
-
-const clearAllFilters = () => {
-    store.dispatch('resetFilters');
-};
-
-const handleAdvancedSearch = async () => {
-    try {
-        await store.dispatch('getFilteredApplicants', {page: 1});
-        await store.dispatch('setSearchMode', true);
-        emit('advancedSearch');
-        // emit('close');
-    } catch (error) {
-        console.error("Error in advanced search:", error);
-        // Handle error (e.g., show an error message to the user)
-    }
-};
-
+const activeSpecialization = computed(() => store.state.activeSpecialization);
 
 const cities = ref([]);
 const degrees = ref([]);
 
+const updateFilter = async (key, value) => {
+    await store.dispatch('updateFilter', {key, value});
+};
+
+const clearAllFilters = async () => {
+    await store.dispatch('resetFilters');
+};
+
+const handleAdvancedSearch = async () => {
+    try {
+        // Ensure we're sending specializations correctly
+        const filtersToApply = { ...filters.value };
+
+        // If we have an active specialization, make sure it's included
+        if (store.state.activeSpecialization !== 'Latest') {
+            filtersToApply.mainSpecializations = filtersToApply.mainSpecializations || [];
+            if (!filtersToApply.mainSpecializations.includes(store.state.activeSpecialization)) {
+                filtersToApply.mainSpecializations = [
+                    ...filtersToApply.mainSpecializations,
+                    store.state.activeSpecialization
+                ];
+            }
+        }
+
+        await store.dispatch('setFilters', filtersToApply);
+        await store.dispatch('getFilteredApplicants', { page: 1 });
+        emit('advancedSearch');
+    } catch (error) {
+        console.error("Error in advanced search:", error);
+    }
+};
+const handleClose = () => {
+    store.dispatch('setAdvanceSearchInUse', false);
+    emit('close');
+};
+
+watch(() => props.showAdvanceSearch, (newValue) => {
+    if (!newValue) {
+        store.dispatch('setAdvanceSearchInUse', false);
+    }
+});
 
 onMounted(async () => {
     try {
@@ -204,11 +226,27 @@ onMounted(async () => {
         ]);
     } catch (error) {
         console.error('Error fetching selectables:', error);
-        // Implement user-friendly error handling here
     }
 });
-</script>
 
+watch(
+    () => store.state.filters.mainSpecializations,
+    (newValue) => {
+        if (!newValue || newValue.length === 0) {
+            // Only reset to Latest if it's not already Latest
+            if (store.state.activeSpecialization !== 'Latest') {
+                store.commit('setActiveSpecialization', 'Latest');
+                store.dispatch('getFilteredApplicants', {
+                    page: 1,
+                    sortBy: 'created_at',
+                    sortOrder: 'desc'
+                });
+            }
+        }
+    }
+);
+
+</script>
 
 <style scoped>
 .advance-search-component {

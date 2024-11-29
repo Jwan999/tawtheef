@@ -3,6 +3,7 @@ import { computed, nextTick, onMounted, ref } from "vue";
 import store from '../../../js/store/index.js';
 import router from "../../../js/router/index.js";
 import axios from 'axios';
+import dayjs from 'dayjs';
 
 export function useResumeLogic() {
     const alertMessage = ref('');
@@ -22,8 +23,25 @@ export function useResumeLogic() {
     const activities = ref([]);
     const published = ref(false);
     const dataFetched = ref(false);
+    const updatedAt = ref(null);
 
     const mobileMenuOpen = ref(false);
+
+    const formatLastUpdated = (date) => {
+        if (!date) return '';
+        const today = dayjs().startOf('day');
+        const updateDate = dayjs(date).startOf('day');
+
+        if (updateDate.isSame(today)) {
+            return 'Today';
+        }
+        return dayjs(date).format('MMM D, YYYY');
+    };
+
+    const formatLastSaved = (date) => {
+        if (!date) return '';
+        return dayjs(date).format('MMM D, YYYY HH:mm:ss');
+    };
 
     const validateAndPublish = () => {
         const components = [
@@ -134,7 +152,7 @@ export function useResumeLogic() {
         });
     };
 
-    const saveResume = () => {
+    const saveResume = async () => {
         console.log('Trying to save');
         const requestData = {
             image: image.value,
@@ -152,7 +170,6 @@ export function useResumeLogic() {
         };
 
         const formData = new FormData();
-
         formData.append('data', JSON.stringify(requestData));
 
         if (image.value instanceof File) {
@@ -161,19 +178,20 @@ export function useResumeLogic() {
             formData.append('image', image.value);
         }
 
-        axios.post('/api/applicant', formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            }
-        })
-            .then(response => {
-                showAlert('Data saved successfully.', 'success');
-                console.log('Data sent successfully:', response.data);
-            })
-            .catch(error => {
-                console.error('Error sending data:', error);
-                showAlert('Unable to save. Please try again.', 'error');
+        try {
+            const response = await axios.post('/api/applicant', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
             });
+
+            updatedAt.value = response.data.data.updated_at;
+            showAlert('Data saved successfully.', 'success');
+            console.log('Data sent successfully:', response.data);
+        } catch (error) {
+            console.error('Error sending data:', error);
+            showAlert('Unable to save. Please try again.', 'error');
+        }
     };
 
     const publishResume = (event) => {
@@ -192,6 +210,7 @@ export function useResumeLogic() {
         }
         if (routeName.value === 'profile-view') {
             await fetchApplicantData(`/api/profile`);
+            await store.dispatch('setEditMode', true); // Add this line
         }
     };
 
@@ -212,6 +231,7 @@ export function useResumeLogic() {
             employment.value = response.data.employment;
             activities.value = response.data.activities;
             published.value = response.data.published;
+            updatedAt.value = response.data.updated_at;
             dataFetched.value = true;
 
             const isOwner = store.getters.user?.id === response.data.user_id;
@@ -231,11 +251,6 @@ export function useResumeLogic() {
 
     const isEditable = computed(() => store.getters.canEdit);
     const isPreviewMode = computed(() => store.getters.isPreviewMode);
-
-    onMounted(() => {
-        store.dispatch('setPreviewMode', routeName.value === 'preview-view');
-        checkRouteAndFetchData().then(r => {});
-    });
 
     const handleBackButton = () => {
         router.back();
@@ -302,5 +317,10 @@ export function useResumeLogic() {
         isEditable,
         isPreviewMode,
         handleBackButton,
+        updatedAt,
+        formatLastUpdated,
+        formatLastSaved,
+        checkRouteAndFetchData,
+        fetchApplicantData
     };
 }

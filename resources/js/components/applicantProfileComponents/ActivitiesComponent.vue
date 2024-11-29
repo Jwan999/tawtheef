@@ -6,17 +6,17 @@
             <hr class="h-px w-full bg-orange border-0 mt-1">
         </div>
 
-        <div v-if="!editMode" class="rounded-md p-4 bg-white space-y-3">
+        <div v-if="!editMode" class="rounded-md md:p-6 p-4 bg-white space-y-8">
             <div v-for="(year, index) in uniqueYears" :key="index">
 
                 <h1 v-if="year !== 'Year'" class="text-orange font-semibold text-base mb-2">{{ year }}</h1>
                 <ul class="text-lg ">
                     <li v-for="event in value.filter(item => item.year === year)"
-                        class="flex space-x-2 items-center ml-5">
+                        class="flex space-x-2 items-center">
 
                         <h1 class="font-semibold capitalize">{{ event.title }}</h1>
                         <h1 v-if="event.participatedAs !== 'Participated as'">as</h1>
-                        <h1 v-if="event.participatedAs !== 'Participated as'" class="text-orange capitalize font-semibold">
+                        <h1 v-if="event.participatedAs !== 'Participated as'" class="text-zinc-700 font-semibold">
                             {{ event.participatedAs }}</h1>
                     </li>
 

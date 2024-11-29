@@ -1,6 +1,6 @@
 <template>
     <button @click="generatePdf" :disabled="isGenerating"
-            class="bg-orange cursor-pointer text-white font-semibold text-md px-12 py-2 shadow-custom-3d rounded-full hover:bg-zinc-800 hover:shadow-none transition-all duration-300 ease-in-out transform hover:scale-105">
+            class="bg-orange cursor-pointer text-white font-semibold text-md px-12 py-2 shadow-lg rounded-full hover:bg-zinc-800 hover:shadow-none transition-all duration-300 ease-in-out transform hover:scale-105">
         {{ isGenerating ? 'Generating PDF...' : 'Generate Resume PDF' }}
     </button>
     <Alert :key="alertKey" :message="alertMessage" :type="alertType" :duration="5000"/>

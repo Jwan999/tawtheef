@@ -6,7 +6,7 @@
                     @blur="v$.degree.$touch"
                     class="focus:border-orange focus:ring-0 bg-zinc-50 w-full rounded-md text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none">
                 <option value="" class="hidden" selected>Choose your degree...</option>
-                <option class="notranslate" v-for="option in degrees">{{ option }}</option>
+                <option class="notranslate" v-for="option in degrees" :key="option">{{ option }}</option>
             </select>
             <div v-if="showErrors && v$.degree.$error" class="text-red-500 text-xs mt-1">
                 Degree is required
@@ -27,23 +27,23 @@
         <div class="relative">
             <div class="flex">
                 <select v-model="modelValue.duration[0]"
-                        :class="[{'border-red-500': v$.duration.$error}, degree !== 'Undergraduate' ? 'rounded-l-md' : 'rounded']"
+                        :class="[{'border-red-500': v$.duration.$error}, localDegree === 'Undergraduate' ? 'rounded' : 'rounded-l-md']"
                         @blur="v$.duration.$touch"
                         name="startYear"
                         class="focus:border-orange focus:ring-0 bg-zinc-50 w-full text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none">
                     <option selected>{{ modelValue.duration[0] }}</option>
-                    <template v-for="year in years">
+                    <template v-for="year in years" :key="year">
                         <option :value="year">{{ year }}</option>
                     </template>
                 </select>
-                <select v-if="degree !== 'Undergraduate'"
+                <select v-if="localDegree !== 'Undergraduate'"
                         v-model="modelValue.duration[1]"
                         :class="{'border-red-500': v$.duration.$error}"
                         @blur="v$.duration.$touch"
                         name="endYear"
                         class="focus:border-orange focus:ring-0 bg-zinc-50 w-full rounded-r-md text-sm border-0 border-b-[1px] border-zinc-300 hover:border-orange focus:outline-none">
                     <option selected>{{ modelValue.duration[1] }}</option>
-                    <template v-for="year in futureYears">
+                    <template v-for="year in futureYears" :key="year">
                         <option :value="year">{{ year }}</option>
                     </template>
                 </select>
@@ -61,9 +61,15 @@ import { getSelectables } from "../../utils/storeHelpers.js";
 import { useVuelidate } from "@vuelidate/core";
 import { required } from "@vuelidate/validators";
 
-const props = defineProps(["modelValue"]);
+const props = defineProps({
+    modelValue: {
+        type: Object,
+        required: true
+    }
+});
 
 const showErrors = ref(false);
+const localDegree = computed(() => props.modelValue.degree);
 
 const rules = computed(() => ({
     degree: { required },
@@ -94,17 +100,8 @@ onMounted(async () => {
         console.error('Failed to fetch select options:', error);
     }
 
-    // Generate years from current year to 1950 (past)
-    for (let year = currentYear.value; year >= 1950; year--) {
-        years.value.push(year);
-    }
-
-    const startYear = currentYear.value - 40;
-    const endYear = currentYear.value + 20;
-
-    for (let year = startYear; year <= endYear; year++) {
-        futureYears.value.push(year);
-    }
+    years.value = Array.from({ length: currentYear.value - 1949 }, (_, i) => currentYear.value - i);
+    futureYears.value = Array.from({ length: 61 }, (_, i) => currentYear.value - 40 + i);
 });
 
 const validateFields = () => {
@@ -113,13 +110,10 @@ const validateFields = () => {
 
     setTimeout(() => {
         showErrors.value = false;
-    }, 30000); // Hide errors after 30 seconds
+    }, 30000);
 
     return !v$.value.$invalid;
 };
 
 defineExpose({ validateFields });
 </script>
-
-<style scoped>
-</style>

@@ -10,11 +10,19 @@
             </p>
         </div>
         <div v-else>
-            <div class="mt-2 space-y-1" v-for="item in modelValue">
-                <h1 v-if="item.duration[0] !== 'Start Year' && item.duration[1] !== 'End Year'"
-                    class="font-semibold text-orange">{{ item.duration[0] + ' - ' + item.duration[1] }}</h1>
+            <div class="my-2 space-y-1" v-for="item in modelValue">
+
+
                 <h1 class="font-semibold text-lg capitalize">{{ item.institute }}</h1>
-                <h1 class="text-dark font-semibold italic capitalize">{{ item.degree }}</h1>
+                <div v-if="item.duration[0] !== 'Start Year' && item.duration[1] !== 'End Year'"
+                     class="font-semibold text-orange flex items-center space-x-1.5">
+                    <h1 class="text-zinc-600 text-sm">from </h1>
+                    <span class="text-orange">{{ item.duration[0] }}</span>
+                    <h1 class="text-zinc-600 text-sm"> to </h1>
+                    <span class="text-orange">{{ item.duration[1] }}</span>
+                </div>
+                <h1 class="text-zinc-600 font-semibold capitalize">{{ item.degree }}</h1>
+
             </div>
         </div>
     </div>

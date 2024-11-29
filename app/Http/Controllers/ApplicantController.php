@@ -490,19 +490,23 @@ class ApplicantController extends Controller
         return response()->json($user);
     }
 
-    // Helper method to process applicant data
     private function processApplicantData(array $applicantData): array
     {
-        if (isset($applicantData['contact']['showPhone'])) {
-            if (!$applicantData['contact']['showPhone']) {
-                unset($applicantData['contact']['phone']);
+        // First check if contact exists
+        if (isset($applicantData['contact'])) {
+            // Check if phone exists and is an array
+            if (isset($applicantData['contact']['phone']) && is_array($applicantData['contact']['phone'])) {
+                // Only modify if showPhone key exists and is false
+                if (isset($applicantData['contact']['phone']['showPhone']) &&
+                    !$applicantData['contact']['phone']['showPhone']) {
+                    $applicantData['contact']['phone']['phone'] = '';
+                }
             }
-            unset($applicantData['contact']['showPhone']);
         }
         return $applicantData;
     }
 
-    // Helper method to process multiple applicants' data
+// Helper method to process multiple applicants' data
     private function processApplicantsData($applicants)
     {
         return $applicants->map(function ($applicant) {

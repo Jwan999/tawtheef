@@ -43,7 +43,7 @@
                         </h2>
                         <div class="ml-7 space-y-2">
                             <p class="text-zinc-700">{{ emailValue }}</p>
-                            <p v-if="phone" class="text-zinc-700 text-sm">{{ phone }}</p>
+                            <p v-if="phone?.phone && phone?.showPhone" class="text-zinc-700 text-sm">{{ phone.phone }}</p>
                         </div>
                     </div>
 
@@ -215,11 +215,15 @@ const city = ref('');
 const gender = ref(props.modelValue?.gender || '');
 const zone = ref('');
 const emailValue = ref('');
-const phone = ref('');
+const phone = ref({
+    phone: props.modelValue?.phone?.phone || '',
+    showPhone: props.modelValue?.phone?.showPhone || false
+});
 const workAvailability = ref(false);
 const fullName = ref('');
 const birthdate = ref('');
 const links = ref([]);
+
 onMounted(async () => {
     try {
         cities.value = await getSelectables('cities');
@@ -230,14 +234,16 @@ onMounted(async () => {
     fullName.value = props.modelValue?.fullName || '';
     workAvailability.value = props.modelValue?.workAvailability || false;
     emailValue.value = props.modelValue?.email || '';
-    phone.value = props.modelValue?.phone || '';
+    phone.value = {
+        phone: props.modelValue?.phone?.phone || '',
+        showPhone: props.modelValue?.phone?.showPhone || false
+    };
     city.value = props.modelValue?.city || '';
     zone.value = props.modelValue?.zone || '';
     gender.value = props.modelValue?.gender || '';
     birthdate.value = props.modelValue?.birthdate || '';
     links.value = props.modelValue?.links || [];
 });
-
 
 const showErrors = ref(false);
 // Updated validation rules
@@ -304,7 +310,10 @@ watch([phone, emailValue, city, zone, gender, links, birthdate, fullName, workAv
     emit('update:modelValue', {
         fullName: fullName.value,
         workAvailability: workAvailability.value,
-        phone: phone.value,
+        phone: {
+            phone: phone.value.phone || '',
+            showPhone: phone.value.showPhone || false
+        },
         gender: gender.value,
         email: emailValue.value,
         links: links.value,
@@ -313,6 +322,5 @@ watch([phone, emailValue, city, zone, gender, links, birthdate, fullName, workAv
         zone: zone.value,
     });
 }, {deep: true});
-
 
 </script>

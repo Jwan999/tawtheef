@@ -12,9 +12,9 @@
             </div>
 
             <div class="flex flex-wrap items-center space-y-2">
-                <div class="flex flex-wrap gap-2">
+                <div class="flex flex-wrap gap-2 p-2">
                     <span v-for="skill in selectedSkills"
-                          class="inline-block bg-dark text-white px-3 py-1 rounded-full uppercase font-semibold text-sm tracking-wide">
+                          class="inline-block bg-dark text-white px-3 py-1 rounded-full capitalize tracking-wider font-semibold  tracking-wide">
                         {{ skill }}
                     </span>
                 </div>

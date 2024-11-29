@@ -6,7 +6,7 @@
         </div>
 
 
-        <div v-if="!editMode" class="rounded-md p-4 bg-white space-y-8">
+        <div v-if="!editMode" class="rounded-md md:p-6 p-4 bg-white space-y-8">
             <div v-if="!props?.modelValue[0]?.title">
                 <p class="text-sm text-zinc-700">
                     Data not filled yet.
@@ -14,24 +14,29 @@
             </div>
             <div v-else v-for="(job,index) in value">
                 <!--period of employment-->
-                <div v-if="job?.duration[0] !== 'Start Year' && job?.duration[1] !== 'End Year'"
-                     class="flex text-dark space-x-1 text-sm font-semibold">
-                    <h1 class="text-orange">{{ job.duration[0] }}</h1>
-                    <h1>-</h1>
-                    <h1 class="text-orange">{{ job.duration[1] }}</h1>
-                </div>
+
                 <!--position-->
-                <div class="flex items-center space-x-2 mb-3">
-                    <h1 class="font-semibold text-xl capitalize">{{ job.title }}</h1>
-                    <h1 v-if="job.employer">at</h1>
-                    <h1 class="font-semibold italic capitalize">{{ job.employer }}</h1>
+                <div class="flex justify-between flex-wrap md:flex-nowrap items-center mb-6">
+                    <div>
+                        <h1 class="font-semibold text-xl capitalize">{{ job.title }}</h1>
+                        <h1 class="font-semibold text-zinc-700 text-base">at {{ job.employer }}</h1>
+                    </div>
+                    <div v-if="job?.duration[0] !== 'Start Year' && job?.duration[1] !== 'End Year'"
+                         class="flex items-center text-dark space-x-2 font-semibold">
+                        <h1 class="text-zinc-700 text-sm">from </h1>
+                        <span class="text-orange">{{ job.duration[0] }}</span>
+                        <h1 class="text-zinc-700 text-sm"> to </h1>
+                        <span class="text-orange">{{ job.duration[1] }}</span>
+                    </div>
                 </div>
+
+
                 <div class="space-y-2">
-                    <h1 class="font-semibold text-zinc-500">Responsibilities:</h1>
+                    <h1 class="font-semibold text-sm text-zinc-500">Responsibilities:</h1>
                     <div v-for="responsibility in job.responsibilities" class="flex items-center space-x-3">
                         <div class="flex items-start w-full space-x-3">
-                            <span class="flex-none mt-2 w-2 h-2 bg-dark rounded-full"></span>
-                            <p class="text-base capitalize">{{ responsibility }}</p>
+                            <span class="flex-none mt-2 w-2 h-2 bg-zinc-500 rounded-full"></span>
+                            <p class="text-base">{{ responsibility }}</p>
                         </div>
                     </div>
 

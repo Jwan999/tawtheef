@@ -1,34 +1,27 @@
 <template>
     <div class="relative">
-        <div class="bg-pattern relative">
+        <div class="relative">
             <div class="fade-overlay"></div>
-            <HeroComponent class="mb-10 relative z-10"></HeroComponent>
-            <NumbersComponent class="md:mb-44 mb-32 relative z-10"></NumbersComponent>
+            <SecondHeroComponent class="mb-10 relative z-10"></SecondHeroComponent>
+            <WhyBuildWithUs></WhyBuildWithUs>
             <div class="mt-10 relative z-10" id="search-area-spacer"></div>
             <SearchComponent class="pb-24 relative z-10" id="search-area"></SearchComponent>
         </div>
-        <SlidersComponent v-if="(!searchMode) && (!isAdvanceSearchInUse)"></SlidersComponent>
-        <PreviewAllComponent v-if="(searchMode) || (isAdvanceSearchInUse)"></PreviewAllComponent>
+        <PreviewAllComponent></PreviewAllComponent>
         <FooterComponent></FooterComponent>
     </div>
 </template>
 
 <script setup>
-import {computed, onMounted, nextTick} from "vue";
-import {useRouter} from 'vue-router';
-import {useStore} from 'vuex';
+import { onMounted, nextTick } from "vue";
+import { useRouter } from 'vue-router';
 import SearchComponent from "./mainViewComponents/SearchComponent.vue";
-import SlidersComponent from "./mainViewComponents/SlidersComponent.vue";
 import PreviewAllComponent from "./mainViewComponents/PreviewAllComponent.vue";
 import FooterComponent from "./mainViewComponents/FooterComponent.vue";
-import HeroComponent from "./mainViewComponents/HeroComponent.vue";
-import NumbersComponent from "./mainViewComponents/NumbersComponent.vue";
+import SecondHeroComponent from "./mainViewComponents/SecondHeroComponent.vue";
+import WhyBuildWithUs from "./mainViewComponents/WhyBuildWithUs.vue";
 
 const router = useRouter();
-const store = useStore();
-
-const isAdvanceSearchInUse = computed(() => store.state.advanceSearchInUse);
-const searchMode = computed(() => store.state.searchMode);
 
 onMounted(() => {
     const hash = window.location.hash;
@@ -36,9 +29,8 @@ onMounted(() => {
         nextTick(() => {
             const searchArea = document.getElementById('search-area');
             if (searchArea) {
-                const yOffset = -80; // Adjust this value to fine-tune the final scroll position
+                const yOffset = -80;
                 const y = searchArea.getBoundingClientRect().top + window.pageYOffset + yOffset;
-
                 window.scrollTo({
                     top: y,
                     behavior: 'smooth'
@@ -51,13 +43,15 @@ onMounted(() => {
 
 <style scoped>
 #search-area-spacer {
-    height: 1.5rem; /* Equivalent to Tailwind's mt-10 */
+    height: 1.5rem;
 }
+
 .bg-pattern {
     background-image: url("/public/svgs/background-pattern.svg");
     background-repeat: repeat;
     position: relative;
 }
+
 .fade-overlay {
     position: absolute;
     top: 0;
@@ -65,8 +59,8 @@ onMounted(() => {
     right: 0;
     bottom: 0;
     background: linear-gradient(to bottom,
-    rgba(255,255,255,0) 0%,
-    rgba(255,255,255,0) 70%,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0) 70%,
     #F4F4F5 100%);
     pointer-events: none;
     z-index: 1;

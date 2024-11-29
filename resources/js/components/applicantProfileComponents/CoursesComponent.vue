@@ -5,7 +5,7 @@
             <hr class="h-px w-full bg-orange border-0 mt-1">
         </div>
 
-        <div v-if="!editMode" class="rounded-md p-4 bg-white space-y-8">
+        <div v-if="!editMode" class="rounded-md p-4 md:p-6 bg-white space-y-8">
             <div v-if="!props?.modelValue[0]?.title">
                 <p class="text-sm text-zinc-700">
                     Data not filled yet.
@@ -13,11 +13,12 @@
             </div>
 
             <div v-else v-for="(course,index) in value" :key="index">
-                <h1 class="text-orange text-xl font-semibold capitalize mb-2">{{ course.title }}</h1>
+                <div class="flex justify-between flex-wrap md:flex-nowrap items-center">
+                    <h1 class="text-orange text-xl font-semibold capitalize mb-2">{{ course.title }}</h1>
+                    <h1 class="font-semibold text-zinc-700 mb-2">{{ course.duration }}</h1>
+                </div>
                 <h1 v-if="course.entity" class="text-zinc-600 text-sm font-semibold mb-1 capitalize">Provided by: {{
-                        course.entity
-                    }}</h1>
-                <h1 class="text-sm font-semibold mb-2">{{ course.duration }}</h1>
+                        course.entity }}</h1>
             </div>
         </div>
 

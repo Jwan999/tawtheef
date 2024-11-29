@@ -251,30 +251,40 @@ class ApplicantFilterService
     }
     protected function filterMainSpecializations(Builder $query, Request $request): void
     {
-        if ($request->filled('mainSpecializations')) {
-            $mainSpecialization = strtolower($request->input('mainSpecializations')[0]);
-            Log::info('Filtering by main specialization: ' . $mainSpecialization);
+        if ($request->has('mainSpecializations') && !empty($request->input('mainSpecializations'))) {
+            $specializations = collect($request->input('mainSpecializations'))
+                ->map(function($item) {
+                    return strtolower(trim($item));
+                })
+                ->filter()
+                ->values()
+                ->all();
 
-            if ($this->isPostgres) {
-                $query->whereRaw("
+            if (!empty($specializations)) {
+                Log::info('Filtering by main specializations: ' . json_encode($specializations));
+
+                if ($this->isPostgres) {
+                    $placeholders = implode(',', array_fill(0, count($specializations), '?'));
+                    $query->whereRaw("
                     EXISTS (
                         SELECT 1
                         FROM jsonb_array_elements_text(speciality::jsonb->'specializations') AS specialization
-                        WHERE lower(specialization) = ?
+                        WHERE lower(specialization) IN ($placeholders)
                     )
-                ", [$mainSpecialization]);
-            } else {
-                $query->whereRaw("
-                    JSON_SEARCH(LOWER(JSON_EXTRACT(speciality, '$.specializations')), 'one', ?) IS NOT NULL
-                ", [$mainSpecialization]);
-            }
+                ", $specializations);
+                } else {
+                    $conditions = [];
+                    foreach ($specializations as $specialization) {
+                        $conditions[] = "JSON_SEARCH(LOWER(JSON_EXTRACT(speciality, '$.specializations')), 'one', ?) IS NOT NULL";
+                    }
+                    $query->whereRaw('(' . implode(' OR ', $conditions) . ')', $specializations);
+                }
 
-            // Log the SQL query and bindings
-            Log::info('SQL Query: ' . $query->toSql());
-            Log::info('Query Bindings: ' . json_encode($query->getBindings()));
+                Log::info('SQL Query: ' . $query->toSql());
+                Log::info('Query Bindings: ' . json_encode($query->getBindings()));
+            }
         }
     }
-
     protected function filterSubSpecialities(Builder $query, Request $request): void
     {
         if ($request->filled('subSpecialities') && is_array($request->input('subSpecialities'))) {

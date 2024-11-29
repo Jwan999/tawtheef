@@ -37,7 +37,7 @@
                                 <div :class="isButtonFixed ? 'bottom-10 right-4': 'right-0 top-1'"
                                      class="absolute right-0 top-2 md:top-1" ref="buttonContainer">
                                     <button @click="toggleAdvanceSearch"
-                                            :class="{'bg-orange text-white': showAdvanceSearch, 'fixed-position shadow-lg': isButtonFixed, 'shadow-custom-3d hover:shadow-none':!isButtonFixed}"
+                                            :class="{'bg-orange text-white': showAdvanceSearch, 'fixed-position shadow-lg': isButtonFixed, 'hover:shadow-none':!isButtonFixed}"
                                             class="advanced-search-button md:mt-0 -mt-1 z-40 transition-all duration-300 flex items-center bg-orange hover:bg-dark text-white rounded-3xl
                                          md:py-2 py-2 px-2 md:px-3">
                                         <svg id="icons" viewBox="0 0 64 64" class="w-6 h-6 md:mr-2 fill-white md:hidden block"

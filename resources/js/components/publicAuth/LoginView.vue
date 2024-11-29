@@ -27,7 +27,7 @@
                 <router-link to="/signup" class="text-orange text-lg font-semibold hover:text-zinc-800">or Signup</router-link>
 
                 <form
-                      class="bg-orange cursor-pointer text-white font-semibold text-md px-12 py-2 shadow-custom-3d rounded-full hover:bg-zinc-800 hover:shadow-none transition-all duration-300 ease-in-out transform hover:scale-105"
+                      class="bg-orange cursor-pointer text-white font-semibold text-md px-12 py-2 rounded-full hover:bg-zinc-800 hover:shadow-none transition-all duration-300 ease-in-out transform hover:scale-105"
                       @click.prevent="handleLogin">
                     login
                 </form>

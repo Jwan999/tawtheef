@@ -12,13 +12,13 @@
                 <p v-else class="text-sm">No specializations selected yet.</p>
             </div>
             <div class="">
-                <ul v-if="specializations.length" class="list-disc list-inside space-y-4 p-4">
-                    <li v-for="spec in specializations" :key="spec" class="text-dark">
+                <ul v-if="specializations.length" class=" list-inside space-y-4 p-4">
+                    <li v-for="spec in specializations" :key="spec" class="text-dark font-semibold text-lg">
                         {{ spec }}
                         <template v-if="getSubSpecializations(spec).length">
-                            <p class="text-orange text-sm font-semibold mt-2 ml-6">Experienced with the following:</p>
-                            <ul class="list-circle list-inside ml-8 mt-1 space-y-1">
-                                <li v-for="subSpec in getSubSpecializations(spec)" :key="subSpec" class="text-zinc-600 text-sm">
+                            <p class="text-zinc-600 text-sm font-semibold mt-2">Experienced with the following:</p>
+                            <ul class="list-circle font-normal list-inside ml-4 mt-1 space-y-1">
+                                <li v-for="subSpec in getSubSpecializations(spec)" :key="subSpec" class="text-zinc-600 text-base pt-1">
                                     {{ subSpec }}
                                 </li>
                             </ul>
