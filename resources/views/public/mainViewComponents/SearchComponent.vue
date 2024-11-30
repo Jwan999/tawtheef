@@ -1,9 +1,17 @@
 <template>
     <div class="relative">
+        <div class="w-3/12 md:w-5/12 md:px-20 px-6 mb-24">
+            <div class="w-full mt-16 mb-8">
+                <h1 class="text-3xl sm:text-4xl md:text-6xl text-zinc-900">
+                    Talent Pool
+                </h1>
+                <div class="w-44 h-1.5 mt-4 bg-orange-500 rounded-full"></div>
+            </div>
+        </div>
         <div class="flex justify-center">
             <div class="md:w-10/12 w-full">
                 <div
-                    class="w-full bg-white border-none md:border-2 md:rounded-full border-orange md:px-24 md:pt-20 md:pb-16 px-10 py-10">
+                    class="w-full bg-zinc-50 border-none md:border-2 md:rounded-full border-orange md:px-24 md:pt-20 md:pb-16 px-10 py-10">
                     <div class="flex justify-center items-center w-full">
                         <div class="w-full">
                             <div class="relative w-full flex justify-between items-center space-x-4">
@@ -71,7 +79,7 @@
 
         </div>
 
-        <div class="space-y-16">
+        <div class="space-y-16 z-40">
             <AdvanceSearchComponent
                 v-model:showAdvanceSearch="showAdvanceSearch"
                 @advancedSearch="handleAdvancedSearch"
@@ -204,4 +212,12 @@ watch(showAdvanceSearch, (newValue) => {
     z-index: 50;
     transition: all 0.3s ease;
 }
+
+ .fixed-position {
+     position: fixed;
+     bottom: 2.5rem;
+     right: 2rem;
+     z-index: 90;  /* High enough to be above cards but below the advance search panel */
+ }
+
 </style>

@@ -1,62 +1,54 @@
 <template>
-    <div class="w-full px-4 py-8 bg-white">
+    <div :class="isAdvanceSearchInUse ? 'w-8/12' : 'w-full'" class="px-6 py-12 bg-zinc-50">
         <!-- Specializations Filter -->
-        <div :class="isAdvanceSearchInUse ? 'sm:w-8/12 md:w-8/12 lg:w-8/12' : 'w-full'">
+        <div>
             <SpecializationsFilter/>
-
         </div>
 
         <!-- Content Header -->
-        <div class="md:w-3/12 w-full mt-16">
-            <h1 class="text-start py-1 my-2 px-3 font-bold tracking-wider text-2xl md:text-3xl">
+        <div class="w-full mt-16 mb-8">
+            <h1 class="text-3xl md:text-4xl font-semibold text-zinc-900">
                 {{ getHeaderText }}
             </h1>
-            <div class="w-10/12 mt-6">
-                <div class="-mt-4 h-2.5 mb-2 w-full rounded-full shadow-custom-3d bg-orange"></div>
-            </div>
+            <div class="w-32 h-1.5 mt-4 bg-orange rounded-full"></div>
         </div>
 
         <!-- Loading State -->
-        <div v-if="loading && !applicantsToShow.length" class="flex justify-center items-center min-h-[200px]">
+        <div v-if="loading && !applicantsToShow.length" class="flex justify-center items-center min-h-[300px]">
             <Loader/>
         </div>
 
         <!-- Main Content -->
-        <div v-else class="mt-16">
+        <div v-else class="mt-8">
             <!-- Grid of Applicants -->
             <div v-if="accumulatedApplicants.length"
-                 :class="isAdvanceSearchInUse ? 'px-4 sm:w-8/12 md:w-8/12 lg:w-8/12 grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3' : 'px-10 grid-cols-1 sm:grid-cols-2 md:grid-cols-4 justify-items-center'"
-                 class="grid gap-x-4 gap-y-14 justify-items-center">
-                <template v-for="(applicant, index) in accumulatedApplicants" :key="applicant.id">
+                 class="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                <template v-for="applicant in accumulatedApplicants" :key="applicant.id">
                     <ApplicantCard
                         :applicant="applicant"
-                        :rounded="'rounded-lg'"
-                        class="w-full"
+                        class="h-full"
                     />
                 </template>
             </div>
 
-            <!-- Message when no initial results -->
+            <!-- No Results Message -->
             <div v-else-if="!accumulatedApplicants.length"
-                 :class="isAdvanceSearchInUse ? 'sm:w-8/12 md:w-8/12 lg:w-8/12' : 'w-full'"
-                 class="flex justify-center items-center h-64">
-                <p class="text-2xl font-semibold text-zinc-600">
+                 class="flex justify-center items-center min-h-[200px] bg-white rounded-xl shadow-sm">
+                <p class="text-xl text-zinc-600">
                     {{ getNoResultsMessage }}
                 </p>
             </div>
 
             <!-- End of Results Section -->
             <div v-if="accumulatedApplicants.length"
-                 :class="isAdvanceSearchInUse ? 'sm:w-8/12 md:w-8/12 lg:w-8/12' : 'w-full'"
-                 class="flex flex-col items-center mt-12">
-
+                 class="flex flex-col items-center mt-12 space-y-4">
                 <!-- Loading State -->
-                <div v-if="isLoadingMore" class="mb-4">
+                <div v-if="isLoadingMore">
                     <Loader class="w-8 h-8"/>
                 </div>
 
                 <!-- No More Results Message -->
-                <p v-else-if="!hasMorePages" class="text-lg text-zinc-600 mb-4">
+                <p v-else-if="!hasMorePages" class="text-zinc-600">
                     That's all our available talents for now
                 </p>
 
@@ -64,7 +56,7 @@
                 <button
                     v-if="isLoadMoreVisible"
                     @click="loadMore"
-                    class="px-8 py-3 bg-orange text-white rounded-full font-semibold hover:bg-orange-600 transition-colors duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed">
+                    class="px-8 py-3 bg-orange text-white rounded-full font-medium hover:bg-orange-600 transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100">
                     Load More
                 </button>
             </div>
@@ -142,16 +134,16 @@ const hasMorePages = computed(() => {
 });
 
 const isLoadMoreVisible = computed(() => {
-    return !loading.value && // Not in initial loading state
-        !isLoadingMore.value && // Not currently loading more
-        accumulatedApplicants.value.length > 0 && // Has some data
-        hasMorePages.value; // Has more pages to load
+    return !loading.value &&
+        !isLoadingMore.value &&
+        accumulatedApplicants.value.length > 0 &&
+        hasMorePages.value;
 });
 
 const fetchApplicants = async (page, isLoadMore = false) => {
     if (!isLoadMore) {
         loading.value = true;
-        accumulatedData.value = []; // Reset accumulated data on new search/filter
+        accumulatedData.value = [];
     } else {
         isLoadingMore.value = true;
     }
@@ -161,13 +153,11 @@ const fetchApplicants = async (page, isLoadMore = false) => {
     try {
         const action = isSearchMode.value ? 'searchApplicantsInfinite' : 'getFilteredApplicants';
 
-        // Include active specialization in the request if it exists
         const requestParams = {
             page,
             perPage: 12,
         };
 
-        // If we have an active specialization that isn't Latest, ensure it's included
         if (activeSpecialization.value && activeSpecialization.value !== 'Latest') {
             if (!store.state.filters.mainSpecializations?.includes(activeSpecialization.value)) {
                 await store.dispatch('updateFilter', {
@@ -179,14 +169,11 @@ const fetchApplicants = async (page, isLoadMore = false) => {
 
         await store.dispatch(action, requestParams);
 
-        // Get the latest data directly from the store after the action
         const currentData = isSearchMode.value
             ? store.state.searchedApplicants.data
             : store.state.filteredApplicants.data;
 
-        // Update accumulated data
         if (isLoadMore) {
-            // Ensure we don't have duplicates and maintain order
             const existingIds = new Set(accumulatedData.value.map(item => item.id));
             const uniqueNewData = currentData.filter(item => !existingIds.has(item.id));
             accumulatedData.value = [...accumulatedData.value, ...uniqueNewData];
@@ -211,7 +198,6 @@ const loadMore = async () => {
     try {
         isLoadingMore.value = true;
         currentPage.value++;
-
         await fetchApplicants(currentPage.value, true);
     } catch (error) {
         console.error('Error loading more applicants:', error);
@@ -224,22 +210,19 @@ const loadMore = async () => {
 
 watch(
     () => store.state.advanceSearchInUse,
-    (newValue) => {
-        // Reset and refetch when advanced search is toggled
+    () => {
         currentPage.value = 1;
         accumulatedData.value = [];
         fetchApplicants(1);
     }
 );
 
-// Watch for filter changes to reset pagination
 watch([isSearchMode, activeSpecialization], () => {
     currentPage.value = 1;
-    accumulatedData.value = []; // Reset accumulated data
+    accumulatedData.value = [];
     fetchApplicants(1);
 });
 
-// Watch for changes in filters
 watch(
     () => store.state.filters,
     (newFilters, oldFilters) => {
@@ -256,16 +239,14 @@ watch(
     {deep: true}
 );
 
-// Initial fetch
 onMounted(async () => {
     await fetchApplicants(1);
 });
 
-// Expose for parent component
 defineExpose({
     handleAdvancedSearch: () => {
         currentPage.value = 1;
-        accumulatedData.value = []; // Reset accumulated data
+        accumulatedData.value = [];
         fetchApplicants(1);
     }
 });

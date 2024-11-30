@@ -1,17 +1,17 @@
 <template>
     <div
-        class="advance-search-component fixed top-0 right-0 h-full w-full sm:w-3/12 md:w-4/12 lg:w-4/12 bg-zinc-800 text-white z-50 overflow-y-auto transition-transform duration-300"
+        class="advance-search-component fixed top-0 right-0 h-full w-full sm:w-3/12 md:w-4/12 lg:w-4/12 bg-zinc-800 text-white z-[100] overflow-y-auto transition-transform duration-300"
         :class="{ 'translate-x-0': showAdvanceSearch, 'translate-x-full': !showAdvanceSearch }">
         <div class="p-2 px-8">
             <!-- Sticky Header -->
-            <div class="sticky z-40 w-full top-0 bg-zinc-800 py-2">
+            <div class="sticky z-10 w-full top-0 bg-zinc-800 py-2">
                 <div class="flex justify-between items-center mb-3">
                     <div class="flex items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none"
                              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
                         </svg>
-                        <h2 class="text-xl text-zinc-100 font-semibold">Refine Search</h2>
+                        <h2 class="text-xl text-zinc-100 font-semibold">Advance Search</h2>
                     </div>
                     <div class="flex items-center gap-4">
                         <button @click="handleReset" class="text-sm text-zinc-400 hover:text-white transition-colors flex items-center gap-2">

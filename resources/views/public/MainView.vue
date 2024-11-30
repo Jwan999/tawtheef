@@ -5,7 +5,7 @@
             <SecondHeroComponent class="mb-10 relative z-10"></SecondHeroComponent>
             <WhyBuildWithUs></WhyBuildWithUs>
             <div class="mt-10 relative z-10" id="search-area-spacer"></div>
-            <SearchComponent class="pb-24 relative z-10" id="search-area"></SearchComponent>
+            <SearchComponent class="relative pb-24 z-10" id="search-area"></SearchComponent>
         </div>
         <PreviewAllComponent></PreviewAllComponent>
         <FooterComponent></FooterComponent>
