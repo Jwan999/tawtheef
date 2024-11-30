@@ -2,11 +2,11 @@
     <div class="md:px-16 px-6">
         <div class="md:my-20 my-10">
             <div class="md:pt-4 md:pb-5 py-6 md:px-10 px-4 inline-block bg-orange md:rounded-full rounded-3xl">
-                <div class="space-x-3">
-                    <span
-                        class="bg-white w-32 text-center md:text-4xl text-3xl font-semibold rounded-full px-6 py-1 counter-wrapper">
+                <div class="space-x-5">
+
+                    <div class="bg-white rounded-full w-[9rem] py-1 font-semibold md:text-4xl text-3xl text-center inline-block">
                         <span ref="counterRef">{{ displayedCount }}</span>
-                    </span>
+                    </div>
                     <span class="text-white md:text-5xl text-3xl font-semibold">Resumes crafted and ready for opportunities.</span>
                 </div>
             </div>
