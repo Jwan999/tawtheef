@@ -24,7 +24,7 @@
             <div class="w-full md:w-3/12 mb-10">
                 <div class="mt-3 md:mt-6">
                     <h1 class="text-start py-1 my-2 px-3 font-bold tracking-wider text-2xl md:text-3xl">
-                        Latest Applicants
+                        Latest Candidates
                     </h1>
                     <div class="mt-6">
                         <div class="-mt-4 h-2 mb-2 w-full rounded-full shadow-custom-3d bg-orange"></div>

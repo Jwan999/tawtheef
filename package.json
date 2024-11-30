@@ -25,6 +25,7 @@
         "dayjs": "^1.11.13",
         "flowbite-datepicker": "^1.2.6",
         "g": "^2.0.1",
+        "lodash": "^4.17.21",
         "lucide-vue-next": "^0.439.0",
         "npm": "^10.7.0",
         "puppeteer": "^22.15.0",

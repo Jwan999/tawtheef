@@ -99,10 +99,10 @@ const isSearchMode = computed(() => store.state.searchMode);
 const activeSpecialization = computed(() => store.state.activeSpecialization);
 
 const getHeaderText = computed(() => {
-    if (activeSpecialization.value === 'Latest') return 'Latest Applicants';
+    if (activeSpecialization.value === 'Latest') return 'Latest Candidates';
     if (activeSpecialization.value) return activeSpecialization.value;
     if (isSearchMode.value) return 'Search Results';
-    return 'Latest Applicants';
+    return 'Latest Candidates';
 });
 
 const getNoResultsMessage = computed(() => {

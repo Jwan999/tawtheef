@@ -162,9 +162,9 @@ console.log(response)
 
         setAdvanceSearchInUse({commit}, isInUse) {
             commit('setAdvanceSearchInUse', isInUse);
-            if (!isInUse) {
-                commit('resetFilters');
-            }
+            // if (!isInUse) {
+            //     commit('resetFilters');
+            // }
         },
 
         resetFilters({commit}) {
@@ -184,6 +184,7 @@ console.log(response)
                 });
             }
         },
+
 
         setEditMode({commit}, isEdit) {
             commit('setEditMode', isEdit);
