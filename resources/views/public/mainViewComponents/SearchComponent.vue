@@ -1,21 +1,23 @@
 <template>
-    <div class="relative">
-        <div class="w-3/12 md:w-5/12 md:px-20 px-6 mb-24">
-            <div class="w-full mt-16 mb-8">
-                <h1 class="text-3xl sm:text-4xl md:text-6xl text-zinc-900">
+    <div id="search-area" class="relative">
+        <div class="w-full text-center px-6 mt-24">
+            <div class="mx-auto max-w-2xl">
+                <h1 class="text-4xl md:text-5xl font-semibold text-zinc-900">
                     Talent Pool
                 </h1>
-                <div class="w-44 h-1.5 mt-4 bg-orange-500 rounded-full"></div>
+                <div class="w-24 h-1 mt-4 bg-orange-500 rounded-full mx-auto"></div>
             </div>
         </div>
-        <div class="flex justify-center">
-            <div class="md:w-10/12 w-full">
-                <div
-                    class="w-full bg-zinc-50 border-none md:border-2 md:rounded-full border-orange md:px-24 md:pt-20 md:pb-16 px-10 py-10">
+        <div class="mt-10 text-center">
+            <h1 class="text-2xl px-6 max-w-3xl mx-auto">Connect with top talent and find your perfect candidate. Browse through professionally crafted resumes from skilled individuals across all industries.</h1>
+        </div>
+        <div class="flex justify-center py-20" ref="searchContainer">
+            <div class="md:w-10/12 w-full max-w-4xl mx-auto">
+                <div class="w-full border-none md:border-2 md:rounded-full border-orange">
                     <div class="flex justify-center items-center w-full">
-                        <div class="w-full">
-                            <div class="relative w-full flex justify-between items-center space-x-4">
-                                <div class="relative group lg:w-9/12 md:w-7/12 sm:w-6/12 w-10/12 flex items-center">
+                        <div class="w-full px-4 md:px-0">
+                            <div class="relative w-full flex justify-center items-center">
+                                <div class="relative group w-full max-w-2xl flex items-center">
                                     <input
                                         v-model="searchTerm"
                                         @keyup.enter="handleSearch"
@@ -42,28 +44,10 @@
                                         </button>
                                     </div>
                                 </div>
-                                <div :class="isButtonFixed ? 'bottom-10 right-4': 'right-0 top-1'"
-                                     class="absolute right-0 top-2 md:top-1" ref="buttonContainer">
-                                    <button @click="toggleAdvanceSearch"
-                                            :class="{'bg-orange text-white': showAdvanceSearch, 'fixed-position shadow-lg': isButtonFixed, 'hover:shadow-none':!isButtonFixed}"
-                                            class="advanced-search-button md:mt-0 -mt-1 z-40 transition-all duration-300 flex items-center bg-orange hover:bg-dark text-white rounded-3xl
-                                         md:py-2 py-2 px-2 md:px-3">
-                                        <svg id="icons" viewBox="0 0 64 64" class="w-6 h-6 md:mr-2 fill-white md:hidden block"
-                                             xmlns="http://www.w3.org/2000/svg">
-                                            <path
-                                                d="m53.39 8h-42.78a5.61 5.61 0 0 0 -4.15 9.38l18.54 20.39v19.23a2 2 0 0 0 1.13 1.8 1.94 1.94 0 0 0 .87.2 2 2 0 0 0 1.25-.44l3.75-3 6.25-5a2 2 0 0 0 .75-1.56v-11.23l18.54-20.39a5.61 5.61 0 0 0 -4.15-9.38z"/>
-                                        </svg>
-                                        <span
-                                            class="whitespace-nowrap md:block hidden px-6 font-semibold tracking-wide">{{
-                                                showAdvanceSearch ? 'Close' : 'Advanced Search'
-                                            }}</span>
-                                    </button>
-                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="px-4 mt-4">
-
+                    <div class="px-4 mt-4 text-center">
                         <h1>Example keywords:</h1>
                         <div class="space-x-2 mt-2">
                             <span v-for="(keyword,index) in keywords" :key="index" @click="keywordSelected(keyword)"
@@ -71,13 +55,35 @@
                                 {{ keyword }}
                             </span>
                         </div>
-
-
                     </div>
                 </div>
             </div>
-
         </div>
+
+        <!-- Fixed Advanced Search Button with animation -->
+        <Transition
+            enter-active-class="transition duration-500 ease-out"
+            enter-from-class="transform translate-y-10 opacity-0"
+            enter-to-class="transform translate-y-0 opacity-100"
+            leave-active-class="transition duration-300 ease-in"
+            leave-from-class="transform translate-y-0 opacity-100"
+            leave-to-class="transform translate-y-10 opacity-0"
+        >
+            <button v-show="showFixedButton"
+                    @click="toggleAdvanceSearch"
+                    ref="advanceSearchButton"
+                    :class="{'bg-orange text-white': showAdvanceSearch}"
+                    class="fixed bottom-10 right-6 z-50 flex items-center bg-orange hover:bg-dark text-white rounded-3xl py-2 px-3 shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
+                <svg id="icons" viewBox="0 0 64 64" class="w-6 h-6 md:mr-2 fill-white md:hidden block"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="m53.39 8h-42.78a5.61 5.61 0 0 0 -4.15 9.38l18.54 20.39v19.23a2 2 0 0 0 1.13 1.8 1.94 1.94 0 0 0 .87.2 2 2 0 0 0 1.25-.44l3.75-3 6.25-5a2 2 0 0 0 .75-1.56v-11.23l18.54-20.39a5.61 5.61 0 0 0 -4.15-9.38z"/>
+                </svg>
+                <span class="whitespace-nowrap md:block hidden px-6 font-semibold tracking-wide">
+                    {{ showAdvanceSearch ? 'Close' : 'Advanced Search' }}
+                </span>
+            </button>
+        </Transition>
 
         <div class="space-y-16 z-40">
             <AdvanceSearchComponent
@@ -100,24 +106,25 @@ const store = useStore();
 const showAdvanceSearch = ref(false);
 const searchApplied = ref(false);
 const searchTerm = ref('');
-const isButtonFixed = ref(false);
-const buttonContainer = ref(null);
-const keywords = ref(null)
+const showFixedButton = ref(false);
+const keywords = ref(null);
+const searchContainer = ref(null);
+const advanceSearchButton = ref(null);
 
 const keywordSelected = (term) => {
-    if (term) searchTerm.value = term
-    handleSearch()
-}
+    if (term) searchTerm.value = term;
+    handleSearch();
+};
+
 onMounted(async () => {
     try {
         keywords.value = await getSelectables('keywords');
     } catch (error) {
         console.error('Failed to fetch select options:', error);
     }
-})
+});
 
 const handleSearch = async () => {
-
     if (searchTerm.value.trim() !== '') {
         await store.dispatch('setSearchMode', true);
         await store.dispatch('setSearchQuery', searchTerm.value);
@@ -142,13 +149,8 @@ const handleAdvancedSearch = async (advancedFilters) => {
         await store.dispatch('getFilteredApplicants', {page: 1});
         searchApplied.value = true;
         await store.dispatch('setSearchMode', true);
-        if (store.getters.error) {
-            console.error(store.getters.error);
-            // Handle error (e.g., show an error message to the user)
-        }
     } catch (error) {
         console.error("Error in advanced search:", error);
-        // Handle error (e.g., show an error message to the user)
     }
 };
 
@@ -163,22 +165,21 @@ const closeAdvanceSearch = () => {
 };
 
 const handleScroll = () => {
-    if (buttonContainer.value) {
-        const rect = buttonContainer.value.getBoundingClientRect();
-        if (rect.top <= 0 && !isButtonFixed.value) {
-            isButtonFixed.value = true;
-        } else if (rect.top > 0 && isButtonFixed.value) {
-            isButtonFixed.value = false;
-        }
+    if (searchContainer.value) {
+        const rect = searchContainer.value.getBoundingClientRect();
+        const triggerPoint = window.innerHeight / 2;
+        showFixedButton.value = rect.top <= triggerPoint;
     }
 };
 
-
 onMounted(() => {
-
     window.addEventListener('scroll', handleScroll);
     window.addEventListener('click', (event) => {
-        if (showAdvanceSearch.value && !event.target.closest('.advance-search-component') && !event.target.closest('.advanced-search-button')) {
+        // Check if click is outside both the advance search component and the toggle button
+        const isClickOutsideAdvanceSearch = !event.target.closest('.advance-search-component');
+        const isClickOnToggleButton = advanceSearchButton.value && advanceSearchButton.value.contains(event.target);
+
+        if (showAdvanceSearch.value && isClickOutsideAdvanceSearch && !isClickOnToggleButton) {
             closeAdvanceSearch();
         }
     });
@@ -196,28 +197,5 @@ watch(showAdvanceSearch, (newValue) => {
 <style scoped>
 .advanced-search-button {
     transition: all 0.3s ease;
-    position: absolute;
-    right: 0.5rem;
 }
-
-.fixed-position {
-    position: fixed;
-    bottom: 2.5rem;
-    right: 2rem;
-//box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.fixed-button {
-    position: fixed;
-    z-index: 50;
-    transition: all 0.3s ease;
-}
-
- .fixed-position {
-     position: fixed;
-     bottom: 2.5rem;
-     right: 2rem;
-     z-index: 90;  /* High enough to be above cards but below the advance search panel */
- }
-
 </style>

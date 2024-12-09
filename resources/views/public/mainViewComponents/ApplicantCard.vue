@@ -7,7 +7,7 @@
         'inline-flex items-center px-3 py-1 rounded-full text-sm font-medium',
         applicant.contact.workAvailability
             ? 'bg-orange-100 text-orange'
-            : 'bg-zinc-100 text-zinc-600'
+            : 'bg-zinc-200 text-zinc-600'
     ]">
         {{ applicant.contact.workAvailability ? 'Ready to start' : 'Currently employed' }}
     </span>

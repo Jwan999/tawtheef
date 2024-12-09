@@ -1,12 +1,12 @@
 <template>
-    <div class="md:px-20 px-10 md:-mt-[14rem] -mt-[8rem] mb-24">
+    <div class="md:px-20 px-10 mb-24">
         <!-- Header -->
         <div class="w-3/12 md:w-4/12">
             <div class="w-full mt-16 mb-8">
-                <h1 class="text-3xl sm:text-4xl md:text-6xl text-zinc-900">
+                <h1 class="text-2xl sm:text-3xl md:text-6xl text-zinc-900">
                     How we make it easier
                 </h1>
-                <div class="w-44 h-1.5 mt-4 bg-orange-500 rounded-full"></div>
+                <div class="w-44 h-1 mt-4 bg-orange-500 rounded-full"></div>
             </div>
         </div>
 

@@ -2,10 +2,9 @@
     <div class="relative">
         <div class="relative">
             <div class="fade-overlay"></div>
-            <SecondHeroComponent class="mb-10 relative z-10"></SecondHeroComponent>
-            <WhyBuildWithUs></WhyBuildWithUs>
-            <div class="mt-10 relative z-10" id="search-area-spacer"></div>
-            <SearchComponent class="relative pb-24 z-10" id="search-area"></SearchComponent>
+            <SecondHeroComponent class="relative z-10"></SecondHeroComponent>
+            <div class="relative z-10" id="search-area-spacer"></div>
+            <SearchComponent class="relative z-10 -mt-32" id="search-area"></SearchComponent>
         </div>
         <PreviewAllComponent></PreviewAllComponent>
         <FooterComponent></FooterComponent>

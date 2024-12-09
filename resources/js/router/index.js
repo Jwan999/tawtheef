@@ -8,9 +8,11 @@ import SignupView from "../components/publicAuth/SignupView.vue";
 import store from "../store/index";
 import ResumePreviewMode from "../../views/public/Resume/ResumePreviewMode.vue"
 import ResumeProfileMode from "../../views/public/Resume/ResumeProfileMode.vue"
+import DescriptionAndBrandView from "../../views/public/DescriptionAndBrandView.vue"
 
 const routes = [
     {path: '/', component: Home, name: 'home'},
+    {path: '/about', component: DescriptionAndBrandView, name: 'DescriptionAndBrandView'},
 
     // {path: '/profile/:id', component: ApplicantProfileView, name: 'profile-view', meta: {requiresAuth: true}},
     // {path: '/profile/:id/edit', component: ApplicantProfileView, name: 'profile-edit', meta: {requiresAuth: true}},

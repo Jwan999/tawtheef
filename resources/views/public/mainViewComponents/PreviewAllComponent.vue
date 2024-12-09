@@ -5,12 +5,22 @@
             <SpecializationsFilter/>
         </div>
 
-        <!-- Content Header -->
+        <!-- Content Header with Counter -->
         <div class="w-full mt-16 mb-8">
-            <h1 class="text-3xl md:text-4xl font-semibold text-zinc-900">
-                {{ getHeaderText }}
-            </h1>
-            <div class="w-32 h-1.5 mt-4 bg-orange rounded-full"></div>
+            <div class="flex justify-between items-center mb-4">
+                <h1 class="text-3xl md:text-4xl font-semibold text-zinc-900">
+                    {{ getHeaderText }}
+                </h1>
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-zinc-100 text-zinc-900">
+    <span class="font-medium">
+        {{ totalPublishedResumes }}
+    </span>
+                    <span class="text-zinc-600 text-sm">
+        {{ countLabel }}
+    </span>
+                </div>
+            </div>
+            <div class="w-32 h-1 mt-4 bg-orange rounded-full"></div>
         </div>
 
         <!-- Loading State -->
@@ -42,17 +52,14 @@
             <!-- End of Results Section -->
             <div v-if="accumulatedApplicants.length"
                  class="flex flex-col items-center mt-12 space-y-4">
-                <!-- Loading State -->
                 <div v-if="isLoadingMore">
                     <Loader class="w-8 h-8"/>
                 </div>
 
-                <!-- No More Results Message -->
                 <p v-else-if="!hasMorePages" class="text-zinc-600">
                     That's all our available talents for now
                 </p>
 
-                <!-- Load More Button -->
                 <button
                     v-if="isLoadMoreVisible"
                     @click="loadMore"
@@ -85,6 +92,37 @@ const alertMessage = ref('');
 const alertType = ref('info');
 const isLoadingMore = ref(false);
 const accumulatedData = ref([]);
+
+onMounted(async () => {
+    if (!store.state.statistics) {
+        await store.dispatch('fetchStatistics');
+    }
+});
+const hasActiveFilters = computed(() => {
+    const activeFilters = store.getters.activeFilters;
+    return Object.keys(activeFilters).length > 0;
+});
+
+// Modify the total count computation
+const totalPublishedResumes = computed(() => {
+    if (hasActiveFilters.value) {
+        // Use filtered applicants total when filters are active
+        return new Intl.NumberFormat().format(store.state.filteredApplicants.total || 0);
+    } else {
+        // Use total published resumes when no filters are active
+        return new Intl.NumberFormat().format(store.state.statistics?.PublishedResumes || 0);
+    }
+});
+
+// You might also want to modify the label text
+const countLabel = computed(() => {
+    return hasActiveFilters.value ? 'results' : 'talents';
+});
+
+const currentResults = computed(() => {
+    const count = currentPageData.value?.total || 0;
+    return new Intl.NumberFormat().format(count);
+});
 
 const isAdvanceSearchInUse = computed(() => store.state.advanceSearchInUse);
 const isSearchMode = computed(() => store.state.searchMode);
@@ -126,8 +164,8 @@ const currentPageData = computed(() => {
 });
 
 const hasMorePages = computed(() => {
-    const currentPage = currentPageData.value.current_page;
-    const lastPage = currentPageData.value.last_page;
+    const currentPage = currentPageData.value?.current_page;
+    const lastPage = currentPageData.value?.last_page;
     const hasData = accumulatedData.value.length > 0;
 
     return hasData && currentPage < lastPage;
@@ -144,6 +182,16 @@ const fetchApplicants = async (page, isLoadMore = false) => {
     if (!isLoadMore) {
         loading.value = true;
         accumulatedData.value = [];
+
+        if (!store.state.statistics) {
+            try {
+                const response = await fetch('/api/statistics');
+                const data = await response.json();
+                await store.commit('setStatistics', data);
+            } catch (error) {
+                console.error('Error fetching statistics:', error);
+            }
+        }
     } else {
         isLoadingMore.value = true;
     }
@@ -189,7 +237,6 @@ const fetchApplicants = async (page, isLoadMore = false) => {
         isLoadingMore.value = false;
     }
 };
-
 const loadMore = async () => {
     if (!hasMorePages.value || isLoadingMore.value || loading.value) {
         return;

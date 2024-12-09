@@ -8,21 +8,23 @@
         </div>
 
         <!-- Full menu for md and larger screens -->
-        <div class="hidden md:flex items-center justify-between space-x-6">
-            <template v-if="!isAuthenticated">
-<!--                <router-link v-slot="{ navigate }" custom to="/login">-->
-<!--                    <button @click="navigate" class="text-orange font-semibold text-md hover:bg-zinc-800 hover:text-white rounded-full px-12 py-2.5 transition-all duration-300 ease-in-out transform hover:scale-105">Login</button>-->
-<!--                </router-link>-->
-                <router-link v-slot="{ navigate }" custom to="/login">
-                    <button @click="navigate" class="bg-orange text-white font-semibold text-md px-12 py-2 rounded-full hover:bg-zinc-800 hover:shadow-none transition-all duration-300 ease-in-out transform hover:scale-105">Get Started</button>
+        <div class="hidden md:flex items-center space-x-8 flex-1 justify-end">
+            <div class="flex items-center space-x-8">
+                <router-link v-slot="{ navigate }" custom to="/about">
+                    <button @click="navigate" class="text-orange font-semibold text-md hover:bg-zinc-800 hover:text-white rounded-full px-12 py-2.5 transition-all duration-300 ease-in-out transform hover:scale-105">About</button>
                 </router-link>
-            </template>
-            <template v-else>
-                <button @click="logout" class="text-orange font-semibold text-md hover:bg-zinc-800 hover:text-white rounded-full px-12 py-2 transition-all duration-300 ease-in-out transform hover:scale-105">Logout</button>
-                <router-link v-slot="{ navigate }" custom :to="`/profile/${user?.applicant?.id}`">
-                    <button @click="navigate" class="bg-orange text-white font-semibold text-md px-12 py-2 rounded-full hover:bg-zinc-800 hover:shadow-none transition-all duration-300 ease-in-out transform hover:scale-105">Resume</button>
-                </router-link>
-            </template>
+                <template v-if="!isAuthenticated">
+                    <router-link v-slot="{ navigate }" custom to="/login">
+                        <button @click="navigate" class="bg-orange text-white font-semibold text-md px-12 py-2 rounded-full hover:bg-zinc-800 hover:shadow-none transition-all duration-300 ease-in-out transform hover:scale-105">Get Started</button>
+                    </router-link>
+                </template>
+                <template v-else>
+                    <button @click="logout" class="text-orange font-semibold text-md hover:bg-zinc-800 hover:text-white rounded-full px-12 py-2 transition-all duration-300 ease-in-out transform hover:scale-105">Logout</button>
+                    <router-link v-slot="{ navigate }" custom :to="`/profile/${user?.applicant?.id}`">
+                        <button @click="navigate" class="bg-orange text-white font-semibold text-md px-12 py-2 rounded-full hover:bg-zinc-800 hover:shadow-none transition-all duration-300 ease-in-out transform hover:scale-105">Resume</button>
+                    </router-link>
+                </template>
+            </div>
         </div>
 
         <!-- Dropdown menu for smaller screens -->
@@ -42,6 +44,11 @@
             >
                 <div v-if="isDropdownOpen" class="absolute right-0 mt-2 w-52 bg-zinc-50 rounded-md shadow-lg py-1 z-10">
                     <div class="px-4 py-2 text-xs text-zinc-400 uppercase tracking-wider">Menu</div>
+                    <router-link v-slot="{ navigate }" custom to="/about">
+                        <a @click="navigate" class="block px-4 py-2 text-sm text-zinc-800 hover:bg-orange hover:text-white">
+                            About
+                        </a>
+                    </router-link>
                     <template v-if="!isAuthenticated">
                         <router-link v-slot="{ navigate }" custom to="/login">
                             <a @click="navigate" class="block px-4 py-2 text-sm text-zinc-800 hover:bg-orange hover:text-white">
@@ -72,8 +79,9 @@
 
 <script setup>
 import { computed, ref, onMounted, onUnmounted } from "vue";
-import { mapActions, useStore } from "vuex";
+import { useStore } from "vuex";
 import router from "../../../js/router/index.js";
+import axios from 'axios';
 
 const store = useStore();
 const isDropdownOpen = ref(false);
@@ -81,13 +89,27 @@ const isDropdownOpen = ref(false);
 const user = computed(() => store.getters.user);
 const isAuthenticated = computed(() => store.getters.isAuthenticated);
 
-const { checkAuthStatus } = mapActions(['checkAuthStatus']);
+const checkAuthStatus = async () => {
+    try {
+        const response = await axios.get('/api/auth');
+        if (!response.data) {
+            store.commit('setUser', null);
+        }
+    } catch (error) {
+        console.error('Error checking auth status:', error);
+        store.commit('setUser', null);
+    }
+};
 
 const logout = async () => {
-    await axios.post('/logout');
-    store.commit('setUser', null);
-    await router.push('/');
-    isDropdownOpen.value = false;
+    try {
+        await axios.post('/logout');
+        store.commit('setUser', null);
+        await router.push('/');
+        isDropdownOpen.value = false;
+    } catch (error) {
+        console.error('Error during logout:', error);
+    }
 };
 
 const toggleDropdown = (event) => {
@@ -95,15 +117,14 @@ const toggleDropdown = (event) => {
     isDropdownOpen.value = !isDropdownOpen.value;
 };
 
-// Close dropdown when clicking outside
 const closeDropdown = (event) => {
     if (isDropdownOpen.value && !event.target.closest('.dropdown')) {
         isDropdownOpen.value = false;
     }
 };
 
-// Add event listener for closing dropdown
-onMounted(() => {
+onMounted(async () => {
+    await checkAuthStatus();
     document.addEventListener('click', closeDropdown);
 });
 

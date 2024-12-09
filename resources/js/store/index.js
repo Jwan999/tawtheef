@@ -34,6 +34,7 @@ const defaultFilters = {
 
 export default createStore({
     state: {
+        statistics: null,
         advanceSearchInUse: false,
         isFormValid: false,
         editMode: false,
@@ -67,6 +68,14 @@ export default createStore({
         },
     },
     actions: {
+        async fetchStatistics({ commit }) {
+            try {
+                const response = await axios.get('/api/statistics');
+                commit('setStatistics', response.data);
+            } catch (error) {
+                console.error('Error fetching statistics:', error);
+            }
+        },
         async searchApplicantsInfinite({commit, state}, {page = 1, perPage = 12} = {}) {
             try {
                 commit('updateInfiniteLoadingStatus', {loading: true, hasMore: state.infiniteLoadingStatus.hasMore});
@@ -242,6 +251,9 @@ console.log(response)
         },
     },
     mutations: {
+        setStatistics(state, data) {
+            state.statistics = data;
+        },
         setActiveSpecialization(state, specialization) {
             state.activeSpecialization = specialization || 'Latest';
         },
