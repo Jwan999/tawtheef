@@ -14,6 +14,14 @@ return [
     |
     */
 
+    'recaptcha' => [
+        'site_key' => env('RECAPTCHA_SITE_KEY'),
+        'secret_key' => env('RECAPTCHA_SECRET_KEY'),
+        'skip_on_local' => env('RECAPTCHA_SKIP_LOCAL', false),
+        'project_id' => env('RECAPTCHA_PROJECT_ID', ''),
+        'min_score' => env('RECAPTCHA_MIN_SCORE', 0.5),
+    ],
+
     'mailgun' => [
         'domain' => env('MAILGUN_DOMAIN'),
         'secret' => env('MAILGUN_SECRET'),

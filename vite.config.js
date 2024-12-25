@@ -13,7 +13,7 @@ export default defineConfig({
             template: {
                 compilerOptions: {
                     // isCustomElement: (tag) => tag === 'lottie-loader',
-                    isCustomElement: tag => tag.includes('dotlottie-player')
+                    isCustomElement: tag => tag.includes('dotlottie-player','-')
 
                 }
             }

@@ -86,7 +86,7 @@
     </div>
 
     <!-- Background Circles -->
-    <div class="flex justify-end mt-10 -mt-0 md:-mt-48 px-4">
+    <div class="flex justify-end mt-10 -mt-0 md:-mt-64 px-4">
         <img class="md:w-10/12 w-full md:flex hidden object-cover mt-10 opacity-90" src="/public/svgs/circles.svg" alt="Background circles">
         <img class="md:w-6/12 w-6/12 flex md:hidden object-cover mt-10 opacity-90" src="/public/svgs/mobile-circles.svg" alt="Background circles mobile">
     </div>

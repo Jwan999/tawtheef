@@ -194,7 +194,7 @@
 </template>
 <script>
 export default {
-    name: "ApplicantsView",
+    name: "NavigationComponent",
     mounted(){
         console.log("im mounted")
     }

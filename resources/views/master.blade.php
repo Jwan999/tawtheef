@@ -12,15 +12,15 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Dosis:wght@200..800&display=swap" rel="stylesheet">
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <title>Tawtheef</title>
     <link rel="icon" type="image/x-icon" href="../../public/svgs/tawtheefLogo.svg">
-
 </head>
 <body class="bg-light">
 
 <div id="app"></div>
 
 @vite('resources/js/app.js')
-<script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
+
 </body>
 </html>

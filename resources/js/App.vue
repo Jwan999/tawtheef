@@ -1,18 +1,14 @@
 <template>
     <div v-if="!isLoading">
-        <template v-if="isDashboard">
-            <NavigationComponent/>
-        </template>
-        <template v-if="!isDashboard">
-            <NavbarComponent></NavbarComponent>
-        </template>
+
+        <NavbarComponent></NavbarComponent>
 
         <div :class="isDashboard ? 'p-4 sm:ml-64 mt-16' : ''">
-            <router-view ></router-view>
+            <router-view></router-view>
         </div>
     </div>
     <div v-else>
-        <LottieLoader />
+        <LottieLoader/>
     </div>
 
 

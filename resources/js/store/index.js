@@ -1,6 +1,10 @@
-import {createStore} from 'vuex';
+import { createStore } from 'vuex';
 import axios from "axios";
-import {getAuthUser} from "../utils/storeHelpers.js";
+import { getAuthUser } from "../utils/storeHelpers.js";
+
+// Configure axios defaults
+axios.defaults.withCredentials = true;
+axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
 function getUserFromLocalStorage() {
     try {
@@ -34,6 +38,8 @@ const defaultFilters = {
 
 export default createStore({
     state: {
+        loading: false,
+        isAdmin: false,
         statistics: null,
         advanceSearchInUse: false,
         isFormValid: false,
@@ -58,7 +64,7 @@ export default createStore({
             total: 0
         },
         currentPage: 1,
-        filters: {...defaultFilters},
+        filters: { ...defaultFilters },
         searchQuery: '',
         error: null,
         activeSpecialization: 'Latest',
@@ -68,6 +74,81 @@ export default createStore({
         },
     },
     actions: {
+        async checkAuth({ commit }) {
+            try {
+                const response = await axios.get('/api/auth');
+                if (response.data) {
+                    commit('setUser', response.data);
+                    return response.data;
+                } else {
+                    commit('setUser', null);
+                    return null;
+                }
+            } catch (error) {
+                console.error('Error checking auth status:', error);
+                commit('setUser', null);
+                return null;
+            }
+        },
+
+        async login({ commit }, { email, password, recaptcha_token }) {
+            try {
+                const response = await axios.post('/login', {
+                    email,
+                    password,
+                    recaptcha_token
+                });
+
+                if (response.data.user) {
+                    commit('setUser', response.data.user);
+                }
+                return response;
+            } catch (error) {
+                throw error;
+            }
+        },
+
+        async logout({ commit }) {
+            try {
+                await axios.post('/logout');
+                commit('setUser', null);
+                commit('clearError');
+            } catch (error) {
+                console.error('Logout error:', error);
+                throw error;
+            }
+        },
+
+        async signup({ commit }, userData) {
+            try {
+                const response = await axios.post('/signup', userData);
+                if (response.data.user) {
+                    commit('setUser', response.data.user);
+                }
+                return response;
+            } catch (error) {
+                throw error;
+            }
+        },
+
+        async forgotPassword({ commit }, email) {
+            try {
+                const response = await axios.post('/forgot-password', { email });
+                return response.data;
+            } catch (error) {
+                throw error;
+            }
+        },
+
+        async resetPassword({ commit }, credentials) {
+            try {
+                const response = await axios.post('/reset-password', credentials);
+                return response.data;
+            } catch (error) {
+                throw error;
+            }
+        },
+
         async fetchStatistics({ commit }) {
             try {
                 const response = await axios.get('/api/statistics');
@@ -76,9 +157,10 @@ export default createStore({
                 console.error('Error fetching statistics:', error);
             }
         },
-        async searchApplicantsInfinite({commit, state}, {page = 1, perPage = 12} = {}) {
+
+        async searchApplicantsInfinite({ commit, state }, { page = 1, perPage = 12 } = {}) {
             try {
-                commit('updateInfiniteLoadingStatus', {loading: true, hasMore: state.infiniteLoadingStatus.hasMore});
+                commit('updateInfiniteLoadingStatus', { loading: true, hasMore: state.infiniteLoadingStatus.hasMore });
 
                 const response = await axios.get('/api/applicants/search', {
                     params: {
@@ -105,30 +187,26 @@ export default createStore({
                 });
             } catch (error) {
                 console.error('Error searching applicants:', error);
-                commit('updateInfiniteLoadingStatus', {loading: false, hasMore: false});
+                commit('updateInfiniteLoadingStatus', { loading: false, hasMore: false });
                 throw error;
             }
         },
 
-        async getFilteredApplicants({commit, state}, {page = 1, perPage = 12, sortBy = 'created_at', sortOrder = 'asc'} = {}) {
+        async getFilteredApplicants({ commit, state }, { page = 1, perPage = 12, sortBy = 'created_at', sortOrder = 'asc' } = {}) {
             try {
-                commit('updateInfiniteLoadingStatus', {loading: true, hasMore: state.infiniteLoadingStatus.hasMore});
+                commit('updateInfiniteLoadingStatus', { loading: true, hasMore: state.infiniteLoadingStatus.hasMore });
 
-                // Start with base params
                 const params = new URLSearchParams();
                 params.append('page', page);
                 params.append('per_page', perPage);
                 params.append('sort_by', sortBy);
                 params.append('sort_order', sortOrder);
 
-                // Always add active specialization if not Latest
                 if (state.activeSpecialization !== 'Latest') {
                     params.append('mainSpecializations[]', state.activeSpecialization);
                 }
 
-                // Add other filters
                 Object.entries(state.filters).forEach(([key, value]) => {
-                    // Skip mainSpecializations if we have an active specialization
                     if (key === 'mainSpecializations' && state.activeSpecialization !== 'Latest') {
                         return;
                     }
@@ -145,10 +223,8 @@ export default createStore({
                     }
                 });
 
-                console.log('Sending request with params:', Object.fromEntries(params));
-
                 const response = await axios.get('/api/applicants/filter', { params });
-console.log(response)
+
                 if (page === 1) {
                     commit('setFilteredApplicants', response.data);
                 } else {
@@ -169,21 +245,17 @@ console.log(response)
             }
         },
 
-        setAdvanceSearchInUse({commit}, isInUse) {
+        setAdvanceSearchInUse({ commit }, isInUse) {
             commit('setAdvanceSearchInUse', isInUse);
-            // if (!isInUse) {
-            //     commit('resetFilters');
-            // }
         },
 
-        resetFilters({commit}) {
+        resetFilters({ commit }) {
             commit('resetFilters');
         },
 
-        updateFilter({commit, state, dispatch}, {key, value}) {
-            commit('updateFilter', {key, value});
+        updateFilter({ commit, state, dispatch }, { key, value }) {
+            commit('updateFilter', { key, value });
 
-            // If mainSpecializations is cleared, reset to Latest
             if (key === 'mainSpecializations' && (!value || value.length === 0)) {
                 commit('setActiveSpecialization', 'Latest');
                 dispatch('getFilteredApplicants', {
@@ -194,33 +266,32 @@ console.log(response)
             }
         },
 
-
-        setEditMode({commit}, isEdit) {
+        setEditMode({ commit }, isEdit) {
             commit('setEditMode', isEdit);
         },
 
-        checkEditMode({commit}, url) {
+        checkEditMode({ commit }, url) {
             if (url.includes('profile')) {
                 commit('setEditMode', true);
             }
         },
 
-        setPreviewMode({commit}, isPreview) {
+        setPreviewMode({ commit }, isPreview) {
             commit('setPreviewMode', isPreview);
         },
 
-        setCanEdit({commit}, canEdit) {
+        setCanEdit({ commit }, canEdit) {
             commit('setCanEdit', canEdit);
         },
 
-        setSearchMode({commit}, isSearchMode) {
+        setSearchMode({ commit }, isSearchMode) {
             commit('setSearchMode', isSearchMode);
             if (!isSearchMode) {
                 commit('setSearchQuery', '');
             }
         },
 
-        async getUser({commit}) {
+        async getUser({ commit }) {
             try {
                 const user = await getAuthUser();
                 commit('setUser', user);
@@ -232,34 +303,29 @@ console.log(response)
             }
         },
 
-        async checkAuthStatus({commit}) {
-            try {
-                const response = await axios.get('/api/auth');
-                commit('setAuthStatus', !!response.data);
-            } catch (error) {
-                console.error('Error fetching auth status:', error);
-                commit('setAuthStatus', false);
-            }
-        },
-
-        setFilters({commit}, filters) {
+        setFilters({ commit }, filters) {
             commit('setFilters', filters);
         },
 
-        setSearchQuery({commit}, query) {
+        setSearchQuery({ commit }, query) {
             commit('setSearchQuery', query);
         },
     },
     mutations: {
+        setLoading(state, value) {
+            state.loading = value;
+        },
+
         setStatistics(state, data) {
             state.statistics = data;
         },
+
         setActiveSpecialization(state, specialization) {
             state.activeSpecialization = specialization || 'Latest';
         },
 
-        updateInfiniteLoadingStatus(state, {hasMore, loading}) {
-            state.infiniteLoadingStatus = {hasMore, loading};
+        updateInfiniteLoadingStatus(state, { hasMore, loading }) {
+            state.infiniteLoadingStatus = { hasMore, loading };
         },
 
         appendSearchedApplicants(state, applicants) {
@@ -276,9 +342,9 @@ console.log(response)
 
         setUser(state, user) {
             state.user = user;
+            state.isAdmin = user?.role === 'admin';
             if (user) {
-                const userAsString = JSON.stringify(user);
-                localStorage.setItem('user', userAsString);
+                localStorage.setItem('user', JSON.stringify(user));
             } else {
                 localStorage.removeItem('user');
             }
@@ -336,15 +402,15 @@ console.log(response)
         },
 
         setFilters(state, filters) {
-            state.filters = {...state.filters, ...filters};
+            state.filters = { ...state.filters, ...filters };
         },
 
-        updateFilter(state, {key, value}) {
+        updateFilter(state, { key, value }) {
             state.filters[key] = value;
         },
 
         resetFilters(state) {
-            state.filters = {...defaultFilters};
+            state.filters = { ...defaultFilters };
         },
 
         setCurrentPage(state, page) {
@@ -381,13 +447,15 @@ console.log(response)
         },
     },
     getters: {
+        isLoading: state => state.loading,
+        isAdmin: state => state.isAdmin,
         hasMoreResults: state => state.infiniteLoadingStatus.hasMore,
         isLoadingMore: state => state.infiniteLoadingStatus.loading,
         advanceSearchInUse: state => state.advanceSearchInUse,
         getCurrentApplicantId: (state) => state.user?.applicant?.id || null,
         isFormValid: state => state.isFormValid,
         user: (state) => state.user,
-        isAuthenticated: (state) => state.user !== null,
+        isAuthenticated: (state) => !!state.user,
         invalidFields: (state) => state.invalidFields,
         editMode: state => state.editMode,
         isPreviewMode: state => state.previewMode,
