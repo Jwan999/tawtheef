@@ -22,12 +22,11 @@
                 <div class="form-group flex flex-col space-y-3">
                     <div class="flex justify-between items-center">
                         <h1 class="text-sm text-zinc-500 font-semibold tracking-wider">Password</h1>
-                        <!--                        todo-->
-                        <!--                        <router-link-->
-                        <!--                            to="/forgot-password"-->
-                        <!--                            class="text-sm text-orange hover:text-zinc-800">-->
-                        <!--                            Forgot Password?-->
-                        <!--                        </router-link>-->
+                                                <router-link
+                                                    to="/forgot-password"
+                                                    class="text-sm text-orange hover:text-zinc-800">
+                                                    Forgot Password?
+                                                </router-link>
                     </div>
                     <input
                         type="password"
